@@ -60,6 +60,11 @@ def logout():
     logout_user()
     return redirect(url_for('home_page'))
 
+@app.route("/profile")
+def profile_page():
+    if current_user.is_authenticated:
+        return render_template("profile.html")
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
