@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
-{% block title %}  {% endblock title %} 
+{% block title %} {% endblock title %}
 <!-- For block title and block content we need add something -->
 
 {% block content %}
 {% if not current_user.is_authenticated %}
-        <h1 class="display-4">Giriş Yapmadınız</h1>
-        <p class="lead">Lütfen <a href="{{ url_for('login_page') }}">giriş yapın</a> veya <a href="{{ url_for('signup_page') }}">kayıt olun</a>.</p>
-    {% else %}
-        <h1 class="display-4">Hoş geldiniz, {{ current_user.email }}!</h1>
-    {% endif %}
+<h1 class="display-4">Giriş Yapmadınız</h1>
+<p class="lead">Lütfen <a href="{{ url_for('login_page') }}">giriş yapın</a> veya <a
+        href="{{ url_for('signup_page') }}">kayıt olun</a>.</p>
+{% else %}
+<h1 class="display-4">Hoş geldiniz, {{ current_user.email }}!</h1>
+{% endif %}
 {% endblock content %}

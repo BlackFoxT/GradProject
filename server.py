@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, request
+from flask import Flask, redirect, url_for, render_template, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user
 
@@ -24,6 +24,7 @@ def home_page():
 
 @app.route("/login", methods=["GET", "POST"])
 def login_page():
+
     if current_user.is_authenticated:
         return redirect(url_for('home_page'))
 
@@ -36,7 +37,8 @@ def login_page():
             login_user(user)
             return redirect(url_for('home_page'))
         else:
-            return "Hatalı email veya şifre", 401
+            flash("Email or password is incorrect", "error")
+            return redirect(url_for('login_page'))
 
     return render_template("login.html")
 
@@ -48,10 +50,16 @@ def signup_page():
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
+
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash("This email is already registered", "error")
+            return redirect(url_for('signup_page'))
+
         new_user = User(email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('home_page'))
+        return redirect(url_for('login_page'))
 
     return render_template("signup.html")
 
