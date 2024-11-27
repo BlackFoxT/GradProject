@@ -3,7 +3,7 @@
 <!-- For block title and block content we need add something -->
 
 {% block content %}
-{% if not current_user.is_authenticated %}
+{% if current_user.is_authenticated %}
 <h1 class="display-4">Hoş geldiniz, {{ current_user.email }}!</h1>
 {% endif %}
         <div class="container vh-100 mb-5">
