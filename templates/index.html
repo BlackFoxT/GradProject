@@ -4,11 +4,13 @@
 
 {% block content %}
 {% if not current_user.is_authenticated %}
+<h1 class="display-4">Hoş geldiniz, {{ current_user.email }}!</h1>
+{% endif %}
         <div class="container vh-100 mb-5">
             <div class="container-fluid" style="margin-top: 170px; padding-right: 150px;">
                 <h1 class="display-4 text-center mb-4" style="font-weight: 500; font-size: 30px;">What can I help with?</h1>
                 <div class="container pt-2" style="min-height: 110px; width: 90%; border-style: none;
-  border-radius: 25px; background-color: rgb(240, 242, 242);">
+                  border-radius: 25px; background-color: rgb(240, 242, 242);">
                     <form>
                         <div class="mb-1">
                             <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" style="background-color: rgb(240, 242, 242); border-style: none;">Message</textarea>
@@ -19,12 +21,6 @@
                       </form>
                 </div>
             </div>
-            
-
             </div>
-            
-        {% else %}
-            <h1 class="display-4">Hoş geldiniz, {{ current_user.email }}!</h1>
-        {% endif %}
     </div>
 {% endblock content %}
