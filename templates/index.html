@@ -43,9 +43,9 @@
       contentDiv.style.display = 'block'; 
       const storedMessage = localStorage.getItem('message');
       if (storedMessage) {
-        contentDiv.innerText = storedMessage; 
+        contentDiv.innerText = storedMessage;
       }
-      header.style.display = 'none'; 
+      header.style.display = 'none';
       chatDiv.style.marginTop = '10px'; 
     }
 
@@ -58,11 +58,12 @@
       }
       event.preventDefault(); 
       console.log("Button clicked");
+      textarea.value = "";
       contentDiv.innerText = message;
-      contentDiv.style.display = 'block';
+      contentDiv.style.display = 'block'; 
       header.style.display = 'none';
-      chatDiv.style.marginTop = '10px'; 
-      localStorage.setItem('contentVisible', 'true');,
+      chatDiv.style.marginTop = '10px';
+      localStorage.setItem('contentVisible', 'true'); 
       localStorage.setItem('message', message);
     });
   });
