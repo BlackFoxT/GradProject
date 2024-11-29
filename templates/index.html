@@ -2,9 +2,21 @@
 {% block title %}Welcome{% endblock title %}
 
 {% block content %}
-{% if current_user.is_authenticated %}
-<h1 class="display-4">Hoş geldiniz, {{ current_user.email }}!</h1>
-{% endif %}
+
+<div class="flash-container position-absolute top-0 start-50 translate-middle-x p-3" style="z-index: 1050;">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} fade show shadow" role="alert" style="opacity: 1; transition: opacity 0.5s;">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+  {% endif %}
+  {% endwith %}
+</div>
+
+
 <div class="container vh-100 mb-5">
   <div class="container-fluid" id="hiddenContent" style="display: none; height: 65%;">
     <!-- Add your hidden content here -->
