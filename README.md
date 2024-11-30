@@ -1,8 +1,19 @@
-GradProject
+# GradProject
 
-Description
+## Description
+This project is part of the GradProject software application, built with Flask. It provides various functionalities for users and is intended for academic purposes.
 
-This project is designed as part of the GradProject software application, built with Flask. It provides various functionalities for users and is intended for academic purposes.
+---
+
+## Before Downloading the Project
+Before downloading this project, you should have **Ollama** installed.  
+
+[Download Ollama](https://ollama.com/)
+
+After installing it, run the following command in CMD:  
+`ollama run llama2`
+
+Make sure Ollama is running while using the project.
 
 ---
 
@@ -18,16 +29,32 @@ If you are downloading this project for the first time, follow these steps:
 
 2. Install Required Dependencies:
 
-   Install the dependencies from `requirements.txt`:
+   Install the dependencies from requirements.txt:
+
+   `pip install -r requirements.txt`
+   
+   Then run with:
+
+   `python server.py`
+
+3. If project doesn't working directly:
+
+   Creating new environment for windows:
+
+   `python -m venv venv`
+
+   Activate the environment:
+
+   `. venv\scripts\activate`
+
+   
+   Install the dependencies from requirements.txt:
 
    `pip install -r requirements.txt`
 
-3. Upgrade Flask-Login:
-
-   If needed, upgrade Flask-Login to the latest version:
-
-   `pip install --upgrade flask-login`
-
+   You should open the project in the environment:
+   
+   `python server.py`
 ---
 
 Git Setup Instructions
@@ -78,11 +105,11 @@ This will pull the latest changes from the remote `main` branch into your local 
 
 If you want to temporarily save your local changes without committing them, you can stash them:
 
-- **Link your local repository to the remote repository** (if not done yet):
+- **Link your local repository to the remote repository** (this only needs to be done once):
 
   `git remote add origin https://github.com/BlackFoxT/GradProject`
 
-- **Set the default branch to `main`** (if not done yet):
+- **Set the default branch to `main`** (this only needs to be done once):
 
   `git branch -M main`
 
@@ -104,11 +131,11 @@ This approach lets you save your work temporarily and pull the latest updates wi
 
 If you don't need your local changes and want the latest version from the remote, you can discard all local changes:
 
-- **Link your local repository to the remote repository** (if not done yet):
+- **Link your local repository to the remote repository** (this only needs to be done once)
 
   `git remote add origin https://github.com/BlackFoxT/GradProject`
 
-- **Set the default branch to `main`** (if not done yet):
+- **Set the default branch to `main`** (this only needs to be done once):
 
   `git branch -M main`
 
@@ -126,29 +153,25 @@ This approach will reset your local repository to the state of the remote `main`
 
 ### 3. Initial Push Operation
 
-For new repositories, initialize Git and make your first commit:
+For new repositories, initialize Git and make your commit:
 
-1. **Initialize the repository**:
-
-   `git init`
-
-2. **Stage all files for commit**:
+1. **Stage all files for commit**:
 
    `git add .`
 
-3. **Commit your changes**:
+2. **Commit your changes**:
 
    `git commit -m "your commit message"`
 
-4. **Set the default branch to `main`**:
+3. **Set the default branch to `main`** (this only needs to be done once):
 
    `git branch -M main`
 
-5. **Link your local repository to the remote**:
+4. **Link your local repository to the remote** (this only needs to be done once):
 
    `git remote add origin https://github.com/BlackFoxT/GradProject`
 
-6. **Push your changes to the remote repository**:
+5. **Push your changes to the remote repository**:
 
    `git push -u origin main`
 
