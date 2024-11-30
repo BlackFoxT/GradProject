@@ -1,6 +1,7 @@
-from flask import Flask, redirect, url_for, render_template, request, flash
+from flask import Flask, redirect, url_for, render_template, request, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user
+from langchain_community.llms.ollama import Ollama
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -8,6 +9,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
+
+# Initialize Ollama model
+llm = Ollama(model="llama2")
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -119,6 +123,14 @@ def update_information():
     else:
         flash("You must be logged in to update your information.", "error")
         return redirect(url_for('login_page'))
+
+@app.route("/ask", methods=["POST"])
+def ask():
+        user_message = request.json.get('message')
+        if user_message:
+            # Invoke the LLM with the message
+            response = llm.invoke(user_message)
+            return jsonify({"response": response})
 
 if __name__ == "__main__":
     with app.app_context():

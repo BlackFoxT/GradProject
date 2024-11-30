@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+
 {% block title %}Welcome{% endblock title %}
 
 {% block content %}
@@ -16,7 +17,6 @@
   {% endwith %}
 </div>
 
-
 <div class="container vh-100 mb-5">
   <div class="container-fluid" id="hiddenContent" style="display: none; height: 65%;">
     <!-- Add your hidden content here -->
@@ -25,7 +25,7 @@
     <h1 class="display-4 text-center mb-4"  id="header" style="font-weight: 500; font-size: 30px;">What can I help with?</h1>
     <div class="container pt-2" style="min-height: 110px; width: 90%; border-style: none;
                   border-radius: 25px; background-color: rgb(240, 242, 242);">
-      <form>
+      <form id="messageForm">
         <div class="mb-1">
           <textarea class="form-control" id="exampleFormControlTextarea1" rows="1"
             style="background-color: rgb(240, 242, 242); border-style: none;" placeholder="Message" required></textarea>
@@ -47,36 +47,64 @@
     const header = document.getElementById('header');
     const askButton = document.getElementById('askButton');
     const textarea = document.getElementById('exampleFormControlTextarea1');
-    //localStorage.setItem('contentVisible', 'false');
-    //localStorage.setItem('message', "");
 
     // Check localStorage to persist the visibility state
     if (localStorage.getItem('contentVisible') === 'true') {
-      contentDiv.style.display = 'block'; 
+      contentDiv.style.display = 'block';
       const storedMessage = localStorage.getItem('message');
-      if (storedMessage) {
-        contentDiv.innerText = storedMessage;
+      const storedResponse = localStorage.getItem('response');
+      if (storedMessage && storedResponse) {
+        contentDiv.innerHTML = `
+          <div><strong>User:</strong> ${storedMessage}</div>
+          <div><strong>Response:</strong> ${storedResponse}</div>
+        `;
       }
       header.style.display = 'none';
-      chatDiv.style.marginTop = '10px'; 
+      chatDiv.style.marginTop = '10px';
     }
 
-    // Add click event listener to the button
-    askButton.addEventListener('click', function (event) {
+    // Add event listener to the form submission
+    const messageForm = document.getElementById('messageForm');
+    messageForm.addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent the default form submission
       const message = textarea.value.trim();
       if (!message) {
         textarea.focus();
         return;
       }
-      event.preventDefault(); 
-      console.log("Button clicked");
       textarea.value = "";
-      contentDiv.innerText = message;
-      contentDiv.style.display = 'block'; 
+      // Display the user's message immediately
+      contentDiv.innerHTML = `<div><strong>User:</strong> ${message}</div>`;
+      contentDiv.style.display = 'block';
       header.style.display = 'none';
       chatDiv.style.marginTop = '10px';
-      localStorage.setItem('contentVisible', 'true'); 
+      
+      // Store the message in localStorage
+      localStorage.setItem('contentVisible', 'true');
       localStorage.setItem('message', message);
+
+      // Send the message to the Flask backend
+      fetch("/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: message })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.response) {
+          // After getting the response, display both the message and response
+          contentDiv.innerHTML += `<div><strong>Response:</strong> ${data.response}</div>`;
+          localStorage.setItem('response', data.response); // Store the response in localStorage
+        } else {
+          contentDiv.innerHTML += `<div>Error: ${data.error}</div>`;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        contentDiv.innerHTML += "<div>An error occurred. Please try again.</div>";
+      });
     });
   });
 </script>

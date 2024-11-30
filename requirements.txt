@@ -1,3 +1,11 @@
+sentence-transformers
+uvicorn
+ctransformers
+langchain
+python-box
+streamlit
 Flask==2.3.3
 Flask-SQLAlchemy==2.5.1
-Flask-Login==0.6.2
+Flask-Login==0.6.3
+ollama==0.4.2
+langchain-community
