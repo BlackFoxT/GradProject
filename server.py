@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 
 # Initialize Ollama model
-llm = Ollama(model="llama2")
+llm = Ollama(model="llama3.2")
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
