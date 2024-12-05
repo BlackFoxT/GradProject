@@ -6,58 +6,55 @@ This project is part of the GradProject software application, built with Flask. 
 ---
 
 ## Before Downloading the Project
-Before downloading this project, you should have **Ollama** installed.  
+Before downloading this project, you should have **Ollama** installed.
 
 [Download Ollama](https://ollama.com/)
 
-After installing it, run the following command in CMD:  
+After installing it, run the following command in CMD:
 `ollama run llama3.2`
 
 Make sure Ollama is running while using the project.
 
 ---
 
-Required Steps
+## Installation
 
 If you are downloading this project for the first time, follow these steps:
 
-1. Clone the Repository:
+### 1. Clone the Repository:
 
    Clone the project repository to your local machine:
 
    `git clone https://github.com/BlackFoxT/GradProject`
+   `cd GradProject`
 
-2. Install Required Dependencies:
+### 2. Prepare the project environment:
 
-   Install the dependencies from requirements.txt:
-
-   `pip install -r requirements.txt`
-   
-   Then run with:
-
-   `python server.py`
-
-3. If project doesn't working directly:
-
-   Creating new environment for windows:
+   Creating new environment for project:
 
    `python -m venv venv`
 
    Activate the environment:
 
+   ##### Windows
    `. venv\scripts\activate`
 
-   
+   ##### Linux
+   `source venv/bin/activate`
+
    Install the dependencies from requirements.txt:
 
    `pip install -r requirements.txt`
 
+### 3. Start the project
+
    You should open the project in the environment:
-   
+
    `python server.py`
+
 ---
 
-Git Setup Instructions
+## Git Setup Instructions
 
 Follow these instructions for cloning, setting up the remote repository, and handling local changes.
 
@@ -68,8 +65,6 @@ If this is your first time using the repository, clone it to create a local copy
 `git clone https://github.com/BlackFoxT/GradProject`
 
 After cloning, you do **not** need to use `git remote add origin` again. It is only necessary the first time to link your local repository to the remote repository.
-
----
 
 ### 2. Setting Up the Remote for Pulling
 
