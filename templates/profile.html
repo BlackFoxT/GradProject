@@ -1,53 +1,148 @@
-{% extends "layouts/layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        /* Genel ayarlar */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #01faef;
+            margin: 0;
+            padding: 0;
+        }
 
-{% block title %}
-Profile Page
-{% endblock title %}
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-{% block content %}
-<div class="container mt-5">
-    
-    <div class="card mt-4">
-        <div class="card-header">
-            <h3>User Information</h3>
-        </div>
-        <div class="card-body">
-            <form method="POST" action="{{ url_for('update_information') }}">
-                <div class="mb-3">
-                    <label for="name" class="form-label"><strong>Name</strong></label>
-                    <input type="text" class="form-control" id="name" name="name" value="{{ info.name if info else '' }}">
-                </div>
-                <div class="mb-3">
-                    <label for="surname" class="form-label"><strong>Surname</strong></label>
-                    <input type="text" class="form-control" id="surname" name="surname" value="{{ info.surname if info else '' }}">
-                </div>
-                <div class="mb-3">
-                    <label for="telephone_number" class="form-label"><strong>Telephone Number</strong></label>
-                    <input type="text" class="form-control" id="telephone_number" name="telephone_number" value="{{ info.telephone_number if info else '' }}">
-                </div>
-                <button type="submit" class="btn btn-primary">Update Information</button>
-            </form>
-        </div>
-    </div>
+        /* Kart tasarımı */
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
 
-    <div class="card mt-4">
-        <div class="card-header">
-            <h3>Chat Links</h3>
+        .card-header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Form tasarımı */
+        form .form-label {
+            font-weight: bold;
+            color: #333333;
+        }
+
+        form .form-control {
+            border-radius: 5px;
+            border: 1px solid #cccccc;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        form .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        form button[type="submit"] {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Liste tasarımı */
+        .list-group-item {
+            background-color: #f9f9f9;
+            border: 1px solid #e6e6e6;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+
+        .list-group-item a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: 500;
+        }
+
+        .list-group-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Uyarı mesajı */
+        .text-danger {
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Kullanıcı Bilgileri Kartı -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>User Information</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/update_information">
+                    <div class="mb-3">
+                        <label for="name" class="form-label"><strong>Name</strong></label>
+                        <input type="text" class="form-control" id="name" name="name" value="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="surname" class="form-label"><strong>Surname</strong></label>
+                        <input type="text" class="form-control" id="surname" name="surname" value="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="telephone_number" class="form-label"><strong>Telephone Number</strong></label>
+                        <input type="text" class="form-control" id="telephone_number" name="telephone_number" value="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Information</button>
+                </form>
+            </div>
         </div>
-        <div class="card-body">
-            {% if chat_links %}
+
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>Chat Links</h3>
+            </div>
+            <div class="card-body">
                 <ul class="list-group">
-                    {% for link in chat_links %}
-                        <li class="list-group-item">
-                            <a href="{{ link.link }}" target="_blank">{{ link.link }}</a>
-                        </li>
-                    {% endfor %}
+                    <li class="list-group-item">
+                        <a href="" target="_blank">chat1_örnek</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="" target="_blank">chat2_örnek</a>
+                    </li>
                 </ul>
-            {% else %}
-                <p class="text-danger">No chat links available.</p>
-            {% endif %}
+            </div>
         </div>
     </div>
-
-</div>
-{% endblock content %}
+</body>
+</html>
