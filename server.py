@@ -235,6 +235,19 @@ def ask():
         })
 
 
+@app.route("/quiz_start")
+def quiz_start():
+    return render_template("quiz_start.html")
+
+
+@app.route("/quiz")
+def quiz():
+    return render_template("quiz.html")
+
+
+@app.route("/quiz_result")
+def quiz_result():
+    return render_template("quiz_result.html")
 
 if __name__ == "__main__":
     with app.app_context():
