@@ -37,7 +37,7 @@ If you are downloading this project for the first time, follow these steps:
    Activate the environment:
 
    ##### Windows
-   `. venv\scripts\activate`
+   `venv\scripts\activate`
 
    ##### Linux
    `source venv/bin/activate`
