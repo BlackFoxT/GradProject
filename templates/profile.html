@@ -1,53 +1,75 @@
-{% extends "layouts/layout.html" %}
+{% extends "layouts/layout.html" %} {% block title %} Profile Page {% endblock
+title %} {% block content %}
 
-{% block title %}
-Profile Page
-{% endblock title %}
-
-{% block content %}
 <div class="container mt-5">
-    
     <div class="card mt-4">
         <div class="card-header">
-            <h3>User Information</h3>
+            <h3>{{ _('User Information') }}</h3>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ url_for('update_information') }}">
                 <div class="mb-3">
-                    <label for="name" class="form-label"><strong>Name</strong></label>
-                    <input type="text" class="form-control" id="name" name="name" value="{{ info.name if info else '' }}">
+                    <label for="name" class="form-label"
+                        ><strong>{{ _('Name') }}</strong></label
+                    >
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        value="{{ info.name if info else '' }}"
+                    />
                 </div>
                 <div class="mb-3">
-                    <label for="surname" class="form-label"><strong>Surname</strong></label>
-                    <input type="text" class="form-control" id="surname" name="surname" value="{{ info.surname if info else '' }}">
+                    <label for="surname" class="form-label"
+                        ><strong>{{ _('Surname') }}</strong></label
+                    >
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="surname"
+                        name="surname"
+                        value="{{ info.surname if info else '' }}"
+                    />
                 </div>
                 <div class="mb-3">
-                    <label for="telephone_number" class="form-label"><strong>Telephone Number</strong></label>
-                    <input type="text" class="form-control" id="telephone_number" name="telephone_number" value="{{ info.telephone_number if info else '' }}">
+                    <label for="telephone_number" class="form-label"
+                        ><strong>{{ _('Phone Number') }}</strong></label
+                    >
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="telephone_number"
+                        name="telephone_number"
+                        value="{{ info.telephone_number if info else '' }}"
+                    />
                 </div>
-                <button type="submit" class="btn btn-primary">Update Information</button>
+                <button type="submit" class="btn btn-primary">
+                    {{ _('Update Information') }}
+                </button>
             </form>
         </div>
     </div>
 
     <div class="card mt-4">
         <div class="card-header">
-            <h3>Chat Links</h3>
+            <h3>{{ _('Chat Links') }}</h3>
         </div>
         <div class="card-body">
             {% if chat_links %}
-                <ul class="list-group">
-                    {% for link in chat_links %}
-                        <li class="list-group-item">
-                            <a href="{{ link.link }}" target="_blank">{{ link.link }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <ul class="list-group">
+                {% for link in chat_links %}
+                <li class="list-group-item">
+                    <a href="{{ link.link }}" target="_blank"
+                        >{{ link.link }}</a
+                    >
+                </li>
+                {% endfor %}
+            </ul>
             {% else %}
-                <p class="text-danger">No chat links available.</p>
+            <p class="text-danger">{{ _('No chat links available.') }}</p>
             {% endif %}
         </div>
     </div>
-
 </div>
 {% endblock content %}

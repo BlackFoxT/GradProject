@@ -1,6 +1,7 @@
-from flask import Flask, redirect, url_for, render_template, request, flash, jsonify
+from flask import Flask, redirect, url_for, render_template, request, flash, jsonify, g, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user, login_required
+from flask_babel import Babel, _,lazy_gettext as _l, gettext
 from langchain_community.llms.ollama import Ollama
 from datetime import datetime
 import bcrypt
@@ -11,6 +12,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['LANGUAGES'] = ['en', 'tr']  # List of supported languages
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 
@@ -48,10 +50,35 @@ class ChatHistory(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
 
+def get_locale():
+    # Check if the language query parameter is set and valid
+    if 'lang' in request.args:
+        lang = request.args.get('lang')
+        if lang in ['en', 'tr']:
+            session['lang'] = lang
+            return session['lang']
+    # If not set via query, check if we have it stored in the session
+    elif 'lang' in session:
+        return session.get('lang')
+    # Otherwise, use the browser's preferred language
+    return request.accept_languages.best_match(['en', 'tr'])
+
+def get_timezone():
+    user = getattr(g, 'user', None)
+    if user is not None:
+        return user.timezone
+
+babel = Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.route('/change_language/<lang_code>')
+def change_language(lang_code):
+    # Save language preference in session or cookie
+    session['lang'] = lang_code
+    return redirect(request.referrer or url_for('index'))
 
 @app.route("/")
 def home_page():
@@ -68,6 +95,35 @@ def chatl():
     # Pass the 'chat_id' to the template
     return redirect(url_for('home_page'))
 
+@app.route('/setlang')
+def setlang():
+    lang = request.args.get('lang', 'en')
+    session['lang'] = lang
+    return redirect(request.referrer)
+
+@app.context_processor
+def inject_babel():
+    return dict(_=gettext)
+
+@app.context_processor
+def inject_locale():
+    # This makes the function available directly, allowing you to call it in the template
+    return {'get_locale': get_locale}
+
+@app.route('/')
+def home():
+    return render_template('index.html', current_locale=get_locale())
+
+@app.route('/js_translations')
+def js_translations():
+    translations = {
+        'logoutText': gettext('Logout'),
+        'accountText': gettext('Account'),
+        'successTitle': gettext('Success!'),
+        'successText': gettext('You are registered.'),
+        'validEmail': gettext('Please enter a valid email address.')
+    }
+    return jsonify(translations)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -80,7 +136,7 @@ def login_page():
         email = request.form['email']
         password = request.form['password']
         user = User.query.filter_by(email=email, password=password).first()
-        
+
         if user:
             login_user(user)
             return redirect(url_for('home_page'))
@@ -90,7 +146,7 @@ def login_page():
 
     return render_template("login.html")
 
-@app.route("/signup", methods=["GET", "POST"])  
+@app.route("/signup", methods=["GET", "POST"])
 def signup_page():
     if current_user.is_authenticated:
         return redirect(url_for('home_page'))
@@ -131,7 +187,7 @@ def profile_page():
         return render_template("profile.html", info=user_information, chat_links=user_chat_links)
     else:
         return redirect(url_for('login_page'))
-    
+
 @app.route('/update_information', methods=['POST'])
 def update_information():
     if current_user.is_authenticated:
@@ -160,12 +216,11 @@ def update_information():
         flash("You must be logged in to update your information.", "error")
         return redirect(url_for('login_page'))
 
-from flask import request, jsonify, session
 
 @app.route("/get-chat-history", methods=["GET"])
 def get_chat_history():
     topic = request.args.get("topic", "General")  # Default topic or fetch from user preference
-    
+
     if current_user.is_authenticated:
         # For authenticated users, fetch chat history from the database
         print(current_user.id)
