@@ -14,3 +14,14 @@
     margin-bottom: 5px;
   }
   
+  #quiz-start-button{
+            background-color: #219700;
+            color: white;
+            cursor: pointer;
+            height: 45px;
+            transition: 0.3s;
+  }
+  #quiz-start-button:hover{
+    background-color: #27b300;
+    box-shadow: 0 0 0 5px #87ff66;
+  }
