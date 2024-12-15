@@ -16,38 +16,17 @@ endblock title %} {% block content %}
 
         <form method="POST" action="{{ url_for('signup_page') }}">
             <div id="signup-mail-input" class="mb-3">
-                <input
-                    type="email"
-                    class="form-control"
-                    id="signup-email"
-                    name="email"
-                    placeholder="{{ _('Email Address') }}"
-                    required
-                />
+                <input type="email" class="form-control" id="signup-email" name="email"
+                    placeholder="{{ _('Email Address') }}" required />
             </div>
             <div id="signup-password-input" class="mb-3" style="display: none">
-                <input
-                    type="password"
-                    class="form-control"
-                    id="signup-password"
-                    name="password"
-                    placeholder="{{ _('Password') }}"
-                    required
-                />
+                <input type="password" class="form-control" id="signup-password" name="password"
+                    placeholder="{{ _('Password') }}" required />
             </div>
-            <button
-                type="button"
-                id="signup-next-button"
-                class="btn btn-success w-100"
-            >
+            <button type="button" id="signup-next-button" class="btn btn-success w-100">
                 {{ _('Continue') }}
             </button>
-            <button
-                type="submit"
-                id="signup-submit-button"
-                class="btn btn-success w-100"
-                style="display: none"
-            >
+            <button type="submit" id="signup-submit-button" class="btn btn-success w-100" style="display: none">
                 {{ _('Sign Up') }}
             </button>
         </form>
@@ -55,87 +34,44 @@ endblock title %} {% block content %}
         <div class="text-center mt-3">
             <p>
                 <span>{{ _('Already have an account?') }}</span>
-                <a
-                    href="{{ url_for('login_page') }}"
-                    class="text-decoration-none"
-                >
+                <a href="{{ url_for('login_page') }}" class="text-decoration-none">
                     {{ _('Log In') }}
                 </a>
             </p>
         </div>
 
-        <div
-            class="d-flex justify-content-center align-items-center text-center my-4"
-        >
+        <div class="d-flex justify-content-center align-items-center text-center my-4">
             <div style="flex: 1; border-bottom: 1px solid #ccc"></div>
             <span class="mx-3">{{ _('OR') }}</span>
             <div style="flex: 1; border-bottom: 1px solid #ccc"></div>
         </div>
 
         <div class="d-grid gap-2">
-            <button
-                class="btn btn-outline-secondary d-grid align-items-center"
-                style="grid-template-columns: auto 1fr"
-            >
-                <img
-                    src="https://auth.openai.com/assets/google-logo-NePEveMl.svg"
-                    alt="Google"
-                    style="width: 20px; margin: 0px 8px"
-                />
-                <span style="text-align: left; margin-left: 20px"
-                    >{{ _('Continue with Google') }}</span
-                >
+            <button class="btn btn-outline-secondary d-grid align-items-center" style="grid-template-columns: auto 1fr">
+                <img src="https://auth.openai.com/assets/google-logo-NePEveMl.svg" alt="Google"
+                    style="width: 20px; margin: 0px 8px" />
+                <span style="text-align: left; margin-left: 20px">{{ _('Continue with Google') }}</span>
             </button>
-            <button
-                class="btn btn-outline-secondary d-grid align-items-center"
-                style="grid-template-columns: auto 1fr"
-            >
-                <img
-                    src="https://auth.openai.com/assets/microsoft-logo-BUXxQnXH.svg"
-                    alt="Microsoft"
-                    style="width: 20px; margin: 0px 8px"
-                />
-                <span style="text-align: left; margin-left: 20px"
-                    >{{ _('Continue with Microsoft') }}</span
-                >
+            <button class="btn btn-outline-secondary d-grid align-items-center" style="grid-template-columns: auto 1fr">
+                <img src="https://auth.openai.com/assets/microsoft-logo-BUXxQnXH.svg" alt="Microsoft"
+                    style="width: 20px; margin: 0px 8px" />
+                <span style="text-align: left; margin-left: 20px">{{ _('Continue with Microsoft') }}</span>
             </button>
-            <button
-                class="btn btn-outline-secondary d-grid align-items-center"
-                style="grid-template-columns: auto 1fr"
-            >
-                <img
-                    src="https://auth.openai.com/assets/apple-logo-vertical-full-bleed-tAoxPOUx.svg"
-                    alt="Apple"
-                    style="width: 20px; margin: 0px 8px"
-                />
-                <span style="text-align: left; margin-left: 20px"
-                    >{{ _('Continue with Apple') }}</span
-                >
+            <button class="btn btn-outline-secondary d-grid align-items-center" style="grid-template-columns: auto 1fr">
+                <img src="https://auth.openai.com/assets/apple-logo-vertical-full-bleed-tAoxPOUx.svg" alt="Apple"
+                    style="width: 20px; margin: 0px 8px" />
+                <span style="text-align: left; margin-left: 20px">{{ _('Continue with Apple') }}</span>
             </button>
         </div>
     </div>
 </div>
 
 <!-- ALERT -->
-<div
-    class="toast-container position-absolute top-0 start-50 translate-middle-x p-3"
-    style="z-index: 1050"
->
-    <div
-        id="emailToastforSignup"
-        class="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-    >
+<div class="toast-container position-absolute top-0 start-50 translate-middle-x p-3" style="z-index: 1050">
+    <div id="emailToastforSignup" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
             <strong class="me-auto">{{ _('Invalid Email') }}</strong>
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="toast"
-                aria-label="{{ _('Close') }}"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="{{ _('Close') }}"></button>
         </div>
         <div class="toast-body">
             {{ _('Please enter a valid email address.') }}
@@ -143,25 +79,11 @@ endblock title %} {% block content %}
     </div>
 </div>
 
-<div
-    class="toast-container position-absolute top-0 start-50 translate-middle-x p-3"
-    style="z-index: 1050"
->
-    <div
-        id="passwordToastforSignup"
-        class="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-    >
+<div class="toast-container position-absolute top-0 start-50 translate-middle-x p-3" style="z-index: 1050">
+    <div id="passwordToastforSignup" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
             <strong class="me-auto">{{ _('Password Error') }}</strong>
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="toast"
-                aria-label="{{ _('Close') }}"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="{{ _('Close') }}"></button>
         </div>
         <div class="toast-body"></div>
     </div>

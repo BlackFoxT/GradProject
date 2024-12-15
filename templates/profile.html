@@ -9,40 +9,19 @@ title %} {% block content %}
         <div class="card-body">
             <form method="POST" action="{{ url_for('update_information') }}">
                 <div class="mb-3">
-                    <label for="name" class="form-label"
-                        ><strong>{{ _('Name') }}</strong></label
-                    >
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="name"
-                        name="name"
-                        value="{{ info.name if info else '' }}"
-                    />
+                    <label for="name" class="form-label"><strong>{{ _('Name') }}</strong></label>
+                    <input type="text" class="form-control" id="name" name="name"
+                        value="{{ info.name if info else '' }}" />
                 </div>
                 <div class="mb-3">
-                    <label for="surname" class="form-label"
-                        ><strong>{{ _('Surname') }}</strong></label
-                    >
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="surname"
-                        name="surname"
-                        value="{{ info.surname if info else '' }}"
-                    />
+                    <label for="surname" class="form-label"><strong>{{ _('Surname') }}</strong></label>
+                    <input type="text" class="form-control" id="surname" name="surname"
+                        value="{{ info.surname if info else '' }}" />
                 </div>
                 <div class="mb-3">
-                    <label for="telephone_number" class="form-label"
-                        ><strong>{{ _('Phone Number') }}</strong></label
-                    >
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="telephone_number"
-                        name="telephone_number"
-                        value="{{ info.telephone_number if info else '' }}"
-                    />
+                    <label for="telephone_number" class="form-label"><strong>{{ _('Phone Number') }}</strong></label>
+                    <input type="text" class="form-control" id="telephone_number" name="telephone_number"
+                        value="{{ info.telephone_number if info else '' }}" />
                 </div>
                 <button type="submit" class="btn btn-primary">
                     {{ _('Update Information') }}
@@ -60,9 +39,7 @@ title %} {% block content %}
             <ul class="list-group">
                 {% for link in chat_links %}
                 <li class="list-group-item">
-                    <a href="{{ link.link }}" target="_blank"
-                        >{{ link.link }}</a
-                    >
+                    <a href="{{ link.link }}" target="_blank">{{ link.link }}</a>
                 </li>
                 {% endfor %}
             </ul>

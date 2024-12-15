@@ -1,31 +1,36 @@
-{% extends "layouts/empty_layout.html" %} {% block title %}Quiz Start{% endblock title %} 
+{% extends "layouts/empty_layout.html" %} {% block title %}Quiz Start{% endblock title %}
 {% block content %}
-    
-    <div class="d-flex justify-content-center align-items-center vh-100 px-5">
 
-        <div class="d-flex flex-column justify-content-evenly w-75 p-5 border border-light rounded-5 bg-success-subtle" style=" height: 90%;">
-           <h1>QUIZ TIME!</h1> 
+<div class="d-flex justify-content-center align-items-center vh-100 px-5">
 
-           <div>
+    <div class="d-flex flex-column justify-content-evenly w-75 p-5 border border-light rounded-5 bg-success-subtle"
+        style=" height: 90%;">
+        <h1>QUIZ TIME!</h1>
+
+        <div>
             <p>Read the instructions before starting.</p>
             <ul style="list-style-type: circle;">
-                <li>The questions are a mix of <strong>multiple-choice</strong> and <strong>true/false</strong> formats.</li>
-                <li>You can use the <strong>Next</strong> and <strong>Back</strong> buttons to navigate between questions.</li>
+                <li>The questions are a mix of <strong>multiple-choice</strong> and <strong>true/false</strong> formats.
+                </li>
+                <li>You can use the <strong>Next</strong> and <strong>Back</strong> buttons to navigate between
+                    questions.</li>
                 <li>Once submitted you <strong> Cannot Change</strong> your answers.</li>
-                <li>If you do not submit your answers before the time runs out, they will <strong>automatically be submitted</strong>.</li>
+                <li>If you do not submit your answers before the time runs out, they will <strong>automatically be
+                        submitted</strong>.</li>
                 <li>Make sure to stay focused and manage your time wisely.</li>
             </ul>
-            </div>
-            <p class="fs-5">You have <span class="fs-4 fw-bold" style="color: red;">20 Questions</span> and <span class="fs-4 fw-bold" style="color: red;"> 10 Minutes</span>.</p>
-           
-           <p>Click the <strong>Start Quiz</strong> button when you are ready. Good luck!</p>
-           
-           <div class="w-25">
+        </div>
+        <p class="fs-5">You have <span class="fs-4 fw-bold" style="color: red;">20 Questions</span> and <span
+                class="fs-4 fw-bold" style="color: red;"> 10 Minutes</span>.</p>
+
+        <p>Click the <strong>Start Quiz</strong> button when you are ready. Good luck!</p>
+
+        <div class="w-25">
             <button class="border border-0 rounded-3 w-50" id="quiz-start-button">Start Quiz</button>
-           </div>
-           
         </div>
 
     </div>
 
-    {% endblock content %}
+</div>
+
+{% endblock content %}

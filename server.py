@@ -256,8 +256,27 @@ def ask():
     if not user_message:
         return jsonify({"error": "Message is required"}), 400
 
-    # Invoke the LLM with the user message
-    response = llm.invoke(user_message)
+    
+     # Eğer mesaj '!' ile başlıyorsa komutları kontrol et
+    if user_message.startswith('!'):
+        command = user_message[1:].lower()  # '!' işaretini kaldır ve komutu küçük harflerle al
+
+        if command == 'help':
+            response = "I am helping. How can I assist you today?"
+        elif command == 'baybay':
+            response = "Byebye!"
+        elif command == 'komutlar':
+            response = (
+                "Here are the available commands:\n"
+                "!help - I am helping\n"
+                "!baybay - Byebye\n"
+                "!komutlar - List of available commands"
+            )
+        else:
+            response = "Command not found! Type !komutlar to see the available commands."
+
+    else:
+        response = llm.invoke(user_message)
 
     chat_entry = {
         "question": user_message,

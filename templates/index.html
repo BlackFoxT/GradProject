@@ -1,76 +1,38 @@
 {% extends "layouts/layout.html" %} {% block title %}Welcome{% endblock title %}
 {% block content %}
 
-<div
-    class="flash-container position-absolute top-0 start-50 translate-middle-x p-3"
-    style="z-index: 1050"
->
+<div class="flash-container position-absolute top-0 start-50 translate-middle-x p-3" style="z-index: 1050">
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %}
-    <div
-        class="alert alert-{{ category }} fade show shadow"
-        role="alert"
-        style="opacity: 1; transition: opacity 0.5s"
-    >
+    <div class="alert alert-{{ category }} fade show shadow" role="alert" style="opacity: 1; transition: opacity 0.5s">
         {{ message }}
-        <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %} {% endif %} {% endwith %}
 </div>
 
 <div class="container" style="margin-bottom: 50px; min-height: 600px">
-    <div
-        class="container-fluid"
-        id="hiddenContent"
-        style="display: none; min-height: 65%"
-    ></div>
-    <div
-        class="container-fluid"
-        id="content"
-        style="margin-top: 170px; padding-right: 150px"
-    >
-        <h1
-            class="display-4 text-center mb-4"
-            id="header"
-            style="font-weight: 500; font-size: 30px"
-        >
+    <div class="container-fluid" id="hiddenContent" style="display: none; min-height: 65%"></div>
+    <div class="container-fluid" id="content" style="margin-top: 170px; padding-right: 150px">
+        <h1 class="display-4 text-center mb-4" id="header" style="font-weight: 500; font-size: 30px">
             {{ _('What Can I Help With?') }}
         </h1>
-        <div
-            class="container pt-2"
-            style="
+        <div class="container pt-2" style="
                 min-height: 110px;
                 width: 90%;
                 border-style: none;
                 border-radius: 25px;
                 background-color: rgb(240, 242, 242);
-            "
-        >
+            ">
             <form id="messageForm">
                 <div class="mb-1">
-                    <textarea
-                        class="form-control"
-                        id="exampleFormControlTextarea1"
-                        rows="1"
-                        style="
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" style="
                             background-color: rgb(240, 242, 242);
                             border-style: none;
-                        "
-                        placeholder="{{ _('Message') }}"
-                        required
-                    ></textarea>
+                        " placeholder="{{ _('Message') }}" required></textarea>
                 </div>
                 <div class="d-flex flex-row-reverse">
-                    <button
-                        type="submit"
-                        class="btn btn-secondary"
-                        id="askButton"
-                    >
+                    <button type="submit" class="btn btn-secondary" id="askButton">
                         {{ _('Ask') }}
                     </button>
                 </div>
