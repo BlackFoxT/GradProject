@@ -26,7 +26,6 @@ class User(UserMixin, db.Model):
     password = db.Column(db.Text, nullable=False)
     information = db.relationship('Information', backref='user', lazy=True)
     chats = db.relationship('ChatHistory', backref='user', lazy=True)
-    chat_links = db.relationship('ChatLink', backref='user', lazy=True)
 
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -34,11 +33,6 @@ class Information(db.Model):
     name = db.Column(db.String(50))
     surname = db.Column(db.String(50))
     telephone_number = db.Column(db.String(15))
-
-class ChatLink(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    link = db.Column(db.String(255), nullable=False)
 
 class ChatHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -181,8 +175,7 @@ def logout():
 def profile_page():
     if current_user.is_authenticated:
         user_information = Information.query.filter_by(user_id=current_user.id).first()
-        user_chat_links = ChatLink.query.filter_by(user_id=current_user.id).all()
-        return render_template("profile.html", info=user_information, chat_links=user_chat_links)
+        return render_template("profile.html", info=user_information)
     else:
         return redirect(url_for('login_page'))
 

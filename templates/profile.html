@@ -35,17 +35,20 @@ title %} {% block content %}
             <h3>{{ _('Chat Links') }}</h3>
         </div>
         <div class="card-body">
-            {% if chat_links %}
+            <!-- {% if chat_history %}
             <ul class="list-group">
-                {% for link in chat_links %}
+                {% for record in chat_history %}
                 <li class="list-group-item">
-                    <a href="{{ link.link }}" target="_blank">{{ link.link }}</a>
+                    <button class="btn btn-link" onclick="loadChat({{ record.id }})">
+                        {{ record.topic }}
+                    </button>
+                    <small class="text-muted">{{ record.timestamp }}</small>
                 </li>
                 {% endfor %}
             </ul>
             {% else %}
-            <p class="text-danger">{{ _('No chat links available.') }}</p>
-            {% endif %}
+            <p class="text-danger">{{ _('No chat history available.') }}</p>
+            {% endif %} -->
         </div>
     </div>
 </div>
