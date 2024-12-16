@@ -4,7 +4,8 @@ from flask_login import LoginManager, UserMixin, login_user, current_user, logou
 from flask_babel import Babel, _,lazy_gettext as _l, gettext
 from langchain_community.llms.ollama import Ollama
 from datetime import datetime
-import bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # ChatHistory model (storing an array of chats for each topic)
 from sqlalchemy.ext.mutable import MutableList
 
@@ -22,11 +23,10 @@ llm = Ollama(model="llama3.2")
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.Text, nullable=False)
     information = db.relationship('Information', backref='user', lazy=True)
     chats = db.relationship('ChatHistory', backref='user', lazy=True)
     chat_links = db.relationship('ChatLink', backref='user', lazy=True)
-
 
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -39,8 +39,6 @@ class ChatLink(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     link = db.Column(db.String(255), nullable=False)
-
-
 
 class ChatHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -135,9 +133,9 @@ def login_page():
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
-        user = User.query.filter_by(email=email, password=password).first()
+        user = User.query.filter_by(email=email).first()
 
-        if user:
+        if user and check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('home_page'))
         else:
@@ -162,7 +160,7 @@ def signup_page():
             return redirect(url_for('signup_page'))
 
         # Hash the password before saving to the database
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        hashed_password = generate_password_hash(password)
 
         # Create a new user with hashed password
         new_user = User(email=email, password=hashed_password)
@@ -246,8 +244,6 @@ def get_chat_history():
         })
 
 
-
-
 @app.route("/ask", methods=["POST"])
 def ask():
     user_message = request.json.get('message')
@@ -256,25 +252,86 @@ def ask():
     if not user_message:
         return jsonify({"error": "Message is required"}), 400
 
-    
-     # Eğer mesaj '!' ile başlıyorsa komutları kontrol et
     if user_message.startswith('!'):
-        command = user_message[1:].lower()  # '!' işaretini kaldır ve komutu küçük harflerle al
+        command = user_message[1:].lower()
+        response = ""
 
         if command == 'help':
-            response = "I am helping. How can I assist you today?"
-        elif command == 'baybay':
-            response = "Byebye!"
-        elif command == 'komutlar':
             response = (
-                "Here are the available commands:\n"
-                "!help - I am helping\n"
-                "!baybay - Byebye\n"
-                "!komutlar - List of available commands"
+            "Here are the available commands:\n"
+            "!time / !saat - Get the current server time\n"
+            "!date / !tarih - Show today's date\n"
+            "!userinfo / !kullanıcıbilgisi - Display your account information\n"
+            "!quiz / !sınav - Directly open quiz page\n"
+            "!clearhistory / !temizle - Clear your chat history\n"
+            "!about / !hakkında - Learn more about me\n"
             )
-        else:
-            response = "Command not found! Type !komutlar to see the available commands."
-
+        elif command == 'yardım':    
+            response = (
+                "Mevcut komutlar şunlardır:\n"
+                "!time / !saat - Sunucunun mevcut saatini gösterir\n"
+                "!date / !tarih - Bugünün tarihini gösterir\n"
+                "!userinfo / !kullanıcıbilgisi - Kullanıcı bilgilerinizi gösterir\n"
+                "!quiz / !sınav - Sınav sayfasına yönlendirir\n"
+                "!clearhistory / !temizle - Sohbet geçmişinizi siler\n"
+                "!about / !hakkında - Benim hakkımda bilgi verir\n"
+            )
+        elif command == 'time':
+            response = f"The current server time is: {datetime.now().strftime('%H:%M:%S')}"
+        elif command == 'saat':
+            response = f"Sunucu saati: {datetime.now().strftime('%H:%M:%S')}"
+        elif command == 'date':
+            response = f"Today's date is: {datetime.now().strftime('%Y-%m-%d')}",
+        elif command == 'tarih':
+            response = f"Bugünün tarihi: {datetime.now().strftime('%Y-%m-%d')}"
+        elif command == 'about':
+            response = (
+            "I am an educational bot designed to assist you with various topics.\n"
+            "My purpose is to provide helpful information, guide you through lessons, and answer your questions on a variety of subjects.\n"
+            "You can ask me anything related to your learning journey, and I'll do my best to provide accurate and insightful responses.\n"
+            "I am constantly evolving to better serve your educational needs, so feel free to explore!\n"
+            "I can help with coding, quizzes, general knowledge, and much more!\n"
+            "I am here to support you in your learning process. Let's start learning together!"
+            )
+        elif command == 'hakkında':    
+            response = (
+                "Ben bir eğitim botuyum, çeşitli konularda size yardımcı olmak için tasarlandım.\n"
+                "Amacım, size faydalı bilgiler sunmak, derslerde rehberlik yapmak ve birçok konuda sorularınızı cevaplamak.\n"
+                "Öğrenme yolculuğunuzla ilgili bana her türlü soruyu sorabilirsiniz ve ben elimden gelenin en iyisini yaparak yanıt vermeye çalışırım.\n"
+                "Sürekli olarak gelişiyorum, böylece eğitim ihtiyaçlarınıza daha iyi hizmet verebilirim. O yüzden keşfetmekten çekinmeyin!\n"
+                "Kodlama, sınavlar, genel bilgiler ve daha birçok konuda yardımcı olabilirim!\n"
+                "Öğrenme sürecinizde sizi desteklemek için buradayım. Haydi, birlikte öğrenmeye başlayalım!"
+            )
+        elif command == 'userinfo' or command == 'kullanıcıbilgisi':
+            if command == 'userinfo':
+                if current_user.is_authenticated:
+                    response = "Redirecting you to your profile page..."
+                else:
+                    response = "You need to be logged in to view your profile."
+            else:
+                if current_user.is_authenticated:
+                    response = "Profil sayfasına yönlendiriliyorsunuz..."
+                else:
+                    response = "Profilinizi görüntülemek için giriş yapmanız gerekmektedir."
+        elif command == 'quiz':
+            response = "Redirecting you to the quiz page..."
+        elif command == 'sınav':
+            response = "Sınav sayfasına yönlendiriliyorsunuz..."
+            
+        '''
+        elif command == 'clearhistory' or command == 'temizle':
+            if current_user.is_authenticated:
+                chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
+                if chat_history:
+                    chat_history.chats = []
+                    db.session.commit()
+                response = "Your chat history has been cleared."
+            else:
+                response = "You need to be logged in to clear chat history."
+        '''
+        if not response:
+            response = "Command cannot be found! Type !help or !yardım to see the available commands."
+        
     else:
         response = llm.invoke(user_message)
 
@@ -294,7 +351,23 @@ def ask():
         chat_history.chats.append(chat_entry)
         db.session.add(chat_history)
         db.session.commit()
-
+        if command == 'userinfo' or command == 'kullanıcıbilgisi':
+            if current_user.is_authenticated:
+                return jsonify({
+                    "redirect": url_for('profile_page'),
+                    "topic": chat_history.topic,
+                    "chats": chat_history.chats,
+                    "isUser": True
+                })
+            
+        elif command == 'quiz' or command == 'sınav':
+            return jsonify({
+                    "redirect": url_for('quiz_start'),
+                    "topic": chat_history.topic,
+                    "chats": chat_history.chats,
+                    "isUser": True
+                })
+        
         return jsonify({
             "topic": chat_history.topic,
             "chats": chat_history.chats,
@@ -302,6 +375,14 @@ def ask():
         })
     else:
         # If the user is not authenticated, store the chat in localStorage on the frontend
+        if command == 'quiz' or command == 'sınav':
+            return jsonify({
+                "redirect": url_for('quiz_start'),
+                "message": "Unauthenticated user, storing chat in localStorage temporarily.",
+                "chat_entry": chat_entry,
+                "isUser": False
+            })
+        
         return jsonify({
             "message": "Unauthenticated user, storing chat in localStorage temporarily.",
             "chat_entry": chat_entry,
