@@ -74,7 +74,7 @@ def change_language(lang_code):
 
 @app.route("/")
 def home_page():
-    print(current_user.is_authenticated)
+    #print(current_user.is_authenticated)
     return render_template('index.html')
 
 @app.route("/chatl")
@@ -214,11 +214,11 @@ def get_chat_history():
 
     if current_user.is_authenticated:
         # For authenticated users, fetch chat history from the database
-        print(current_user.id)
+        #print(current_user.id)
         chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
-        print(chat_history.chats)
+       # print(chat_history.chats)
         if chat_history:
-            print(chat_history.chats)
+           # print(chat_history.chats)
             return jsonify({
                 "contentVisible": True,
                 "chats": chat_history.chats,
@@ -229,7 +229,7 @@ def get_chat_history():
     else:
         # For non-authenticated users, use localStorage or session to fetch chat history
         chat_history = session.get("chat_history", {})
-        print(chat_history)
+       # print(chat_history)
         return jsonify({
             "contentVisible": bool(chat_history),  # Check if there are any chats for this topic
             "chats": chat_history,
