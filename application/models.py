@@ -1,12 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
+from application import db
 from flask_login import UserMixin
 from sqlalchemy.ext.mutable import MutableList
-from datetime import datetime
-
-db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
@@ -14,7 +10,6 @@ class User(UserMixin, db.Model):
     chats = db.relationship('ChatHistory', backref='user', lazy=True)
 
 class Information(db.Model):
-    __tablename__ = 'information'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(50))
@@ -22,15 +17,8 @@ class Information(db.Model):
     telephone_number = db.Column(db.String(15))
 
 class ChatHistory(db.Model):
-    __tablename__ = 'chat_history'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     topic = db.Column(db.String(100), nullable=False)
-    chats = db.Column(MutableList.as_mutable(db.JSON), nullable=True)  # Mutable JSON field
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
-# Function to initialize the database
-def init_db(app):
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()
+    chats = db.Column(MutableList.as_mutable(db.JSON), nullable=True)
+    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())

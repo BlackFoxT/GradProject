@@ -26,14 +26,14 @@
                         fill="currentColor"></path>
                 </svg></a>
 
-            <a class="navbar-brand" href="{{ url_for('home_page') }}">Logo</a>
+            <a class="navbar-brand" href="{{ url_for('main_bp.home_page') }}">Logo</a>
 
             <!-- Bunda ekran küçülünce kaybolma sıkıntısı var -->
             <div class="navbar-nav ms-auto" id="navbarNav">
                 <ul class="navbar-brand">
                     <li>
-                        <a href="{{ url_for('change_language', lang_code='tr') }}">Türkçe</a>
-                        <a href="{{ url_for('change_language', lang_code='en') }}">English</a>
+                        <a href="{{ url_for('main_bp.change_language', lang_code='tr') }}">Türkçe</a>
+                        <a href="{{ url_for('main_bp.change_language', lang_code='en') }}">English</a>
                     </li>
                     <li class="nav-item d-none d-lg-block">
                         <img src="{{ url_for('static', filename='images/user.png') }}" class="rounded-circle"
@@ -42,10 +42,10 @@
 
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('profile_page') }}">{{ _('My Profile') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('main_bp.profile_page') }}">{{ _('My Profile') }}</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('main_bp.logout') }}">{{ _('Logout') }}</a>
                             </li>
                         </ul>
                     </li>
@@ -53,7 +53,7 @@
             </div>
             {% else %}
 
-            <a class="navbar-brand" href="{{ url_for('home_page') }}">Logo</a>
+            <a class="navbar-brand" href="{{ url_for('main_bp.home_page') }}">Logo</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,21 +63,21 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item d-none d-lg-block">
-                        <a href="{{ url_for('change_language', lang_code='tr') }}">Türkçe</a>
-                        <a href="{{ url_for('change_language', lang_code='en') }}">English</a>
+                        <a href="{{ url_for('main_bp.change_language', lang_code='tr') }}">Türkçe</a>
+                        <a href="{{ url_for('main_bp.change_language', lang_code='en') }}">English</a>
                     </li>
                     <li class="nav-item d-none d-lg-block">
-                        <a class="btn btn-dark me-2" href="{{ url_for('signup_page') }}">{{ _('Sign Up') }}</a>
+                        <a class="btn btn-dark me-2" href="{{ url_for('main_bp.signup_page') }}">{{ _('Sign Up') }}</a>
                     </li>
                     <li class="nav-item d-none d-lg-block">
-                        <a class="btn btn-light border border-dark" href="{{ url_for('login_page') }}">{{ _('Login')
+                        <a class="btn btn-light border border-dark" href="{{ url_for('main_bp.login_page') }}">{{ _('Login')
                             }}</a>
                     </li>
                     <li class="nav-item d-lg-none">
-                        <a class="nav-link" href="{{ url_for('signup_page') }}">{{ _('Sign Up') }}</a>
+                        <a class="nav-link" href="{{ url_for('main_bp.signup_page') }}">{{ _('Sign Up') }}</a>
                     </li>
                     <li class="nav-item d-lg-none">
-                        <a class="nav-link" href="{{ url_for('login_page') }}">{{ _('Login') }}</a>
+                        <a class="nav-link" href="{{ url_for('main_bp.login_page') }}">{{ _('Login') }}</a>
                     </li>
                 </ul>
             </div>
@@ -92,22 +92,22 @@
                 style="min-height: 100vh; max-height: 100vh">
                 <ul class="nav flex-column position-sticky">
                     <li class="nav-item">
-                        <a class="nav-link text-dark hover:bg-secondary" href="{{ url_for('home_page') }}">
+                        <a class="nav-link text-dark hover:bg-secondary" href="{{ url_for('main_bp.home_page') }}">
                             <span>Sohbet - 1</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ url_for('chatl', id=1) }}">
+                        <a class="nav-link text-dark" href="{{ url_for('main_bp.chatl', id=1) }}">
                             <span>Sohbet - 2</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ url_for('home_page') }}">
+                        <a class="nav-link text-dark" href="{{ url_for('main_bp.home_page') }}">
                             <span>Sohbet - 3</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ url_for('home_page') }}">
+                        <a class="nav-link text-dark" href="{{ url_for('main_bp.home_page') }}">
                             <span>Sohbet - 4</span>
                         </a>
                     </li>

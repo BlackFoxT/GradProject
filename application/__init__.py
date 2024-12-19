@@ -1,42 +1,52 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from flask_migrate import Migrate
-from flask_wtf import CSRFProtect
+from flask_babel import Babel
+from langchain_community.llms.ollama import Ollama
+from application.models import User
 
-# Initialize extensions
+# db burada tanımlanabilir ancak başka modüllerde kullanmak için create_app fonksiyonu ile ilişkilendirilir
 db = SQLAlchemy()
 login_manager = LoginManager()
-migrate = Migrate()
-csrf = CSRFProtect()
+babel = Babel()
+llm = Ollama(model="llama3.2")
+
+babel = Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
+
+# Helper functions
+def get_locale():
+    if 'lang' in request.args:
+        lang = request.args.get('lang')
+        if lang in ['en', 'tr']:
+            session['lang'] = lang
+            return session['lang']
+    elif 'lang' in session:
+        return session.get('lang')
+    return request.accept_languages.best_match(['en', 'tr'])
+
+def get_timezone():
+    user = getattr(g, 'user', None)
+    if user is not None:
+        return user.timezone
+    
+# Kullanıcıyı yüklemek için user_loader fonksiyonu
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))  # Kullanıcıyı id'ye göre yükler
 
 def create_app():
-    # Flask instance
     app = Flask(__name__)
-
-    # Application configuration
-    app.config['SECRET_KEY'] = 'your_secret_key'  # Change to a secure key in production
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # Use your DB URI
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.secret_key = 'your_secret_key'
+    app.config.from_object('application.config.Config')
 
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
-    migrate.init_app(app, db)
-    csrf.init_app(app)
+    babel.init_app(app)
 
-    # Flask-Login config
-    login_manager.login_view = 'auth.login'
-    login_manager.login_message_category = 'info'
-
-    # Import and register blueprints
-    from .routes import main_routes
-    from .auth import auth_routes
-    app.register_blueprint(main_routes)
-    app.register_blueprint(auth_routes, url_prefix='/auth')
-
-    # Create database tables if not exists
+    # Register blueprints or routes
     with app.app_context():
-        db.create_all()
+        from application.routes import main_bp
+        app.register_blueprint(main_bp)
 
     return app
