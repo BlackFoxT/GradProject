@@ -1,72 +1,187 @@
+/* Burası layout.html  */
+#userDropdown {
+  width: 30px;
+  height: 30px;
+}
+
+#sidebar {
+  min-height: 100vh;
+  max-height: 100vh;
+}
+
+/* Burası index.html */
+
+.flash-container {
+  z-index: 1050;
+}
+
+.alert.fade {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+#chat {
+  margin-bottom: 50px;
+  min-height: 600px;
+}
+
+#hiddenContent {
+  display: none;
+  min-height: 65%;
+}
+
+#content {
+  margin-top: 170px;
+  padding-right: 150px;
+}
+
+#header {
+  font-weight: 500;
+  font-size: 30px;
+}
+
+#chatBeginning {
+  min-height: 110px;
+  width: 90%;
+  border-style: none;
+  border-radius: 25px;
+  background-color: rgb(240, 242, 242);
+}
+
+/* Chat işlemleri için */
 .chat-item {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  }
-  
-  .chat-question {
-    background-color: rgb(237, 237, 237);
-    color: rgb(15, 15, 15);
-    width: 60%;
-    padding: 10px;
-    margin-left: auto;  /* Aligns the question to the right */
-    border-radius: 5px;
-    margin-bottom: 5px;
-  }
-  
-  #quiz-start-button{
-            background-color: #219700;
-            color: white;
-            cursor: pointer;
-            height: 45px;
-            transition: 0.3s;
-  }
-  #quiz-start-button:hover{
-    background-color: #27b300;
-    box-shadow: 0 0 0 5px #87ff66;
-  }
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
 
-  #quiz-options>div{
-    margin: 6px 0;
-  }
-  #quiz-options>div>label{
-    margin: 0 6px;
-    font-size: 18px;
-  }
+.chat-question {
+  background-color: rgb(237, 237, 237);
+  color: rgb(15, 15, 15);
+  width: 60%;
+  padding: 10px;
+  margin-left: auto;
+  /* Aligns the question to the right */
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
 
-  .quiz-buttons{
-            background-color: #2196F3;
-            color: white;
-            cursor: pointer;
-            height: 45px;
-            transition: 0.3s;
-  }
-  #back-button {
-    background-color: #ffffff; 
-    color: black;
+#exampleFormControlTextarea1 {
+  background-color: rgb(240, 242, 242);
+  border-style: none;
+}
+
+/* Login.html and Signup.html*/
+.custom-width {
+  width: 400px;
+}
+
+#signup-password-input,
+#signup-submit-button,
+#login-password-input,
+#login-submit-button {
+  display: none;
+}
+
+.blankPlace {
+  flex: 1;
+  border-bottom: 1px solid #ccc;
+}
+
+.authLogoButton {
+  grid-template-columns: auto 1fr;
+}
+
+.authLogoImage {
+  width: 20px;
+  margin: 0px 8px;
+}
+
+.authLogoText {
+  text-align: left;
+  margin-left: 20px;
+}
+
+.toastAlert {
+  z-index: 1050;
+}
+
+/* Profile.html*/
+
+/* All Quiz Part css */
+.quizBackground {
+  height: 90%;
+  background-color: #F5F5DC;
+}
+
+.quizStartTemplate {
+  height: 90%;
+}
+
+#quiz-info-list {
+  list-style-type: circle;
+}
+
+.redSpan {
+  color: red;
+}
+
+#quiz-start-button {
+  background-color: #219700;
+  color: white;
+  cursor: pointer;
+  height: 45px;
+  transition: 0.3s;
+}
+
+#quiz-start-button:hover {
+  background-color: #27b300;
+  box-shadow: 0 0 0 5px #87ff66;
+}
+
+#quiz-options>div {
+  margin: 6px 0;
+}
+
+#quiz-options>div>label {
+  margin: 0 6px;
+  font-size: 18px;
+}
+
+.quiz-buttons {
+  background-color: #2196F3;
+  color: white;
+  cursor: pointer;
+  height: 45px;
+  transition: 0.3s;
+}
+
+#back-button {
+  background-color: #ffffff;
+  color: black;
 }
 
 #back-button:hover {
-    background-color: #ececec; 
-    box-shadow: 0 0 0 5px #e0e0e0;
+  background-color: #ececec;
+  box-shadow: 0 0 0 5px #e0e0e0;
 }
 
 #next-button {
-    background-color: #2196F3;
-    color: white;
+  background-color: #2196F3;
+  color: white;
 }
 
 #next-button:hover {
-    background-color: #2798fa;
-    box-shadow: 0 0 0 5px #87CEEB;
+  background-color: #2798fa;
+  box-shadow: 0 0 0 5px #87CEEB;
 }
 
 #submit-button {
-    background-color: #4CAF50;
-    color: white;
+  background-color: #4CAF50;
+  color: white;
 }
 
 #submit-button:hover {
-    background-color: #43A047;
-    box-shadow: 0 0 0 5px #87FF66; 
+  background-color: #43A047;
+  box-shadow: 0 0 0 5px #87FF66;
 }
