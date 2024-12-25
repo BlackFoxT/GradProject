@@ -1,9 +1,9 @@
 /* Burası layout.html  */
 #userDropdown {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
 }
-
 #sidebar {
   min-height: 100vh;
   max-height: 100vh;
@@ -184,4 +184,24 @@
 #submit-button:hover {
   background-color: #43A047;
   box-shadow: 0 0 0 5px #87FF66;
+}
+
+
+
+.nav-item {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.language-flag {
+  width: 30px;
+  height: auto;
+  margin: 0 3px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.language-flag:hover {
+  transform: scale(1.1);
 }

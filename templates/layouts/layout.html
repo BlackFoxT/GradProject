@@ -28,17 +28,19 @@
 
             <a class="navbar-brand" href="{{ url_for('home_page') }}">Logo</a>
 
-            <!-- Bunda ekran küçülünce kaybolma sıkıntısı var -->
-            <div class="navbar-nav ms-auto" id="navbarNav">
-                <ul class="navbar-brand">
-                    <li>
-                        <a href="{{ url_for('change_language', lang_code='tr') }}">Türkçe</a>
-                        <a href="{{ url_for('change_language', lang_code='en') }}">English</a>
+            <div class="navbar-nav ms-auto d-flex align-items-center" id="navbarNav">
+                <ul class="navbar-brand d-flex align-items-center">
+                    <li class="nav-item d-flex" id="change_language">
+                        <a href="{{ url_for('change_language', lang_code='tr') }}">
+                            <img src="{{ url_for('static', filename='images/Türkçe.jpg') }}" alt="Türkçe" class="language-flag" />
+                        </a>
+                        <a href="{{ url_for('change_language', lang_code='en') }}">
+                            <img src="{{ url_for('static', filename='images/English.png') }}" alt="English" class="language-flag" />
+                        </a>
                     </li>
-                    <li class="nav-item d-none d-lg-block">
+                    <li class="nav-item ms-3">
                         <img src="{{ url_for('static', filename='images/user.png') }}" class="rounded-circle"
                             id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" />
-
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('profile_page') }}">{{ _('My Profile') }}</a>
@@ -50,6 +52,8 @@
                     </li>
                 </ul>
             </div>
+            
+
             {% else %}
 
             <a class="navbar-brand" href="{{ url_for('home_page') }}">Logo</a>
