@@ -10,8 +10,14 @@
 </head>
 
 <body>
-    <a href="{{ url_for('change_language', lang_code='tr') }}">Türkçe</a>
-    <a href="{{ url_for('change_language', lang_code='en') }}">English</a>
+    <div class = "languages-login">
+        <a href="{{ url_for('change_language', lang_code='tr') }}">
+            <img src="{{ url_for('static', filename='images/Türkçe.jpg') }}" alt="Türkçe"/>
+        </a>
+        <a href="{{ url_for('change_language', lang_code='en') }}">
+            <img src="{{ url_for('static', filename='images/English.png') }}" alt="English"/>
+        </a>
+    </div>
     {% block content %} {% endblock content %}
 
     <script src="{{ url_for('static', filename='script/login.js') }}"></script>

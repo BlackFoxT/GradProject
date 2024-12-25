@@ -65,9 +65,13 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item d-none d-lg-block">
-                        <a href="{{ url_for('change_language', lang_code='tr') }}">Türkçe</a>
-                        <a href="{{ url_for('change_language', lang_code='en') }}">English</a>
+                    <li class="nav-item d-flex" id="change_language">
+                        <a href="{{ url_for('change_language', lang_code='tr') }}">
+                            <img src="{{ url_for('static', filename='images/Türkçe.jpg') }}" alt="Türkçe" class="language-flag" />
+                        </a>
+                        <a href="{{ url_for('change_language', lang_code='en') }}">
+                            <img src="{{ url_for('static', filename='images/English.png') }}" alt="English" class="language-flag" />
+                        </a>
                     </li>
                     <li class="nav-item d-none d-lg-block">
                         <a class="btn btn-dark me-2" href="{{ url_for('signup_page') }}">{{ _('Sign Up') }}</a>
