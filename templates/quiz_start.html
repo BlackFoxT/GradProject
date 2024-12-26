@@ -26,7 +26,11 @@
         <p>Click the <strong>Start Quiz</strong> button when you are ready. Good luck!</p>
 
         <div class="w-25">
-            <button class="border border-0 rounded-3 w-50" id="quiz-start-button">Start Quiz</button>
+            <a href="{{ url_for('quiz') }}">
+                <button class="border border-0 rounded-3 w-50" id="quiz-start-button">
+                    Start Quiz
+                </button>
+            </a>            
         </div>
 
     </div>

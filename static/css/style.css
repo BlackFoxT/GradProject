@@ -5,8 +5,10 @@
   cursor: pointer;
 }
 #sidebar {
-  min-height: 100vh;
-  max-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 /* Burası index.html */
