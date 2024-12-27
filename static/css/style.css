@@ -10,6 +10,45 @@
   height: 100vh;
   overflow-y: auto;
 }
+#sidebar {
+  height: 100vh;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: -250px;
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease;
+  z-index: 1040;
+}
+
+#sidebar.show {
+  left: 0;
+}
+
+#toggle-sidebar {
+  left: 10px;
+  z-index: 1050;
+  position: fixed;
+}
+
+#toggle-new-chat {
+  left: 50px;
+  z-index: 1050;
+  position:fixed;
+}
+
+#toggle-logo {
+  left:90px;
+  z-index: 1050;
+  position: fixed;
+}
+
+.nav-item .nav-link:hover {
+  background-color: #ddd;
+  color: #000;
+}
+
 
 /* Burası index.html */
 

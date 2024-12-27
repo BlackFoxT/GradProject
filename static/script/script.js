@@ -44,16 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const toggleSidebarButton = document.getElementById("toggle-sidebar");
   const sidebar = document.getElementById("sidebar");
-
+  
   if (toggleSidebarButton && sidebar) {
     toggleSidebarButton.addEventListener("click", function () {
-      if (sidebar.classList.contains("d-none")) {
-        console.log(1);
-        sidebar.classList.remove("d-none");
-      } else {
-        console.log(2);
-        sidebar.classList.add("d-none");
-      }
+      sidebar.classList.toggle("show");
     });
   }
 
