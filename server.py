@@ -20,6 +20,7 @@ login_manager = LoginManager(app)
 # Initialize Ollama model
 llm = Ollama(model="llama3.2")
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -306,7 +307,6 @@ def ask():
             response = "Command cannot be found! Type !help or !yardım to see the available commands."
     else:
         response = llm.invoke(user_message)
-
     chat_entry = {
         "question": user_message,
         "response": response,
@@ -320,14 +320,19 @@ def ask():
         chat_history.chats.append(chat_entry)
         db.session.add(chat_history)
         db.session.commit()
+        return jsonify({
+                "topic": topic,
+                "chats": chat_history.chats,
+                "isUser": True  # Assuming `chats` is JSON serializable
+            })
 
-    if redirect_url:
-        return redirect(redirect_url)
+    #if redirect_url:
+       # return redirect(redirect_url)
 
     return jsonify({
         "topic": topic,
         "chat_entry": chat_entry,
-        "isUser": current_user.is_authenticated
+        "isUser": False
     })
 
 
@@ -349,3 +354,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+

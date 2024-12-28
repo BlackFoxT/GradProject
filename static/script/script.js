@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Document loaded");
 
+  // Fetch chat history when the document loads
   fetch("/get-chat-history", {
     method: "GET",
     headers: {
@@ -15,12 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         chatHistory = data.chats;
       }
+
+      // Show content if chat history or content is visible
       if (data.contentVisible || chatHistory.length > 0) {
         contentDiv.style.display = "block";
 
         // Display all stored chats
         if (chatHistory && chatHistory.length > 0) {
-          contentDiv.innerHTML = ""; // Clear existing content
           chatHistory.forEach((chat) => {
             contentDiv.innerHTML += `
               <div class="chat-item">
@@ -31,9 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         header.style.display = "none";
         chatDiv.style.marginTop = "10px";
-      } else {
-        // If no content is visible, maybe inform the user or keep the section hidden
-        //contentDiv.innerHTML = "<div>No chat history available.</div>";
       }
     })
     .catch((error) => {
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const toggleSidebarButton = document.getElementById("toggle-sidebar");
   const sidebar = document.getElementById("sidebar");
-  
+
   if (toggleSidebarButton && sidebar) {
     toggleSidebarButton.addEventListener("click", function () {
       sidebar.classList.toggle("show");
@@ -54,10 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const contentDiv = document.getElementById("hiddenContent");
   const chatDiv = document.getElementById("content");
   const header = document.getElementById("header");
-  const askButton = document.getElementById("askButton");
   const textarea = document.getElementById("exampleFormControlTextarea1");
 
-  // Add event listener to the form submission
+  // Event listener for form submission (sending messages)
   const messageForm = document.getElementById("messageForm");
   messageForm.addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the default form submission
@@ -69,16 +67,12 @@ document.addEventListener("DOMContentLoaded", function () {
     textarea.value = "";
 
     // Display the user's message immediately
-    contentDiv.innerHTML += `<div class="chat-item">
-          <div class="chat-question"><strong></strong> ${message}</div></div>`;
+    contentDiv.innerHTML += `
+      <div class="chat-item">
+        <div class="chat-question"><strong></strong> ${message}</div></div>`;
     contentDiv.style.display = "block";
     header.style.display = "none";
     chatDiv.style.marginTop = "10px";
-
-    // Store the message in localStorage
-    // localStorage.setItem('contentVisible', 'true');
-    //localStorage.setItem('message', message);
-    // Check the server to persist the visibility state and chat history
 
     // Send the message to the Flask backend
     fetch("/ask", {
@@ -98,23 +92,24 @@ document.addEventListener("DOMContentLoaded", function () {
             chatHistory.push(data.chat_entry);
             localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
             console.log("Stored chat in localStorage:", data.chat_entry);
-            contentDiv.innerHTML = ""; // Clear current content
-            // Retrieve and display all chats stored in localStorage
+
+            // Append new chat after displaying existing history
             chatHistory.forEach((chat) => {
               contentDiv.innerHTML += `
-              <div class="chat-item">
-                <div class="chat-question"><strong></strong> ${chat.question}</div>
-                <div><strong></strong> ${chat.response}</div><hr> </div>`;
+                <div class="chat-item">
+                  <div class="chat-question"><strong></strong> ${chat.question}</div>
+                  <div><strong></strong> ${chat.response}</div><hr></div>`;
             });
           } else {
+            console.log(data.chats);
+            contentDiv.innerHTML = ``;
             // Display the updated chat history
-            contentDiv.innerHTML = ""; // Clear current content
             data.chats.forEach((chat) => {
               contentDiv.innerHTML += `
-          <div class="chat-item">
-            <div class="chat-question"><strong></strong> ${chat.question}</div>
-            <div><strong></strong> ${chat.response}</div><hr> </div>`;
-            }); //<div><em>${chat.timestamp}</em></div>
+                <div class="chat-item">
+                  <div class="chat-question"><strong></strong> ${chat.question}</div>
+                  <div><strong></strong> ${chat.response}</div><hr></div>`;
+            });
           }
         } else if (data.error) {
           contentDiv.innerHTML += `<div>Error: ${data.error}</div>`;
