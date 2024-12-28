@@ -27,6 +27,8 @@ class User(UserMixin, db.Model):
     password = db.Column(db.Text, nullable=False)
     information = db.relationship('Information', backref='user', lazy=True)
     chats = db.relationship('ChatHistory', backref='user', lazy=True)
+    # Add currentChatID to store the ID of the current selected chat
+    currentChatID = db.Column(db.Integer, nullable=True)
 
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -42,6 +44,7 @@ class ChatHistory(db.Model):
     chats = db.Column(MutableList.as_mutable(db.JSON), nullable=True)  # Make the list mutable
     timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
+selected_chat = None
 
 def get_locale():
     # Check if the language query parameter is set and valid
@@ -75,18 +78,60 @@ def change_language(lang_code):
 
 @app.route("/")
 def home_page():
-    #print(current_user.is_authenticated)
-    return render_template('index.html')
+    user_chats = None
+    selected_chat = None
+
+    if current_user.is_authenticated:
+        # Fetch all chats for the current user
+        user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
+
+    # Get the 'chat_id' from query parameters
+    chat_id = request.args.get("chat_id", type=int)
+    print(chat_id)
+
+    # Fetch the selected chat content, if chat_id is provided
+    if chat_id:
+        selected_chat = ChatHistory.query.filter_by(id=chat_id).first()
+        
+        # If no chat is found, flash an error message and redirect to home page
+        if selected_chat is None:
+            flash('Selected chat not found', 'error')
+            return redirect(url_for('home_page'))  # Redirect to the homepage if no chat found
+        else:
+            # If a valid chat is found, update currentChatID and save to the database
+            current_user.currentChatID = chat_id
+            db.session.commit()
+    else:
+        # If no chat is selected, set currentChatID to None
+        current_user.currentChatID = None
+        db.session.commit()
+
+    # Render the home page with the user's chats and the selected chat (if any)
+    return render_template(
+        "index.html",
+        user_chats=user_chats,
+        selected_chat=selected_chat
+    )
+
+
 
 @app.route("/chatl")
+@login_required
 def chatl():
     # Get the 'id' query parameter from the URL
     chat_id = request.args.get('id', type=int)
     if chat_id:
+        # Fetch the chat history and ensure it belongs to the current user
         chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=chat_id).first()
-        current_user.currentChatID = id
-    # Pass the 'chat_id' to the template
-    return redirect(url_for('home_page'))
+        if chat_history:
+            current_user.currentChatID = chat_id  # Store the current chat ID
+            # Save the change to the database
+            db.session.commit()
+
+    # Redirect to home_page with the chat_id as a query parameter
+    return redirect(url_for("home_page", chat_id=chat_id))
+
+
 
 @app.route('/setlang')
 def setlang():
@@ -169,12 +214,18 @@ def signup_page():
 
 @app.route("/logout")
 def logout():
+    current_user.currentChatID = None
+    # Save the change to the database
+    db.session.commit()
     logout_user()
     return redirect(url_for('home_page'))
 
 @app.route("/profile")
 def profile_page():
     if current_user.is_authenticated:
+        current_user.currentChatID = None
+        # Save the change to the database
+        db.session.commit()
         user_information = Information.query.filter_by(user_id=current_user.id).first()
         return render_template("profile.html", info=user_information)
     else:
@@ -212,11 +263,12 @@ def update_information():
 @app.route("/get-chat-history", methods=["GET"])
 def get_chat_history():
     topic = request.args.get("topic", "General")  # Default topic or fetch from user preference
-
     if current_user.is_authenticated:
+        if current_user.currentChatID is None:
+            return jsonify({"contentVisible": False, "chats": [],"isUser": True})
         # For authenticated users, fetch chat history from the database
         #print(current_user.id)
-        chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
+        chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
        # print(chat_history.chats)
         if chat_history:
            # print(chat_history.chats)
@@ -314,9 +366,13 @@ def ask():
     }
 
     if current_user.is_authenticated:
-        chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
-        if not chat_history:
+        #chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
+        if current_user.currentChatID is None:
             chat_history = ChatHistory(user_id=current_user.id, topic=topic, chats=[])
+        else:
+            chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
+       ## if not chat_history:
+         ##   chat_history = ChatHistory(user_id=current_user.id, topic=topic, chats=[])
         chat_history.chats.append(chat_entry)
         db.session.add(chat_history)
         db.session.commit()

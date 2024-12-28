@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Document loaded");
-
+  
   // Fetch chat history when the document loads
   fetch("/get-chat-history", {
     method: "GET",

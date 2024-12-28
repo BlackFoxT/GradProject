@@ -68,9 +68,10 @@
 
 #hiddenContent {
   display: none;
-  min-height: 65%;
-  max-height: 90%; /* Maximum height before scrolling */
+  min-height: 55%;
+  max-height: 85%; /* Maximum height before scrolling */
   overflow-y: auto;   /* Enable vertical scrolling */
+  margin-bottom: 40px;
 }
 
 #content {
