@@ -267,3 +267,12 @@
   transform: scale(1.1);
 }
 
+.quiz-result-card{
+  background-color: #ffffff49;
+}
+.score-box {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #ddd;
+}
