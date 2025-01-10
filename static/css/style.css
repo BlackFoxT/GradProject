@@ -1,4 +1,15 @@
 /* Burası layout.html  */
+.logo {
+  height: 50px; /* Logo yüksekliği */
+  width: auto; /* Genişlik oranını korur */
+  margin-right: 10px; /* Sağ tarafa boşluk ekler */
+  transition: transform 0.3s ease; /* Geçiş efekti */
+}
+
+.logo:hover {
+  transform: scale(1.1); /* Üzerine gelindiğinde biraz büyür */
+}
+
 #userDropdown {
   width: 40px;
   height: 40px;
