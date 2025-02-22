@@ -290,23 +290,3 @@
   padding: 15px;
   background-color: #ddd;
 }
-.add-chat-btn-container {
-  padding: 10px;
-  background-color: #f8f9fa; /* Light background for the button container */
-}
-
-#addChatButton {
-  background-color: #4e4e4e; /* Primary blue color */
-  color: white;
-  border: none;
-  transition: background-color 0.3s ease;
-}
-
-#addChatButton:hover {
-  background-color: #808080; /* Darker blue on hover */
-}
-
-#addChatButton:focus {
-  outline: none;
-  box-shadow: 0 0 5px #8b8c8c;
-}
