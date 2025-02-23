@@ -18,7 +18,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 
 # Initialize Ollama model
-llm = Ollama(model="llama3.2")
+llm = Ollama(model="llama3.2" , system=("Sen bir eğitim asistanısın. Kullancılar sana bir konu hakkında danışacak ve sen de eğitim içerikleri sağlamaktan, sınavlara hazırlık yapmaktan ve konu anlatımı yapmaktan sorumlusun. Cevaplarını akademik bir dil ile ver, ancak karmaşık konuları basit ve anlaşılır bir şekilde anlat. Kısa ama öz yanıtlar vermeye çalış. Biraz konu anlattıktan sonra konu hakkında örnek soru sor eğer kullanıcı doğru bilemezse de doğrusunu açıkla."))
 
 
 class User(UserMixin, db.Model):
