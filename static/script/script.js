@@ -43,7 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const toggleSidebarButton = document.getElementById("toggle-sidebar");
   const sidebar = document.getElementById("sidebar");
-
+// Ensure the sidebar is shown by default
+sidebar.classList.add("show");
   if (toggleSidebarButton && sidebar) {
     toggleSidebarButton.addEventListener("click", function () {
       sidebar.classList.toggle("show");
@@ -92,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
             chatHistory.push(data.chat_entry);
             localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
             console.log("Stored chat in localStorage:", data.chat_entry);
-
+            contentDiv.innerHTML = ``;
             // Append new chat after displaying existing history
             chatHistory.forEach((chat) => {
               contentDiv.innerHTML += `

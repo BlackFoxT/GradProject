@@ -87,7 +87,6 @@ def home_page():
 
     # Get the 'chat_id' from query parameters
     chat_id = request.args.get("chat_id", type=int)
-    print(chat_id)
 
     # Fetch the selected chat content, if chat_id is provided
     if chat_id:
@@ -269,6 +268,7 @@ def get_chat_history():
         # For authenticated users, fetch chat history from the database
         #print(current_user.id)
         chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
+        print(chat_history)
        # print(chat_history.chats)
         if chat_history:
            # print(chat_history.chats)

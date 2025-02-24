@@ -35,8 +35,10 @@
                         fill="currentColor"></path>
                 </svg></a>
 
-            <a class="navbar-brand" id="toggle-logo" href="{{ url_for('home_page') }}"><img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo"/></a>
-
+                <a class="navbar-brand" id="toggle-logo" href="#" onclick="location.reload(); return false;">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo"/>
+                  </a>
+                  
             <div class="navbar-nav ms-auto d-flex align-items-center" id="navbarNav">
                 <ul class="navbar-brand d-flex align-items-center">
                     <li class="nav-item d-flex" id="change_language">
