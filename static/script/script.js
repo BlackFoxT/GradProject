@@ -85,6 +85,7 @@ sidebar.classList.add("show");
     })
       .then((response) => response.json())
       .then((data) => {
+        
         if (data.chats || data.chat_entry) {
           if (!data.isUser) {
             // For unauthenticated users, store chat in localStorage temporarily
@@ -115,6 +116,19 @@ sidebar.classList.add("show");
                     <hr>
                   </div>`;
               });
+              const lastChat = data.chats[data.chats.length - 1];
+              console.log(lastChat.question.slice(1))
+              console.log(lastChat.question.slice(1).localeCompare('userinfo'))
+if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
+  directCommand(lastChat.question.slice(1));
+}
+
+              
+             /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
+                console.log(data.chats[data.chats.length-1].question)
+                directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
+              }*/
+              
             }
             
             //console.log(data.chats);
@@ -138,3 +152,15 @@ sidebar.classList.add("show");
       });
   });
 });
+
+function directCommand(command) {
+  console.log("Redirecting to profile:", command);
+  if (command.localeCompare('userinfo') == 0) {
+    
+    window.location.href = `http://127.0.0.1:5000/profile`; // Redirects to the profile page
+  }
+  if(command.localeCompare('quiz') == 0){
+    window.location.href = `http://127.0.0.1:5000/quiz_start`;
+  }
+}
+

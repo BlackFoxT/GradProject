@@ -307,6 +307,7 @@ def ask():
             if current_user.is_authenticated:
                 redirect_url = url_for('profile_page')
                 response = "Redirecting to your profile page..."
+                #return redirect(redirect_url)
             else:
                 response = "You need to be logged in to view your profile."
 
