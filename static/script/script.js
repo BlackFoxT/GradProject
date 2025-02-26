@@ -102,15 +102,30 @@ sidebar.classList.add("show");
                   <div><strong></strong> ${chat.response}</div><hr></div>`;
             });
           } else {
-            console.log(data.chats);
-            contentDiv.innerHTML = ``;
+            if (data.chats.length === 1) {
+              window.location.href = `http://127.0.0.1:5000/?chat_id=${data.chatId}`;
+            } else {
+              contentDiv.innerHTML = ""; // Clear previous content
+            
+              data.chats.forEach((chat) => {
+                contentDiv.innerHTML += `
+                  <div class="chat-item">
+                    <div class="chat-question"><strong></strong> ${chat.question}</div>
+                    <div><strong></strong> ${chat.response}</div>
+                    <hr>
+                  </div>`;
+              });
+            }
+            
+            //console.log(data.chats);
+           // contentDiv.innerHTML = ``;
             // Display the updated chat history
-            data.chats.forEach((chat) => {
+           /* data.chats.forEach((chat) => {
               contentDiv.innerHTML += `
                 <div class="chat-item">
                   <div class="chat-question"><strong></strong> ${chat.question}</div>
                   <div><strong></strong> ${chat.response}</div><hr></div>`;
-            });
+            });*/
           }
         } else if (data.error) {
           contentDiv.innerHTML += `<div>Error: ${data.error}</div>`;

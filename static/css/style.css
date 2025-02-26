@@ -74,13 +74,12 @@
 
 #chat {
   margin-bottom: 50px;
-  min-height: 600px;
+  height: 570px;
 }
 
 #hiddenContent {
   display: none;
-  min-height: 55%;
-  max-height: 85%; /* Maximum height before scrolling */
+  height: 85%; /* Maximum height before scrolling */
   overflow-y: auto;   /* Enable vertical scrolling */
   margin-bottom: 40px;
 }

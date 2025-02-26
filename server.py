@@ -369,6 +369,8 @@ def ask():
         #chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
         if current_user.currentChatID is None:
             chat_history = ChatHistory(user_id=current_user.id, topic=topic, chats=[])
+            
+            ## refresh to the this chat
         else:
             chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
        ## if not chat_history:
@@ -376,9 +378,11 @@ def ask():
         chat_history.chats.append(chat_entry)
         db.session.add(chat_history)
         db.session.commit()
+        print(chat_history.id)
         return jsonify({
                 "topic": topic,
                 "chats": chat_history.chats,
+                "chatId": chat_history.id,
                 "isUser": True  # Assuming `chats` is JSON serializable
             })
 
