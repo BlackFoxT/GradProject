@@ -20,7 +20,6 @@ login_manager = LoginManager(app)
 # Initialize Ollama model
 llm = Ollama(model="llama3.2" , system=("Sen bir eğitim asistanısın. Kullancılar sana bir konu hakkında danışacak ve sen de eğitim içerikleri sağlamaktan, sınavlara hazırlık yapmaktan ve konu anlatımı yapmaktan sorumlusun. Cevaplarını akademik bir dil ile ver, ancak karmaşık konuları basit ve anlaşılır bir şekilde anlat. Kısa ama öz yanıtlar vermeye çalış. Biraz konu anlattıktan sonra konu hakkında örnek soru sor eğer kullanıcı doğru bilemezse de doğrusunu açıkla."))
 
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -43,6 +42,21 @@ class ChatHistory(db.Model):
     topic = db.Column(db.String(100), nullable=False)
     chats = db.Column(MutableList.as_mutable(db.JSON), nullable=True)  # Make the list mutable
     timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+
+
+class Quiz(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    chat_id = db.Column(db.Integer, db.ForeignKey('chat_history.id'), nullable=False)  # Quiz'in ait olduğu chat
+    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+    questions = db.relationship('QuizQuestion', backref='quiz', lazy=True, cascade="all, delete-orphan")
+
+class QuizQuestion(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    options = db.Column(MutableList.as_mutable(db.JSON), nullable=False)
+    correct_answer = db.Column(db.String(255), nullable=False)
 
 selected_chat = None
 
@@ -111,8 +125,6 @@ def home_page():
         user_chats=user_chats,
         selected_chat=selected_chat
     )
-
-
 
 @app.route("/chatl")
 @login_required
@@ -416,3 +428,90 @@ if __name__ == "__main__":
         db.create_all()
     app.run(debug=True)
 
+
+
+'''
+# Kullanıcı ve chat ID
+    user_id = 1   # Örnek kullanıcı ID'si
+    chat_id = 5   # Örnek chat ID'si
+
+    # Yeni quiz oluştur
+    new_quiz = Quiz(user_id=user_id, chat_id=chat_id)
+    db.session.add(new_quiz)
+    db.session.commit()  # ID oluşması için önce commit et
+
+    # 10 tane soru ekleyelim
+    questions = [
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da listeleri tersine çevirmek için hangi yöntem kullanılır?",
+            options=["list.reverse()", "list[::-1]", "reversed(list)", "Tümü"],
+            correct_answer="Tümü"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da sözlük (dict) oluşturmak için hangi sembol kullanılır?",
+            options=["{}", "[]", "()", "<>"],
+            correct_answer="{}"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Lambda fonksiyonları ne için kullanılır?",
+            options=["Anonim fonksiyonlar", "Global değişken tanımlama", "Modül yükleme", "Dosya açma"],
+            correct_answer="Anonim fonksiyonlar"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da bir listeyi sıralamak için hangi metod kullanılır?",
+            options=["sort()", "sorted()", "order()", "list.sort()"],
+            correct_answer="sort()"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da fonksiyon içindeki bir değişkeni global olarak kullanmak için hangi anahtar kelime kullanılır?",
+            options=["global", "var", "let", "static"],
+            correct_answer="global"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da hangi veri tipi değiştirilemez (immutable)?",
+            options=["List", "Dictionary", "Tuple", "Set"],
+            correct_answer="Tuple"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da '==' ve 'is' operatörlerinin farkı nedir?",
+            options=[
+                "'==' değerleri karşılaştırır, 'is' bellek adreslerini karşılaştırır.",
+                "'is' değerleri karşılaştırır, '==' bellek adreslerini karşılaştırır.",
+                "İkisi de aynı anlama gelir.",
+                "'==' sadece stringler için çalışır."
+            ],
+            correct_answer="'==' değerleri karşılaştırır, 'is' bellek adreslerini karşılaştırır."
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da bir modül nasıl içe aktarılır?",
+            options=["import module_name", "require module_name", "using module_name", "include module_name"],
+            correct_answer="import module_name"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da hata fırlatmak için hangi anahtar kelime kullanılır?",
+            options=["throw", "raise", "error", "exception"],
+            correct_answer="raise"
+        ),
+        QuizQuestion(
+            quiz_id=new_quiz.id,
+            text="Python'da hangi döngü yapısı belirli bir koşul sağlanana kadar çalışır?",
+            options=["for", "while", "do-while", "foreach"],
+            correct_answer="while"
+        ),
+    ]
+
+    # Soruları veritabanına ekle
+    db.session.add_all(questions)
+    db.session.commit()
+
+    print(f"Quiz oluşturuldu! Quiz ID: {new_quiz.id}, Chat ID: {chat_id}")
+'''
