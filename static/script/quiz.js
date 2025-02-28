@@ -1,27 +1,11 @@
-// quiz soruları  ///////////////////////////////////////
-/// bu kısım manuel bir şekilde oluşturdum. soruları ve cevaplarını sistem kendisi hazırlayacak
-let quizQuestions=[
-
-    {
-        question:"What is integrity?",
-        options:["No unauthorized acces","No unauthorized modification","No unauthorized resource cut"],
-    },
-    {
-        question:"Which of the following is NOT one of Bloom's Taxonomy category?",
-        options:["Applying","Understanding", "Thinking", "Creating"],
-    },
-    {
-        question:"CAPTCHA prevents scammers and detects bot accounts.",
-        options:["True","False"],
-    }
-
-];
-///////////////////////////////////////////////////////////////////////////////
-
+// quiz.js
+window.onload = function() {
+    // Flask tarafından gönderilen JSON verisini al
+    const quizDataElement = document.getElementById("quiz-data");
+    const quizQuestions = JSON.parse(quizDataElement.getAttribute("data-quiz"));
 const timer=document.getElementById("time-left");
 
-// Bu değer sistemin verdiği dakikaya göre değişecek.
-let timeLeft=600; //10 dk
+let timeLeft=600;
 
 timer.textContent=`${Math.floor(timeLeft/60)}:${timeLeft%60 < 10 ? '0' : ''}${timeLeft%60}`;
 
@@ -40,26 +24,27 @@ const timerInterval = setInterval(()=>{
         clearInterval(timerInterval);
     }
 },1000);
-/////////////////////////////////////////////////////////////
 
-/// Question Rendering /////////////////
+/// Question Rendering
 
 const qQuestion = document.getElementById("quiz-question");
 const qOptions = document.getElementById("quiz-options");
 
-function renderQuestion(index){
-    const questionData =quizQuestions[index];
+function renderQuestion(index) {
+
+    const questionData = quizQuestions[index];
 
     qQuestion.textContent= index+1 +") "+ questionData.question;
     qOptions.innerHTML="";
 
-    questionData.options.forEach((option,i) =>{
+    questionData.options.forEach((option,i) => {
         
         const container = document.createElement("div");
         const input = document.createElement("input");
 
         input.type = "radio";
         input.name = "multiple-choice";
+        //////////////////// bunun alttaki iki satır
         input.id = `question-${index}-option-${i}`; // değiştirilebilir
         input.value = option;
 
@@ -72,7 +57,6 @@ function renderQuestion(index){
         qOptions.appendChild(container);
     });
 }
-////////////////////////////////////////
 
 // Navigation buttons
 
@@ -82,11 +66,11 @@ const nextButton = document.getElementById("next-button");
 const backButton = document.getElementById("back-button");
 const submitButton = document.getElementById("submit-button");
 
-backButton.style.display="none";
-submitButton.style.display="none";
+backButton.style.display = "none";
+submitButton.style.display = "none";
 
 nextButton.addEventListener("click", () => {
-    if(currentQuestionIndex < quizQuestions.length-1){
+    if(currentQuestionIndex < quizQuestions.length - 1 ){
         currentQuestionIndex++;
         renderQuestion(currentQuestionIndex);
         backButton.style.display="block";
@@ -106,9 +90,10 @@ backButton.addEventListener("click", () =>{
         nextButton.style.display = "block";
         submitButton.style.display = "none";
     }
-    if(currentQuestionIndex==0){
+    if(currentQuestionIndex == 0){
         backButton.style.display="none";
     }
 });
 
 renderQuestion(currentQuestionIndex);
+}
