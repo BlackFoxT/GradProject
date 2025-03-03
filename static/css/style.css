@@ -82,7 +82,7 @@
 
 #chat {
   margin-bottom: 50px;
-  height: 570px;
+  height: 500px;
 }
 
 #hiddenContent {
@@ -90,6 +90,7 @@
   height: 85%; /* Maximum height before scrolling */
   overflow-y: auto;   /* Enable vertical scrolling */
   margin-bottom: 40px;
+  scroll-behavior: smooth; /* Smooth scrolling */
 }
 
 #content {

@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Document loaded");
   
+
   // Fetch chat history when the document loads
   fetch("/get-chat-history", {
     method: "GET",
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
         header.style.display = "none";
         chatDiv.style.marginTop = "10px";
       }
+      scrollToBottom();
     })
     .catch((error) => {
       console.error("Error fetching chat history:", error);
@@ -141,6 +143,8 @@ if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.questi
                   <div><strong></strong> ${chat.response}</div><hr></div>`;
             });*/
           }
+          scrollToBottom();
+
         } else if (data.error) {
           contentDiv.innerHTML += `<div>Error: ${data.error}</div>`;
         }
@@ -163,4 +167,9 @@ function directCommand(command) {
     window.location.href = `http://127.0.0.1:5000/quiz_start`;
   }
 }
-
+function scrollToBottom() {
+  
+  var hiddenContent = document.getElementById("hiddenContent");
+  if(hiddenContent)console.log("hi");
+  hiddenContent.scrollTop = hiddenContent.scrollHeight;
+}
