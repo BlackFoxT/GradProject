@@ -40,19 +40,19 @@
 #toggle-sidebar {
   left: 10px;
   z-index: 1050;
-  position: fixed;
+  position: absolute;
 }
 
 #toggle-new-chat {
   left: 50px;
   z-index: 1050;
-  position:fixed;
+  position:absolute;
 }
 
 #toggle-logo {
   left:90px;
   z-index: 1050;
-  position: fixed;
+  position: absolute;
 }
 
 .nav-item .nav-link:hover {
