@@ -90,6 +90,7 @@
   height: 85%; /* Maximum height before scrolling */
   overflow-y: auto;   /* Enable vertical scrolling */
   margin-bottom: 40px;
+  margin-top: 70px;
   scroll-behavior: smooth; /* Smooth scrolling */
 }
 
