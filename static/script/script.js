@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Document loaded");
-  
+
 
   // Fetch chat history when the document loads
   fetch("/get-chat-history", {
@@ -24,6 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Display all stored chats
         if (chatHistory && chatHistory.length > 0) {
+          contentDiv.innerHTML += `
+              <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
+                <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" display="block">
+                </div>
+              </div>`;
           chatHistory.forEach((chat) => {
             contentDiv.innerHTML += `
               <div class="chat-item">
@@ -45,8 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const toggleSidebarButton = document.getElementById("toggle-sidebar");
   const sidebar = document.getElementById("sidebar");
-// Ensure the sidebar is shown by default
-sidebar.classList.add("show");
+  // Ensure the sidebar is shown by default
+  sidebar.classList.add("show");
   if (toggleSidebarButton && sidebar) {
     toggleSidebarButton.addEventListener("click", function () {
       sidebar.classList.toggle("show");
@@ -87,7 +92,7 @@ sidebar.classList.add("show");
     })
       .then((response) => response.json())
       .then((data) => {
-        
+
         if (data.chats || data.chat_entry) {
           if (!data.isUser) {
             // For unauthenticated users, store chat in localStorage temporarily
@@ -109,7 +114,7 @@ sidebar.classList.add("show");
               window.location.href = `http://127.0.0.1:5000/?chat_id=${data.chatId}`;
             } else {
               contentDiv.innerHTML = ""; // Clear previous content
-            
+
               data.chats.forEach((chat) => {
                 contentDiv.innerHTML += `
                   <div class="chat-item">
@@ -121,27 +126,27 @@ sidebar.classList.add("show");
               const lastChat = data.chats[data.chats.length - 1];
               console.log(lastChat.question.slice(1))
               console.log(lastChat.question.slice(1).localeCompare('userinfo'))
-if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
-  directCommand(lastChat.question.slice(1));
-}
+              if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
+                directCommand(lastChat.question.slice(1));
+              }
 
-              
-             /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
-                console.log(data.chats[data.chats.length-1].question)
-                directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
-              }*/
-              
+
+              /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
+                 console.log(data.chats[data.chats.length-1].question)
+                 directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
+               }*/
+
             }
-            
+
             //console.log(data.chats);
-           // contentDiv.innerHTML = ``;
+            // contentDiv.innerHTML = ``;
             // Display the updated chat history
-           /* data.chats.forEach((chat) => {
-              contentDiv.innerHTML += `
-                <div class="chat-item">
-                  <div class="chat-question"><strong></strong> ${chat.question}</div>
-                  <div><strong></strong> ${chat.response}</div><hr></div>`;
-            });*/
+            /* data.chats.forEach((chat) => {
+               contentDiv.innerHTML += `
+                 <div class="chat-item">
+                   <div class="chat-question"><strong></strong> ${chat.question}</div>
+                   <div><strong></strong> ${chat.response}</div><hr></div>`;
+             });*/
           }
           scrollToBottom();
 
@@ -160,16 +165,16 @@ if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.questi
 function directCommand(command) {
   console.log("Redirecting to profile:", command);
   if (command.localeCompare('userinfo') == 0) {
-    
+
     window.location.href = `http://127.0.0.1:5000/profile`; // Redirects to the profile page
   }
-  if(command.localeCompare('quiz') == 0){
+  if (command.localeCompare('quiz') == 0) {
     window.location.href = `http://127.0.0.1:5000/quiz_start`;
   }
 }
 function scrollToBottom() {
-  
+
   var hiddenContent = document.getElementById("hiddenContent");
-  if(hiddenContent)console.log("hi");
+  if (hiddenContent) console.log("hi");
   hiddenContent.scrollTop = hiddenContent.scrollHeight;
 }
