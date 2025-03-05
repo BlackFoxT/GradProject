@@ -12,6 +12,7 @@
 </div>
 
 <div class="container" id="chat">
+    <div class="container-fluid" id="progressBarr" style="min-height: 20px; margin-top: 80px;"></div>
     <div class="container-fluid" id="hiddenContent"></div>
     <div class="container-fluid" id="content">
         <h1 class="display-4 text-center mb-4" id="header">
@@ -20,7 +21,7 @@
         <div class="container pt-2" id="chatBeginning">
             <form id="messageForm">
                 <div class="mb-1">
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1"
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="resize: none;"
                         placeholder="{{ _('Message') }}" required></textarea>
                 </div>
                 <div class="d-flex flex-row-reverse">

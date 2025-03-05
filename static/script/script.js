@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Document loaded");
-
+  
 
   // Fetch chat history when the document loads
   fetch("/get-chat-history", {
@@ -24,11 +24,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Display all stored chats
         if (chatHistory && chatHistory.length > 0) {
-          contentDiv.innerHTML += `
+          progressDiv.innerHTML = '';
+            progressDiv.style.backgroundColor = "white"; // Change background color
+            progressDiv.innerHTML += `
               <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
                 <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" display="block">
                 </div>
               </div>`;
+              // 0 - 10 chat progress bar güncellenecek  aria-valuenow 10 artıp rengi kırmızıdan yeşile dönsün
+              // chat sayısı artıkça kırmızıdan yeşile gidecek
           chatHistory.forEach((chat) => {
             contentDiv.innerHTML += `
               <div class="chat-item">
@@ -59,9 +63,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const contentDiv = document.getElementById("hiddenContent");
+  
   const chatDiv = document.getElementById("content");
   const header = document.getElementById("header");
   const textarea = document.getElementById("exampleFormControlTextarea1");
+
+  const progressDiv = document.getElementById("progressBarr");
+  
 
   // Event listener for form submission (sending messages)
   const messageForm = document.getElementById("messageForm");
@@ -110,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   <div><strong></strong> ${chat.response}</div><hr></div>`;
             });
           } else {
+            
             if (data.chats.length === 1) {
               window.location.href = `http://127.0.0.1:5000/?chat_id=${data.chatId}`;
             } else {

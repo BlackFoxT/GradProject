@@ -260,3 +260,17 @@
 ::placeholder {
     color: #a1a9b3;
 }
+
+#sidebar {
+    height: 90vh;
+    width: 250px;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    z-index: 1040;
+    padding-bottom: 500px;
+}
