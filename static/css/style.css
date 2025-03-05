@@ -107,6 +107,41 @@
   border-radius: 25px;
   background-color: rgb(240, 242, 242);
 }
+.modal {
+  z-index: 1050 !important;
+}
+/* Body when modal is open */
+body.modal-open {
+  pointer-events: none;  /* Disable interaction with everything except the modal */
+}
+
+/* Modal itself */
+.enterTopic {
+  display: none;  /* Hidden initially */
+  width: 50%;
+  position: fixed;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  z-index: 1050; /* Make sure modal is on top */
+  pointer-events: auto;  /* Allow interaction with the modal */
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+/* Optional: Styling for backdrop */
+.backdrop {
+  display: none;  /* Initially hidden */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);  /* Semi-transparent black */
+  z-index: 1000;  /* Behind modal */
+}
 
 /* Chat işlemleri için */
 .chat-item {

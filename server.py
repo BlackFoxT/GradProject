@@ -304,8 +304,10 @@ def get_chat_history():
 @app.route("/ask", methods=["POST"])
 def ask():
     user_message = request.json.get('message')
-    topic = request.json.get('topic', 'General')
-
+    topic = request.json.get('chatTopic')
+    if topic is None:
+        topic = request.json.get('topic', 'General')
+    print(topic)
     if not user_message:
         return jsonify({"error": "Message is required"}), 400
 

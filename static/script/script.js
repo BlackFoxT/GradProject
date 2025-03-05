@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Document loaded");
-  
 
+ // document.getElementById("chatModal").style.display = "block";
   // Fetch chat history when the document loads
   fetch("/get-chat-history", {
     method: "GET",
@@ -26,10 +26,25 @@ document.addEventListener("DOMContentLoaded", function () {
         if (chatHistory && chatHistory.length > 0) {
           progressDiv.innerHTML = '';
             progressDiv.style.backgroundColor = "white"; // Change background color
+            const maxChatLength= 20; // maximum chat sayısı
+            let progressBarPercentage = Math.min((chatHistory.length/maxChatLength)*100,100); //burda percentage'in 100ü aşmadığından emin oluyoruz.
+
+            function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
+              let hue = 120-(percentage *1.2);
+              return `hsl(${hue},100%,50%)`;
+            }
+
+            let progressBarColor = getProgressBarColor(progressBarPercentage);
             progressDiv.innerHTML += `
               <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
-                <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" display="block">
-                </div>
+ <div id="progressBar" 
+                class="progress-bar" 
+                role="progressbar" 
+                style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
+                aria-valuenow="${progressBarPercentage}" 
+                aria-valuemin="0" 
+                aria-valuemax="100" 
+                display="block">                </div>
               </div>`;
               // 0 - 10 chat progress bar güncellenecek  aria-valuenow 10 artıp rengi kırmızıdan yeşile dönsün
               // chat sayısı artıkça kırmızıdan yeşile gidecek
@@ -96,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: message }),
+      body: JSON.stringify({ message: message, chatTopic: localStorage.getItem("chatTopic")}),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -118,7 +133,8 @@ document.addEventListener("DOMContentLoaded", function () {
                   <div><strong></strong> ${chat.response}</div><hr></div>`;
             });
           } else {
-            
+            localStorage.removeItem("chatTopic");
+
             if (data.chats.length === 1) {
               window.location.href = `http://127.0.0.1:5000/?chat_id=${data.chatId}`;
             } else {
@@ -135,6 +151,28 @@ document.addEventListener("DOMContentLoaded", function () {
               const lastChat = data.chats[data.chats.length - 1];
               console.log(lastChat.question.slice(1))
               console.log(lastChat.question.slice(1).localeCompare('userinfo'))
+              progressDiv.innerHTML = '';
+                 progressDiv.style.backgroundColor = "white"; // Change background color
+                 const maxChatLength= 20; // maximum chat sayısı
+                 let progressBarPercentage = Math.min((data.chats.length/maxChatLength)*100,100); //burda percentage'in 100ü aşmadığından emin oluyoruz.
+     
+                 function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
+                   let hue = 120-(percentage *1.2);
+                   return `hsl(${hue},100%,50%)`;
+                 }
+     
+                 let progressBarColor = getProgressBarColor(progressBarPercentage);
+                 progressDiv.innerHTML += `
+                   <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
+      <div id="progressBar" 
+                     class="progress-bar" 
+                     role="progressbar" 
+                     style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
+                     aria-valuenow="${progressBarPercentage}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100" 
+                     display="block">                </div>
+                   </div>`;
               if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
                 directCommand(lastChat.question.slice(1));
               }
@@ -144,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
                  console.log(data.chats[data.chats.length-1].question)
                  directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
                }*/
-
+                 
             }
 
             //console.log(data.chats);
@@ -156,6 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
                    <div class="chat-question"><strong></strong> ${chat.question}</div>
                    <div><strong></strong> ${chat.response}</div><hr></div>`;
              });*/
+             
           }
           scrollToBottom();
 
@@ -186,4 +225,39 @@ function scrollToBottom() {
   var hiddenContent = document.getElementById("hiddenContent");
   if (hiddenContent) console.log("hi");
   hiddenContent.scrollTop = hiddenContent.scrollHeight;
+}
+function openTopic(event) {
+  // Display the modal and backdrop
+  const topicDiv = document.getElementById("enterTopic");
+  const backdrop = document.getElementById("backdrop");
+
+  topicDiv.style.display = "block";  // Show the modal
+  backdrop.style.display = "block";  // Show the backdrop
+
+  // Disable interactions with the page
+  document.body.classList.add("modal-open");
+}
+function startChat(event) {
+  event.preventDefault(); // Prevent any unintended form submission
+
+  const topicInput = document.getElementById("chatTopic").value.trim();
+
+  if (topicInput) {
+      localStorage.setItem("chatTopic", topicInput); // Store in localStorage
+      closeTopic(); // Hide the topic popup
+      window.location.href = `http://127.0.0.1:5000/`;
+  } else {
+      alert("Please enter a topic before starting the chat."); // Validation message
+  }
+}
+
+function closeTopic() {
+  const topicDiv = document.getElementById("enterTopic");
+  const backdrop = document.getElementById("backdrop");
+
+  topicDiv.style.display = "none";  // Hide the modal
+  backdrop.style.display = "none";  // Hide the backdrop
+
+  // Enable interactions with the page
+  document.body.classList.remove("modal-open");
 }
