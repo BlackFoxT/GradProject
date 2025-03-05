@@ -262,7 +262,7 @@
 }
 
 #sidebar {
-    height: 90vh;
+    height: 95vh;
     width: 250px;
     overflow-y: auto;
     position: fixed;
