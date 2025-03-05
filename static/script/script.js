@@ -26,9 +26,27 @@ document.addEventListener("DOMContentLoaded", function () {
         if (chatHistory && chatHistory.length > 0) {
           progressDiv.innerHTML = '';
             progressDiv.style.backgroundColor = "white"; // Change background color
+            
+            const maxChatLength= 20; // maximum chat sayısı
+            let progressBarPercentage = Math.min((chatHistory.length/maxChatLength)*100,100); //burda percentage'in 100ü aşmadığından emin oluyoruz.
+
+            function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
+              let hue = 120-(percentage *1.2);
+              return `hsl(${hue},100%,50%)`;
+            }
+
+            let progressBarColor = getProgressBarColor(progressBarPercentage);
+            
             progressDiv.innerHTML += `
               <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
-                <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" display="block">
+                <div id="progressBar" 
+                class="progress-bar" 
+                role="progressbar" 
+                style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
+                aria-valuenow="${progressBarPercentage}" 
+                aria-valuemin="0" 
+                aria-valuemax="100" 
+                display="block">
                 </div>
               </div>`;
               // 0 - 10 chat progress bar güncellenecek  aria-valuenow 10 artıp rengi kırmızıdan yeşile dönsün
