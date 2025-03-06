@@ -1,39 +1,9 @@
 // quiz.js
-window.onload = function() {
-    // Flask tarafından gönderilen JSON verisini al
-    const quizDataElement = document.getElementById("quiz-data");
-    const quizQuestions = JSON.parse(quizDataElement.getAttribute("data-quiz"));
-const timer=document.getElementById("time-left");
-
-let timeLeft=600;
-
-timer.textContent=`${Math.floor(timeLeft/60)}:${timeLeft%60 < 10 ? '0' : ''}${timeLeft%60}`;
-
-const timerInterval = setInterval(()=>{
-    const min= Math.floor(timeLeft/60);
-    const sec= timeLeft%60;
-
-    timer.textContent=`${min}:${sec < 10 ? '0' : ''}${sec}`;
-    timeLeft--;
-
-    if(timeLeft<5){
-        timer.style.color="red";
-    }
-
-    if(timeLeft<0){
-        clearInterval(timerInterval);
-    }
-},1000);
-
-/// Question Rendering
-
-const qQuestion = document.getElementById("quiz-question");
-const qOptions = document.getElementById("quiz-options");
-
 function renderQuestion(index) {
 
-    const questionData = quizQuestions[index];
-
+    const questionData = questions[index];
+    const qQuestion = document.getElementById("quiz-question");
+    const qOptions = document.getElementById("quiz-options");
     qQuestion.textContent= index+1 +") "+ questionData.question;
     qOptions.innerHTML="";
 
@@ -57,33 +27,55 @@ function renderQuestion(index) {
         qOptions.appendChild(container);
     });
 }
-
-// Navigation buttons
-
 let currentQuestionIndex=0;
-
-const nextButton = document.getElementById("next-button");
-const backButton = document.getElementById("back-button");
-const submitButton = document.getElementById("submit-button");
-
-backButton.style.display = "none";
-submitButton.style.display = "none";
-
-nextButton.addEventListener("click", () => {
-    if(currentQuestionIndex < quizQuestions.length - 1 ){
-        currentQuestionIndex++;
+let questions = null;
+fetch("/get-quiz-questions", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        questions = data.questions;
         renderQuestion(currentQuestionIndex);
-        backButton.style.display="block";
+    })
+    .catch((error) => {
+        console.error("Error fetching quiz questions:", error);
+        contentDiv.innerHTML +=
+        "<div>An error occurred while fetching quiz questions.</div>";
+    });
 
-        if (currentQuestionIndex === quizQuestions.length - 1) {
-            submitButton.style.display = "block";
-            nextButton.style.display = "none";
-        }
+
+    // Flask tarafından gönderilen JSON verisini al
+   // const quizDataElement = document.getElementById("quiz-data");
+   // const quizQuestions = JSON.parse(quizDataElement.getAttribute("data-quiz"));
+/*const timer=document.getElementById("time-left");
+
+let timeLeft=600;
+
+timer.textContent=`${Math.floor(timeLeft/60)}:${timeLeft%60 < 10 ? '0' : ''}${timeLeft%60}`;
+
+const timerInterval = setInterval(()=>{
+    const min= Math.floor(timeLeft/60);
+    const sec= timeLeft%60;
+
+    timer.textContent=`${min}:${sec < 10 ? '0' : ''}${sec}`;
+    timeLeft--;
+
+    if(timeLeft<5){
+        timer.style.color="red";
     }
-    
-});
 
-backButton.addEventListener("click", () =>{
+    if(timeLeft<0){
+        clearInterval(timerInterval);
+    }
+},1000);*/
+
+function BackQuestion() {
+    const backButton = document.getElementById("back-button");
+    const nextButton = document.getElementById("nextButton");
+    const submitButton = document.getElementById("submit-button");
     if(currentQuestionIndex > 0){
         currentQuestionIndex--;
         renderQuestion(currentQuestionIndex);
@@ -93,7 +85,27 @@ backButton.addEventListener("click", () =>{
     if(currentQuestionIndex == 0){
         backButton.style.display="none";
     }
-});
-
-renderQuestion(currentQuestionIndex);
 }
+
+function nextQuestion() {
+    const nextButton = document.getElementById("nextButton");
+    const backButton = document.getElementById("back-button");
+    const submitButton = document.getElementById("submit-button");
+    if(currentQuestionIndex < questions.length - 1 ){
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+        backButton.style.display="block";
+
+        if (currentQuestionIndex === questions.length - 1) {
+            submitButton.style.display = "block";
+            nextButton.style.display = "none";
+        }
+    }
+  }
+
+  function submitQuiz() {
+        window.location.href = `http://127.0.0.1:5000/quiz_result`;
+  }
+
+  
+//renderQuestion(currentQuestionIndex);

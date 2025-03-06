@@ -418,13 +418,47 @@ def quiz_start():
         return redirect(url_for('home_page'))
 
     # Quiz'i veritabanından çek
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_page'))
 
     # Quiz var, quiz sayfasına yönlendir
     return render_template("quiz_start.html", quiz=quiz)
+
+@app.route("/get-quiz-questions", methods=["GET"])
+def get_quiz_questions():
+    
+    if current_user.is_authenticated:
+        chat_id = current_user.currentChatID
+        if chat_id is None:
+            flash("No chat selected", "error")
+            return redirect(url_for('home_page'))
+
+        # Quiz'i ve soruları veritabanından çek
+        quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
+        if not quiz:
+            flash("Quiz not found", "error")
+            return redirect(url_for('home_page'))
+
+        # Soruları al
+        questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
+        print(questions)
+        # Soruları JSON formatında frontend'e göndereceksek
+        quiz_questions = []
+        options = []  # Cevapları burada al
+        for question in questions:
+            quiz_questions.append({
+                'question': question.text,
+                'options': question.options
+            })
+        return jsonify({
+            "questions": quiz_questions
+        })
+    else:
+        return jsonify({
+            "questions": None
+        })
 
 @app.route("/quiz")
 def quiz():
@@ -434,26 +468,23 @@ def quiz():
         return redirect(url_for('home_page'))
 
     # Quiz'i ve soruları veritabanından çek
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_page'))
 
     # Soruları al
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
-
+    print(questions)
     # Soruları JSON formatında frontend'e göndereceksek
     quiz_questions = []
+    options = []  # Cevapları burada al
     for question in questions:
-        options = []  # Cevapları burada al
-        answers = QuestionAnswer.query.filter_by(question_id=question.id).all()
-        for answer in answers:
-            options.append(answer.option_text)
-
         quiz_questions.append({
             'question': question.text,
-            'options': options
+            'options': question.options
         })
+        #print(quiz_questions)
 
     return render_template("quiz.html", quiz=quiz, questions=quiz_questions)
 
