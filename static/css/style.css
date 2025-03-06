@@ -10,6 +10,14 @@
   transform: scale(1.1); /* Üzerine gelindiğinde biraz büyür */
 }
 
+.navbar {
+  height: 65px;
+   width: 100%;
+    position: fixed;
+     top: 0;
+}
+
+
 #userDropdown {
   width: 40px;
   height: 40px;
@@ -164,6 +172,7 @@ body.modal-open {
 #exampleFormControlTextarea1 {
   background-color: rgb(240, 242, 242);
   border-style: none;
+  resize: none;
 }
 
 /* Login.html and Signup.html*/
@@ -323,10 +332,29 @@ body.modal-open {
 
 .quiz-result-card{
   background-color: #ffffff49;
+  height: 90%;
 }
 .score-box {
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 15px;
   background-color: #ddd;
+}
+
+#failure-card {
+  display: none;
+}
+
+#failure-button {
+  display: none;
+}
+
+img #b-picture {
+  width: 100px;
+   height: 100px;
+}
+
+#progressBarr {
+  min-height: 20px;
+   margin-top: 80px;
 }

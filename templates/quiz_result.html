@@ -4,7 +4,6 @@ endblock title %} {% block content %}
 <div class="d-flex justify-content-center align-items-center vh-100 px-5">
   <div
     class="quiz-result-card d-flex flex-column justify-content-center align-items-center w-75 p-5 border border-light shadow-lg rounded-5"
-    style="height: 90%"
   >
     <h1>Quiz Results</h1>
     <br />
@@ -13,7 +12,7 @@ endblock title %} {% block content %}
     <div class="d-flex flex-column align-items-center justify-content-center">
         <div>
         <img
-          style="width: 100px; height: 100px"
+          id="b-picture"
           src="/static/images/Check-PNG-File.png"
           alt="check-icon"
         />
@@ -23,11 +22,11 @@ endblock title %} {% block content %}
       
     </div>
 
-    <div id="failure-card" style="display: none;">
+    <div id="failure-card">
         <div class="d-flex flex-column align-items-center justify-content-center">
             <div>
             <img
-              style="width: 100px; height: 100px"
+              id="b-picture"
               src="/static/images/Red-Cross-Mark-Download-PNG.png"
               alt="check-icon"
             />
@@ -67,7 +66,7 @@ endblock title %} {% block content %}
 
     <div class="d-flex align-items-center justify-content-around w-75">
         <button class="btn btn-primary">Review Quiz</button>
-        <button id="failure-button" class="btn btn-primary" style="display: none;">Retry Quiz</button>
+        <button id="failure-button" class="btn btn-primary">Retry Quiz</button>
     </div>
     
   </div>
