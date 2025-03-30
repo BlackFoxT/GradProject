@@ -1,28 +1,28 @@
 /* Burası layout.html  */
 .logo {
-  height: 50px; /* Logo yüksekliği */
-  width: auto; /* Genişlik oranını korur */
-  margin-right: 10px; /* Sağ tarafa boşluk ekler */
-  transition: transform 0.3s ease; /* Geçiş efekti */
+  height: 50px;
+  width: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
 }
 
 .logo:hover {
-  transform: scale(1.1); /* Üzerine gelindiğinde biraz büyür */
+  transform: scale(1.1);
 }
 
 .navbar {
   height: 65px;
-   width: 100%;
-    position: fixed;
-     top: 0;
+  width: 100%;
+  position: fixed;
+  top: 0;
 }
-
 
 #userDropdown {
   width: 40px;
   height: 40px;
   cursor: pointer;
 }
+
 #sidebar {
   height: 90vh;
   width: 250px;
@@ -50,11 +50,11 @@
 #toggle-new-chat {
   left: 50px;
   z-index: 1050;
-  position:absolute;
+  position: absolute;
 }
 
 #toggle-logo {
-  left:90px;
+  left: 90px;
   z-index: 1050;
   position: absolute;
 }
@@ -64,17 +64,16 @@
   color: #000;
 }
 
-.contact-us-text{
+.contact-us-text {
   color: #414040;
 }
 
-.footer-contact-us-icons:hover{
+.footer-contact-us-icons:hover {
   font-size: larger;
   color: #2196F3;
 }
 
 /* Burası index.html */
-
 .flash-container {
   z-index: 1050;
 }
@@ -91,11 +90,11 @@
 
 #hiddenContent {
   display: none;
-  height: 85%; /* Maximum height before scrolling */
-  overflow-y: auto;   /* Enable vertical scrolling */
+  height: 85%;
+  overflow-y: auto;
   margin-bottom: 40px;
   margin-top: 10px;
-  scroll-behavior: smooth; /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
 #content {
@@ -115,24 +114,26 @@
   border-radius: 25px;
   background-color: rgb(240, 242, 242);
 }
+
 .modal {
   z-index: 1050 !important;
 }
+
 /* Body when modal is open */
 body.modal-open {
-  pointer-events: none;  /* Disable interaction with everything except the modal */
+  pointer-events: none;
 }
 
 /* Modal itself */
 .enterTopic {
-  display: none;  /* Hidden initially */
+  display: none;
   width: 50%;
   position: fixed;
   top: 0;
   left: 25%;
   right: 25%;
-  z-index: 1050; /* Make sure modal is on top */
-  pointer-events: auto;  /* Allow interaction with the modal */
+  z-index: 1050;
+  pointer-events: auto;
   background-color: white;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -141,14 +142,14 @@ body.modal-open {
 
 /* Optional: Styling for backdrop */
 .backdrop {
-  display: none;  /* Initially hidden */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);  /* Semi-transparent black */
-  z-index: 1000;  /* Behind modal */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 /* Chat işlemleri için */
@@ -164,7 +165,6 @@ body.modal-open {
   width: 60%;
   padding: 10px;
   margin-left: auto;
-  /* Aligns the question to the right */
   border-radius: 5px;
   margin-bottom: 5px;
 }
@@ -209,8 +209,6 @@ body.modal-open {
 .toastAlert {
   z-index: 1050;
 }
-
-/* Profile.html*/
 
 /* All Quiz Part css */
 .quizBackground {
@@ -290,8 +288,6 @@ body.modal-open {
   box-shadow: 0 0 0 5px #87FF66;
 }
 
-
-
 .nav-item {
   list-style-type: none;
   margin: 0;
@@ -330,10 +326,11 @@ body.modal-open {
   transform: scale(1.1);
 }
 
-.quiz-result-card{
+.quiz-result-card {
   background-color: #ffffff49;
   height: 90%;
 }
+
 .score-box {
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -351,10 +348,10 @@ body.modal-open {
 
 img #b-picture {
   width: 100px;
-   height: 100px;
+  height: 100px;
 }
 
 #progressBarr {
   min-height: 20px;
-   margin-top: 80px;
+  margin-top: 80px;
 }

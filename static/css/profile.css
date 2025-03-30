@@ -9,23 +9,19 @@
     --white: #ffffff;
     --success-green: #34a853;
     --section-bg: #f8fafd;
-    
+
 }
 
 .navbar {
     height: 65px;
-     width: 100%;
-      position: fixed;
-       top: 0;
-  }
-  
+    width: 100%;
+    position: fixed;
+    top: 0;
+}
 
-  main {
+main {
     height: 100%;
-  }
-
-
-
+}
 
 /* Container Styles */
 .container {
@@ -255,16 +251,16 @@
     .profile-section {
         grid-template-columns: 1fr;
     }
-    
+
     .profile-image {
         border-right: none;
         border-bottom: 1px solid var(--border-blue);
     }
-    
+
     .form-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .payment-cards {
         margin: 20px -20px -20px;
         padding: 20px;
@@ -287,8 +283,8 @@
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: left 0.3s ease;
     z-index: 1040;
-    margin-top: 60px; 
-    padding-top: 10px; 
+    margin-top: 60px;
+    padding-top: 10px;
     margin-bottom: 50px;
     padding-bottom: 500px;
 }
@@ -306,8 +302,8 @@ footer {
     position: relative;
     bottom: 0;
     left: 0;
-    width: 100%;  
-    height: 70px;  
+    width: 100%;
+    height: 70px;
     background-color: rgb(49, 49, 49);
-    z-index: 9999; 
+    z-index: 9999;
 }

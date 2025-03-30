@@ -1,4 +1,3 @@
-// quiz.js
 function renderQuestion(index) {
 
     const questionData = questions[index];
@@ -27,8 +26,10 @@ function renderQuestion(index) {
         qOptions.appendChild(container);
     });
 }
+
 let currentQuestionIndex=0;
 let questions = null;
+
 fetch("/get-quiz-questions", {
     method: "GET",
     headers: {
@@ -46,12 +47,11 @@ fetch("/get-quiz-questions", {
         "<div>An error occurred while fetching quiz questions.</div>";
     });
 
+// Flask tarafından gönderilen JSON verisini al
+// const quizDataElement = document.getElementById("quiz-data");
+// const quizQuestions = JSON.parse(quizDataElement.getAttribute("data-quiz"));
 
-    // Flask tarafından gönderilen JSON verisini al
-   // const quizDataElement = document.getElementById("quiz-data");
-   // const quizQuestions = JSON.parse(quizDataElement.getAttribute("data-quiz"));
-/*const timer=document.getElementById("time-left");
-
+const timer=document.getElementById("time-left");
 let timeLeft=600;
 
 timer.textContent=`${Math.floor(timeLeft/60)}:${timeLeft%60 < 10 ? '0' : ''}${timeLeft%60}`;
@@ -70,7 +70,7 @@ const timerInterval = setInterval(()=>{
     if(timeLeft<0){
         clearInterval(timerInterval);
     }
-},1000);*/
+},1000);
 
 function BackQuestion() {
     const backButton = document.getElementById("back-button");
@@ -103,9 +103,6 @@ function nextQuestion() {
     }
   }
 
-  function submitQuiz() {
-        window.location.href = `http://127.0.0.1:5000/quiz_result`;
-  }
-
-  
-//renderQuestion(currentQuestionIndex);
+function submitQuiz() {
+    window.location.href = `http://127.0.0.1:5000/quiz_result`;
+}
