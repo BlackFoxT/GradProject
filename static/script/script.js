@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Document loaded");
-
+  
  // document.getElementById("chatModal").style.display = "block";
   // Fetch chat history when the document loads
   fetch("/get-chat-history", {
@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
         chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
       } else {
         chatHistory = data.chats;
+       
       }
 
       // Show content if chat history or content is visible
@@ -24,28 +25,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Display all stored chats
         if (chatHistory && chatHistory.length > 0) {
-          progressDiv.innerHTML = '';
-            progressDiv.style.backgroundColor = "white"; // Change background color
-            const maxChatLength= 20; // maximum chat sayısı
-            let progressBarPercentage = Math.min((chatHistory.length/maxChatLength)*100,100); //burda percentage'in 100ü aşmadığından emin oluyoruz.
-
-            function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
-              let hue = 120-(percentage *1.2);
-              return `hsl(${hue},100%,50%)`;
-            }
-
-            let progressBarColor = getProgressBarColor(progressBarPercentage);
-            progressDiv.innerHTML += `
-              <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
- <div id="progressBar" 
-                class="progress-bar" 
-                role="progressbar" 
-                style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
-                aria-valuenow="${progressBarPercentage}" 
-                aria-valuemin="0" 
-                aria-valuemax="100" 
-                display="block">                </div>
-              </div>`;
+          if (data.isUser) {
+            setProgressBar(chatHistory);
+              if(chatHistory.length%10 == 0){
+                textarea.disabled = true;
+                //document.getElementById("askButton").textContent = "Start Quiz";
+                document.getElementById("askButton").style.display = "none";
+                document.getElementById("quizButton").style.display = "block";
+              }
+          }
               // 0 - 10 chat progress bar güncellenecek  aria-valuenow 10 artıp rengi kırmızıdan yeşile dönsün
               // chat sayısı artıkça kırmızıdan yeşile gidecek
           chatHistory.forEach((chat) => {
@@ -70,12 +58,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const toggleSidebarButton = document.getElementById("toggle-sidebar");
   const sidebar = document.getElementById("sidebar");
   // Ensure the sidebar is shown by default
-  sidebar.classList.add("show");
-  if (toggleSidebarButton && sidebar) {
-    toggleSidebarButton.addEventListener("click", function () {
-      sidebar.classList.toggle("show");
-    });
+  if(sidebar){
+    sidebar.classList.add("show");
+    if (toggleSidebarButton && sidebar) {
+      toggleSidebarButton.addEventListener("click", function () {
+        sidebar.classList.toggle("show");
+      });
+    }
   }
+  
 
   const contentDiv = document.getElementById("hiddenContent");
   
@@ -123,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
               JSON.parse(localStorage.getItem("chatHistory")) || [];
             chatHistory.push(data.chat_entry);
             localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-            console.log("Stored chat in localStorage:", data.chat_entry);
+            //console.log("Stored chat in localStorage:", data.chat_entry);
             contentDiv.innerHTML = ``;
             // Append new chat after displaying existing history
             chatHistory.forEach((chat) => {
@@ -134,7 +125,13 @@ document.addEventListener("DOMContentLoaded", function () {
             });
           } else {
             localStorage.removeItem("chatTopic");
-
+            //console.log( data.chats.length)
+            if(data.chats.length%10 == 0){
+              textarea.disabled = true;
+              //document.getElementById("askButton").textContent = "Start Quiz";
+              document.getElementById("askButton").style.display = "none";
+              document.getElementById("quizButton").style.display = "block";
+            }
             if (data.chats.length === 1) {
               window.location.href = `http://127.0.0.1:5000/?chat_id=${data.chatId}`;
             } else {
@@ -149,30 +146,9 @@ document.addEventListener("DOMContentLoaded", function () {
                   </div>`;
               });
               const lastChat = data.chats[data.chats.length - 1];
-              console.log(lastChat.question.slice(1))
-              console.log(lastChat.question.slice(1).localeCompare('userinfo'))
-              progressDiv.innerHTML = '';
-                 progressDiv.style.backgroundColor = "white"; // Change background color
-                 const maxChatLength= 20; // maximum chat sayısı
-                 let progressBarPercentage = Math.min((data.chats.length/maxChatLength)*100,100); //burda percentage'in 100ü aşmadığından emin oluyoruz.
-     
-                 function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
-                   let hue = 120-(percentage *1.2);
-                   return `hsl(${hue},100%,50%)`;
-                 }
-     
-                 let progressBarColor = getProgressBarColor(progressBarPercentage);
-                 progressDiv.innerHTML += `
-                   <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
-      <div id="progressBar" 
-                     class="progress-bar" 
-                     role="progressbar" 
-                     style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
-                     aria-valuenow="${progressBarPercentage}" 
-                     aria-valuemin="0" 
-                     aria-valuemax="100" 
-                     display="block">                </div>
-                   </div>`;
+              //console.log(lastChat.question.slice(1))
+              //console.log(lastChat.question.slice(1).localeCompare('userinfo'))
+              //pr
               if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
                 directCommand(lastChat.question.slice(1));
               }
@@ -194,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
                    <div class="chat-question"><strong></strong> ${chat.question}</div>
                    <div><strong></strong> ${chat.response}</div><hr></div>`;
              });*/
-             
+             setProgressBar(data.chats);
           }
           scrollToBottom();
 
@@ -223,7 +199,7 @@ function directCommand(command) {
 function scrollToBottom() {
 
   var hiddenContent = document.getElementById("hiddenContent");
-  if (hiddenContent) console.log("hi");
+  //if (hiddenContent) console.log("hi");
   hiddenContent.scrollTop = hiddenContent.scrollHeight;
 }
 function openTopic(event) {
@@ -260,4 +236,40 @@ function closeTopic() {
 
   // Enable interactions with the page
   document.body.classList.remove("modal-open");
+}
+
+function startQuizz(event) {
+    window.location.href = `http://127.0.0.1:5000/quiz_start`;
+    document.getElementById("askButton").style.display = "block";
+    document.getElementById("quizButton").style.display = "none";
+    document.getElementById("exampleFormControlTextarea1").disabled = false;;
+}
+function setProgressBar(chatHistory){
+  const progressDiv = document.getElementById("progressBarr");
+  progressDiv.innerHTML = '';
+            progressDiv.style.backgroundColor = "white"; // Change background color
+            const maxChatLength= 10; // maximum chat sayısı
+            let progressBarPercentage = Math.min((chatHistory.length%10/maxChatLength)*100,100); //burda percentage'in 100ü aşmadığından emin oluyoruz.
+            if(chatHistory.length%10 == 0){
+              progressBarPercentage = Math.min((10/maxChatLength)*100,100); 
+            }
+            
+
+            function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
+              let hue = 120-(percentage *1.2);
+              return `hsl(${hue},100%,50%)`;
+            }
+
+            let progressBarColor = getProgressBarColor(progressBarPercentage);
+            progressDiv.innerHTML += `
+              <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
+ <div id="progressBar" 
+                class="progress-bar" 
+                role="progressbar" 
+                style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
+                aria-valuenow="${progressBarPercentage}" 
+                aria-valuemin="0" 
+                aria-valuemax="100" 
+                display="block">                </div>
+              </div>`;
 }

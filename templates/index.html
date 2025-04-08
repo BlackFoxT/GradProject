@@ -12,8 +12,13 @@
 </div>
 
 <div class="container" id="chat">
+    {% if current_user.is_authenticated %}
     <div class="container-fluid" id="progressBarr"></div>
     <div class="container-fluid" id="hiddenContent"></div>
+    {% else %}
+    <div class="container-fluid" id="hiddenContent" style="margin-top: 80px;"></div>
+    {% endif %}
+    
     <div class="container-fluid" id="content">
         <h1 class="display-4 text-center mb-4" id="header">
             {{ _('What Can I Help With?') }}
@@ -27,6 +32,8 @@
                 <div class="d-flex flex-row-reverse">
                     <button type="submit" class="btn btn-secondary" id="askButton">
                         {{ _('Ask') }}
+                    </button>
+                    <button class="btn btn-secondary" id="quizButton" style="display: none;" onclick="startQuizz(event);">start Quiz
                     </button>
                 </div>
             </form>

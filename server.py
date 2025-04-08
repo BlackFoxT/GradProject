@@ -379,7 +379,7 @@ def ask():
         "response": response,
         "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
-
+    #print(chat_entry.response)
     if current_user.is_authenticated:
         #chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
         if current_user.currentChatID is None:
@@ -393,7 +393,7 @@ def ask():
         chat_history.chats.append(chat_entry)
         db.session.add(chat_history)
         db.session.commit()
-        print(chat_history.id)
+        #print(chat_history.id)
         return jsonify({
                 "topic": topic,
                 "chats": chat_history.chats,

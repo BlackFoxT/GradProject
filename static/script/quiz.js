@@ -52,7 +52,7 @@ fetch("/get-quiz-questions", {
 // const quizQuestions = JSON.parse(quizDataElement.getAttribute("data-quiz"));
 
 const timer=document.getElementById("time-left");
-let timeLeft=600;
+let timeLeft=60;
 
 timer.textContent=`${Math.floor(timeLeft/60)}:${timeLeft%60 < 10 ? '0' : ''}${timeLeft%60}`;
 
@@ -69,6 +69,7 @@ const timerInterval = setInterval(()=>{
 
     if(timeLeft<0){
         clearInterval(timerInterval);
+        submitQuiz();
     }
 },1000);
 
