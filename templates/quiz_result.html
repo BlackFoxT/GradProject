@@ -1,5 +1,6 @@
-{% extends "layouts/empty_layout.html" %} {% block title %}Quiz Result{%
-endblock title %} {% block content %}
+{% extends "layouts/empty_layout.html" %}
+{% block title %}Quiz Result{% endblock title %}
+{% block content %}
 
 <div class="d-flex justify-content-center align-items-center px-5">
   <div
@@ -11,36 +12,24 @@ endblock title %} {% block content %}
     <div id="succes-card">
     <div class="d-flex flex-column align-items-center justify-content-center">
         <div>
-        <img
-          id="b-picture"
-          src="/static/images/Check-PNG-File.png"
-          alt="check-icon"
-        />
+        <img id="b-picture" src="/static/images/Check-PNG-File.png" alt="check-icon" />
       </div>
-      <p class="text-success fw-bold">Nice job, you passed!</p>
+      <p class="text-success fw-bold" id="success-message">Nice job, you passed!</p>
     </div>
-      
     </div>
 
-    <div id="failure-card">
+    <div id="failure-card" style="display:none;">
         <div class="d-flex flex-column align-items-center justify-content-center">
             <div>
-            <img
-              id="b-picture"
-              src="/static/images/Red-Cross-Mark-Download-PNG.png"
-              alt="check-icon"
-            />
+            <img id="b-picture" src="/static/images/Red-Cross-Mark-Download-PNG.png" alt="check-icon" />
           </div>
-          <p class="text-danger fw-bold">Sorry, you failed!</p>
+          <p class="text-danger fw-bold" id="failure-message">Sorry, you failed!</p>
         </div>
-        
     </div>
 
     <div class="row my-4 w-75">
       <div class="col-md-6">
-        <div
-          class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border"
-        >
+        <div class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border">
           <h5>YOUR SCORE</h5>
           <h1 id="score-table">100%</h1>
           <div>
@@ -72,5 +61,24 @@ endblock title %} {% block content %}
     
   </div>
 </div>
+
+<script>
+    // Sonuçları localStorage'dan al
+    const score = localStorage.getItem("quiz_score");
+    const point = localStorage.getItem("quiz_point");
+    const passed = localStorage.getItem("quiz_passed") === 'true';
+
+    // Sonuçları sayfada güncelle
+    document.getElementById("score-table").textContent = `${score}%`;
+    document.getElementById("point-table").textContent = point;
+
+    if (passed) {
+        document.getElementById("succes-card").style.display = "block";
+        document.getElementById("failure-card").style.display = "none";
+    } else {
+        document.getElementById("succes-card").style.display = "none";
+        document.getElementById("failure-card").style.display = "block";
+    }
+</script>
 
 {% endblock content %}

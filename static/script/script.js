@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("Document loaded");
   
- // document.getElementById("chatModal").style.display = "block";
   // Fetch chat history when the document loads
   fetch("/get-chat-history", {
     method: "GET",
@@ -73,7 +71,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const chatDiv = document.getElementById("content");
   const header = document.getElementById("header");
   const textarea = document.getElementById("exampleFormControlTextarea1");
-
   const progressDiv = document.getElementById("progressBarr");
   
 
@@ -147,18 +144,15 @@ document.addEventListener("DOMContentLoaded", function () {
               });
               const lastChat = data.chats[data.chats.length - 1];
               //console.log(lastChat.question.slice(1))
-              //console.log(lastChat.question.slice(1).localeCompare('userinfo'))
-              //pr
+              //console.log(lastChat.question.slice(1).localeCompare('userinfo')
               if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
                 directCommand(lastChat.question.slice(1));
               }
 
-
               /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
                  console.log(data.chats[data.chats.length-1].question)
                  directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
-               }*/
-                 
+               }*/                 
             }
 
             //console.log(data.chats);

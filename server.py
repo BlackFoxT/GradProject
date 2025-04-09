@@ -5,7 +5,6 @@ from flask_babel import Babel, _,lazy_gettext as _l, gettext
 from langchain_community.llms.ollama import Ollama
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-
 # ChatHistory model (storing an array of chats for each topic)
 from sqlalchemy.ext.mutable import MutableList
 
@@ -13,7 +12,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['LANGUAGES'] = ['en', 'tr']  # List of supported languages
+app.config['LANGUAGES'] = ['en', 'tr']
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 
@@ -42,7 +41,6 @@ class ChatHistory(db.Model):
     topic = db.Column(db.String(100), nullable=False)
     chats = db.Column(MutableList.as_mutable(db.JSON), nullable=True)  # Make the list mutable
     timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
-
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -86,7 +84,6 @@ def load_user(user_id):
 
 @app.route('/change_language/<lang_code>')
 def change_language(lang_code):
-    # Save language preference in session or cookie
     session['lang'] = lang_code
     return redirect(request.referrer or url_for('index'))
 
@@ -96,10 +93,8 @@ def home_page():
     selected_chat = None
 
     if current_user.is_authenticated:
-        # Fetch all chats for the current user
         user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
 
-    # Get the 'chat_id' from query parameters
     chat_id = request.args.get("chat_id", type=int)
 
     # Fetch the selected chat content, if chat_id is provided
@@ -142,8 +137,6 @@ def chatl():
     # Redirect to home_page with the chat_id as a query parameter
     return redirect(url_for("home_page", chat_id=chat_id))
 
-
-
 @app.route('/setlang')
 def setlang():
     lang = request.args.get('lang', 'en')
@@ -173,7 +166,6 @@ def js_translations():
         'validEmail': gettext('Please enter a valid email address.')
     }
     return jsonify(translations)
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login_page():
@@ -270,7 +262,6 @@ def update_information():
         flash("You must be logged in to update your information.", "error")
         return redirect(url_for('login_page'))
 
-
 @app.route("/get-chat-history", methods=["GET"])
 def get_chat_history():
     topic = request.args.get("topic", "General")  # Default topic or fetch from user preference
@@ -278,10 +269,10 @@ def get_chat_history():
         if current_user.currentChatID is None:
             return jsonify({"contentVisible": False, "chats": [],"isUser": True})
         # For authenticated users, fetch chat history from the database
-        #print(current_user.id)
+
         chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
         print(chat_history)
-       # print(chat_history.chats)
+
         if chat_history:
            # print(chat_history.chats)
             return jsonify({
@@ -294,7 +285,7 @@ def get_chat_history():
     else:
         # For non-authenticated users, use localStorage or session to fetch chat history
         chat_history = session.get("chat_history", {})
-       # print(chat_history)
+
         return jsonify({
             "contentVisible": bool(chat_history),  # Check if there are any chats for this topic
             "chats": chat_history,
@@ -312,22 +303,18 @@ def ask():
         return jsonify({"error": "Message is required"}), 400
 
     response = None
-    redirect_url = None
 
     if user_message.startswith('!'):
         command = user_message[1:].lower()
 
         if command in ['userinfo', 'kullanıcıbilgisi']:
             if current_user.is_authenticated:
-                redirect_url = url_for('profile_page')
                 response = "Redirecting to your profile page..."
-                #return redirect(redirect_url)
             else:
                 response = "You need to be logged in to view your profile."
 
         elif command in ['quiz', 'sınav']:
             if current_user.is_authenticated:
-                redirect_url = url_for('quiz_start')
                 response = "Redirecting to the quiz page..."
             else:
                 response = "You need to be logged in to access the quiz page."
@@ -379,30 +366,24 @@ def ask():
         "response": response,
         "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
-    #print(chat_entry.response)
+
     if current_user.is_authenticated:
-        #chat_history = ChatHistory.query.filter_by(user_id=current_user.id).first()
+
         if current_user.currentChatID is None:
             chat_history = ChatHistory(user_id=current_user.id, topic=topic, chats=[])
-            
-            ## refresh to the this chat
         else:
             chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
-       ## if not chat_history:
-         ##   chat_history = ChatHistory(user_id=current_user.id, topic=topic, chats=[])
+
         chat_history.chats.append(chat_entry)
         db.session.add(chat_history)
         db.session.commit()
-        #print(chat_history.id)
+
         return jsonify({
                 "topic": topic,
                 "chats": chat_history.chats,
                 "chatId": chat_history.id,
                 "isUser": True  # Assuming `chats` is JSON serializable
             })
-
-    #if redirect_url:
-       # return redirect(redirect_url)
 
     return jsonify({
         "topic": topic,
@@ -417,13 +398,11 @@ def quiz_start():
         flash("No chat selected", "error")
         return redirect(url_for('home_page'))
 
-    # Quiz'i veritabanından çek
     quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_page'))
 
-    # Quiz var, quiz sayfasına yönlendir
     return render_template("quiz_start.html", quiz=quiz)
 
 @app.route("/get-quiz-questions", methods=["GET"])
@@ -435,7 +414,6 @@ def get_quiz_questions():
             flash("No chat selected", "error")
             return redirect(url_for('home_page'))
 
-        # Quiz'i ve soruları veritabanından çek
         quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
         if not quiz:
             flash("Quiz not found", "error")
@@ -443,14 +421,14 @@ def get_quiz_questions():
 
         # Soruları al
         questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
-        print(questions)
+        
         # Soruları JSON formatında frontend'e göndereceksek
         quiz_questions = []
-        options = []  # Cevapları burada al
         for question in questions:
             quiz_questions.append({
                 'question': question.text,
-                'options': question.options
+                'options': question.options,
+                'correct_answer': question.correct_answer
             })
         return jsonify({
             "questions": quiz_questions
@@ -478,16 +456,13 @@ def quiz():
     print(questions)
     # Soruları JSON formatında frontend'e göndereceksek
     quiz_questions = []
-    options = []  # Cevapları burada al
     for question in questions:
         quiz_questions.append({
             'question': question.text,
             'options': question.options
         })
-        #print(quiz_questions)
 
     return render_template("quiz.html", quiz=quiz, questions=quiz_questions)
-
 
 @app.route("/quiz_result")
 def quiz_result():
@@ -501,6 +476,7 @@ if __name__ == "__main__":
 
 
 '''
+Bu örnek soru ekleme sql kodu
 # Kullanıcı ve chat ID
     user_id = 2   # Örnek kullanıcı ID'si
     chat_id = 5   # Örnek chat ID'si
