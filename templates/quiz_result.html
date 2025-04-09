@@ -31,10 +31,10 @@
       <div class="col-md-6">
         <div class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border">
           <h5>YOUR SCORE</h5>
-          <h1 id="score-table">100%</h1>
+          <h1 id="score-table"></h1>
           <div>
             <hr />
-            <p class="text-muted">PASSING SCORE: 100%</p>
+            <p class="text-muted" id="passing-score"></p>
           </div>
         </div>
       </div>
@@ -44,19 +44,20 @@
           class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border"
         >
           <h5>YOUR POINTS</h5>
-          <h1 id="point-table">10</h1>
+          <h1 id="point-table"></h1>
           <div>
             <hr />
-            <p class="text-muted">PASSING POINTS: 10</p>
+            <p class="text-muted" id="passing-point"></p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="d-flex align-items-center justify-content-around w-75">
-        <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Review Quiz</button>
-        <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/`;">To The Chat</button>
-        <button id="fai" class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Retry Quiz</button>
+      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/`;">Back to Chat</button>
+      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/profile`;">Go to Profile</button>
+      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Review Quiz</button>
+      <button id="fai" class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Retry Quiz</button>
     </div>
     
   </div>
@@ -70,7 +71,14 @@
 
     // Sonuçları sayfada güncelle
     document.getElementById("score-table").textContent = `${score}%`;
-    document.getElementById("point-table").textContent = point;
+    document.getElementById("point-table").textContent = `${point}`;
+
+    //passing point ve score dynamic şekilde değişiyor
+    const passingScore=70;
+    const passingPoint=7;
+
+    document.getElementById("passing-score").textContent = `PASSING SCORE: ${passingScore}%`;
+    document.getElementById("passing-point").textContent = `PASSING POINT: ${passingPoint}`;
 
     if (passed) {
         document.getElementById("succes-card").style.display = "block";
@@ -79,6 +87,17 @@
         document.getElementById("succes-card").style.display = "none";
         document.getElementById("failure-card").style.display = "block";
     }
+
+    //overwrite olmaması için localStorage'dan verilerin iş bittikten sonra silinmesi lazım
+    //alternatif bir yol bulunabilir.
+    window.onload = function() {
+        setTimeout(() => {
+            localStorage.removeItem("quiz_score");
+            localStorage.removeItem("quiz_point");
+            localStorage.removeItem("quiz_passed");
+        }, 1000);
+    };
+
 </script>
 
 {% endblock content %}
