@@ -17,7 +17,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 
 # Initialize Ollama model
-llm = Ollama(model="llama3.2" , system=("Sen bir eğitim asistanısın. Kullancılar sana bir konu hakkında danışacak ve sen de eğitim içerikleri sağlamaktan, sınavlara hazırlık yapmaktan ve konu anlatımı yapmaktan sorumlusun. Cevaplarını akademik bir dil ile ver, ancak karmaşık konuları basit ve anlaşılır bir şekilde anlat. Kısa ama öz yanıtlar vermeye çalış. Biraz konu anlattıktan sonra konu hakkında örnek soru sor eğer kullanıcı doğru bilemezse de doğrusunu açıkla."))
+llm = Ollama(model="llama3.2")
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -152,9 +152,6 @@ def inject_locale():
     # This makes the function available directly, allowing you to call it in the template
     return {'get_locale': get_locale}
 
-@app.route('/')
-def home():
-    return render_template('index.html', current_locale=get_locale())
 
 @app.route('/js_translations')
 def js_translations():
@@ -226,11 +223,12 @@ def logout():
 @app.route("/profile")
 def profile_page():
     if current_user.is_authenticated:
+        user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
         current_user.currentChatID = None
         # Save the change to the database
         db.session.commit()
         user_information = Information.query.filter_by(user_id=current_user.id).first()
-        return render_template("profile.html", info=user_information)
+        return render_template("profile.html", info=user_information, user_chats=user_chats)
     else:
         return redirect(url_for('login_page'))
 
@@ -295,10 +293,11 @@ def get_chat_history():
 @app.route("/ask", methods=["POST"])
 def ask():
     user_message = request.json.get('message')
+    #print(user_message)
     topic = request.json.get('chatTopic')
     if topic is None:
         topic = request.json.get('topic', 'General')
-    print(topic)
+    #print(topic)
     if not user_message:
         return jsonify({"error": "Message is required"}), 400
 
@@ -391,14 +390,53 @@ def ask():
         "isUser": False
     })
 
+@app.route("/prepareQuestions", methods=["POST"])
+def prepareQuestions():
+    chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
+    topic = chat_history.topic
+    if topic is None:
+        topic = "General"
+    print(topic)
+    prompt = "Generate only " + str(10) + " multiple-choice questions about " + topic + ". Provide the correct answer for each question. Use the following format:\n\n" + \
+            "Question: [Write the question here]\n" + \
+            "Choices:\n" + \
+            "A) [Option A]\n" + \
+            "B) [Option B]\n" + \
+            "C) [Option C]\n" + \
+            "D) [Option D]\n" + \
+            "Correct Answer: [Write the correct option letter, e.g., A), B), C), or D)]\n\n" + \
+            "Ensure the questions strictly follow this format and are consistent."
+
+    response = None
+
+    
+    response = llm.invoke(prompt)
+    print(response)
+    user_id = current_user.id   # Örnek kullanıcı ID'si
+    chat_id = current_user.currentChatID   # Örnek chat ID'si
+
+    # Yeni quiz oluştur
+    new_quiz = Quiz(user_id=user_id, chat_id=chat_id)
+    db.session.add(new_quiz)
+    db.session.commit()  # ID oluşması için önce commit et
+    questions = parse_questions(response, quiz_id=new_quiz.id)
+    db.session.add_all(questions)
+    db.session.commit()
+    return jsonify({
+        "topic": topic,
+        "response": response,
+        "isUser": True
+    })
+
 @app.route("/quiz_start")
 def quiz_start():
     chat_id = current_user.currentChatID
+    print(chat_id)
     if chat_id is None:
         flash("No chat selected", "error")
         return redirect(url_for('home_page'))
 
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_page'))
@@ -414,7 +452,7 @@ def get_quiz_questions():
             flash("No chat selected", "error")
             return redirect(url_for('home_page'))
 
-        quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
+        quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
         if not quiz:
             flash("Quiz not found", "error")
             return redirect(url_for('home_page'))
@@ -441,19 +479,20 @@ def get_quiz_questions():
 @app.route("/quiz")
 def quiz():
     chat_id = current_user.currentChatID
+    print(chat_id)
     if chat_id is None:
         flash("No chat selected", "error")
         return redirect(url_for('home_page'))
 
     # Quiz'i ve soruları veritabanından çek
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=5).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_page'))
 
     # Soruları al
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
-    print(questions)
+    #print(questions)
     # Soruları JSON formatında frontend'e göndereceksek
     quiz_questions = []
     for question in questions:
@@ -461,17 +500,55 @@ def quiz():
             'question': question.text,
             'options': question.options
         })
-
+    print(quiz_questions)
     return render_template("quiz.html", quiz=quiz, questions=quiz_questions)
 
 @app.route("/quiz_result")
 def quiz_result():
     return render_template("quiz_result.html")
 
+
+import re
+
+def parse_questions(raw_text, quiz_id):
+    pattern = re.compile(
+        r'\d+\.\s+(.+?)\nChoices:\nA\)\s(.+?)\nB\)\s(.+?)\nC\)\s(.+?)\nD\)\s(.+?)\nCorrect Answer:\s([A-D])\)',
+        re.DOTALL
+    )
+
+    answer_map = {
+        'A': 0,
+        'B': 1,
+        'C': 2,
+        'D': 3
+    }
+
+    questions = []
+
+    matches = pattern.findall(raw_text)
+    for match in matches:
+        question_text = match[0].strip()
+        options = [match[1].strip(), match[2].strip(), match[3].strip(), match[4].strip()]
+        correct_answer_index = answer_map[match[5]]
+        correct_answer = options[correct_answer_index]
+
+        questions.append(
+            QuizQuestion(
+                quiz_id=quiz_id,
+                text=question_text,
+                options=options,
+                correct_answer=correct_answer
+            )
+        )
+
+    return questions
+
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
 
 
 

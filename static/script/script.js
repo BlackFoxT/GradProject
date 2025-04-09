@@ -233,11 +233,27 @@ function closeTopic() {
 }
 
 function startQuizz(event) {
-    window.location.href = `http://127.0.0.1:5000/quiz_start`;
-    document.getElementById("askButton").style.display = "block";
-    document.getElementById("quizButton").style.display = "none";
-    document.getElementById("exampleFormControlTextarea1").disabled = false;;
+  fetch("/prepareQuestions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      document.getElementById("askButton").style.display = "block";
+      document.getElementById("quizButton").style.display = "none";
+      document.getElementById("exampleFormControlTextarea1").disabled = false;
+      window.location.href = `http://127.0.0.1:5000/quiz_start`;
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      contentDiv.innerHTML +=
+        "<div>An error occurred. Please try again.</div>";
+    });
 }
+
 function setProgressBar(chatHistory){
   const progressDiv = document.getElementById("progressBarr");
   progressDiv.innerHTML = '';
