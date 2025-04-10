@@ -56,10 +56,26 @@
     <div class="d-flex align-items-center justify-content-around w-75">
       <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/`;">Back to Chat</button>
       <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/profile`;">Go to Profile</button>
-      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Review Quiz</button>
-      <button id="fai" class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Retry Quiz</button>
+      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Retry Quiz</button>
     </div>
     
+    <hr class="my-4 w-75" />
+
+    <div class="w-75">
+      <h3 class="text-center mb-3">Your Answers vs Correct Answers</h3>
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Your Answer</th>
+            <th scope="col">Correct Answer</th>
+            <th scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody id="answer-table-body"></tbody>
+      </table>
+    </div>
+
   </div>
 </div>
 
@@ -88,6 +104,38 @@
         document.getElementById("failure-card").style.display = "block";
     }
 
+
+    const userAnswers = JSON.parse(localStorage.getItem("user_answers") || "[]");
+    const correctAnswers = JSON.parse(localStorage.getItem("correct_answers") || "[]");
+    console.log(userAnswers)
+
+
+    const tableBody = document.getElementById("answer-table-body");
+
+    for (let i = 0; i < userAnswers.length; i++) {
+        const tr = document.createElement("tr");
+
+        const indexTd = document.createElement("td");
+        indexTd.textContent = i + 1;
+
+        const userTd = document.createElement("td");
+        userTd.textContent = userAnswers[i];
+
+        const correctTd = document.createElement("td");
+        correctTd.textContent = correctAnswers[i];
+
+        const resultTd = document.createElement("td");
+        resultTd.innerHTML = userAnswers[i] === correctAnswers[i]
+            ? '<span class="text-success fw-bold">✔</span>'
+            : '<span class="text-danger fw-bold">✘</span>';
+
+        tr.appendChild(indexTd);
+        tr.appendChild(userTd);
+        tr.appendChild(correctTd);
+        tr.appendChild(resultTd);
+
+        tableBody.appendChild(tr);
+    }
     //overwrite olmaması için localStorage'dan verilerin iş bittikten sonra silinmesi lazım
     //alternatif bir yol bulunabilir.
     window.onload = function() {
@@ -95,6 +143,8 @@
             localStorage.removeItem("quiz_score");
             localStorage.removeItem("quiz_point");
             localStorage.removeItem("quiz_passed");
+            localStorage.removeItem("user_answers");
+            localStorage.removeItem("correct_answers");
         }, 1000);
     };
 

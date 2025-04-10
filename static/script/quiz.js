@@ -131,10 +131,12 @@ function submitQuiz(event) {
     const scorePercentage = Math.round((correct / questions.length) * 100);
     const passingScore = 70;
     const point = correct;
-
+    
     localStorage.setItem("quiz_score", scorePercentage);
     localStorage.setItem("quiz_point", point);
     localStorage.setItem("quiz_passed", scorePercentage >= passingScore);
-
+    localStorage.setItem("user_answers", JSON.stringify(userAnswers));
+    localStorage.setItem("correct_answers", JSON.stringify(correctAnswers));
+    
     window.location.href = `http://127.0.0.1:5000/quiz_result`;
 }
