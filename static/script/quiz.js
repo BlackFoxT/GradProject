@@ -138,6 +138,7 @@ function submitQuiz(event) {
     localStorage.setItem("user_answers", JSON.stringify(userAnswers));
     localStorage.setItem("correct_answers", JSON.stringify(correctAnswers));
     console.log("submit")
-    localStorage.setItem("isSumbitted", true);
+    console.log("Chat ID:", chatId);  
+    localStorage.setItem("isSumbittedChatID" + chatId, true);
     window.location.href = `http://127.0.0.1:5000/quiz_result`;
 }

@@ -25,23 +25,19 @@ document.addEventListener("DOMContentLoaded", function () {
         if (chatHistory && chatHistory.length > 0) {
           let chatLength = chatHistory.length%10;
           if (data.isUser) {
-            if(localStorage.getItem("isQuizStarted") && chatLength == 0){
+            if(localStorage.getItem("isQuizStartedChatID" + data.chatId) && chatLength == 0){
               chatLength = 0;
-              localStorage.setItem("isQuizStarted", false);
+              localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
             }
-            setProgressBar(chatHistory, chatLength);
-            console.log(chatLength)
-            console.log(localStorage.getItem("isSumbitted"))
-            let isSumbitted = localStorage.getItem("isSumbitted")
-            console.log(isSumbitted)
-            if(chatLength == 0 && localStorage.getItem("isSumbitted") === "false"){
+            setProgressBar(chatHistory, chatLength,data.chatId);
+            if(chatLength == 0 && localStorage.getItem("isSumbittedChatID" + data.chatId) === "false"){
               console.log(19191)
               textarea.disabled = true;
               //document.getElementById("askButton").textContent = "Start Quiz";
               document.getElementById("askButton").style.display = "none";
               document.getElementById("quizButton").style.display = "block";
             }
-            if(localStorage.getItem("isSumbitted") == true){
+            if(localStorage.getItem("isSumbittedChatID" + data.chatId) == true){
               console.log(2222)
               document.getElementById("askButton").style.display = "block";
               document.getElementById("quizButton").style.display = "none";
@@ -182,11 +178,11 @@ document.addEventListener("DOMContentLoaded", function () {
              });*/
              if(data.chats.length%10 > 0 && data.chats.length%10 < 10){
               console.log(1683)
-              localStorage.setItem("isQuizStarted", false);
-              localStorage.setItem("isSumbitted", false);
+              localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
+              localStorage.setItem("isSumbittedChatID" + data.chatId, false);
              }
              console.log(data.chats.length%10)
-             setProgressBar(data.chats, data.chats.length%10);
+             setProgressBar(data.chats, data.chats.length%10,data.chatId);
           }
           scrollToBottom();
 
@@ -293,7 +289,7 @@ function startQuizz(event) {
       document.body.style.opacity = "1";
 
       
-      localStorage.setItem("isQuizStarted", true);
+      localStorage.setItem("isQuizStartedChatID" + data.chatId, true);
       setProgressBar(null, 0, true)
       window.location.href = `http://127.0.0.1:5000/quiz_start`;
     })
@@ -311,7 +307,7 @@ function startQuizz(event) {
 }
 
 
-function setProgressBar(chatHistory,chatLength){
+function setProgressBar(chatHistory,chatLength,chatId){
   const progressDiv = document.getElementById("progressBarr");
   progressDiv.innerHTML = '';
             progressDiv.style.backgroundColor = "white"; // Change background color
@@ -324,8 +320,8 @@ function setProgressBar(chatHistory,chatLength){
                 progressBarPercentage = Math.min((10/maxChatLength)*100,100); 
               }
             }
-            if(localStorage.getItem("isQuizStarted") == true){
-              console.log(localStorage.getItem("isQuizStarted"))
+            if(localStorage.getItem("isQuizStartedChatID" + chatId) == true){
+              console.log(localStorage.getItem("isQuizStartedChatID" + chatId))
               progressBarPercentage = 0;
               console.log(progressBarPercentage)
             }

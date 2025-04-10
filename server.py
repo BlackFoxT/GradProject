@@ -276,6 +276,7 @@ def get_chat_history():
             return jsonify({
                 "contentVisible": True,
                 "chats": chat_history.chats,
+                "chatId": current_user.currentChatID,
                 "isUser": True  # Assuming `chats` is JSON serializable
             })
         else:
@@ -432,7 +433,8 @@ def prepareQuestions():
     return jsonify({
         "topic": topic,
         "response": response,
-        "isUser": True
+        "isUser": True,
+        "chatId": chat_id
     })
 
 @app.route("/quiz_start")
