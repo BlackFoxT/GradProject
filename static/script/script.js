@@ -233,6 +233,28 @@ function closeTopic() {
 }
 
 function startQuizz(event) {
+  // Disable entire page interaction
+  document.body.style.pointerEvents = "none";
+  document.body.style.opacity = "0.5";
+
+  // Create a full-screen overlay message
+  const overlay = document.createElement("div");
+  overlay.id = "waitingOverlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+  overlay.style.color = "white";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.zIndex = "9999";
+  overlay.style.fontSize = "2rem";
+  overlay.innerText = "Waiting for the quiz to start...";
+  document.body.appendChild(overlay);
+
   fetch("/prepareQuestions", {
     method: "POST",
     headers: {
@@ -242,26 +264,45 @@ function startQuizz(event) {
   })
     .then((response) => response.json())
     .then((data) => {
+      // Remove overlay and re-enable interaction
+      document.getElementById("waitingOverlay").remove();
+      document.body.style.pointerEvents = "auto";
+      document.body.style.opacity = "1";
+
       document.getElementById("askButton").style.display = "block";
       document.getElementById("quizButton").style.display = "none";
       document.getElementById("exampleFormControlTextarea1").disabled = false;
+      setProgressBar(null, true)
       window.location.href = `http://127.0.0.1:5000/quiz_start`;
     })
     .catch((error) => {
       console.error("Error:", error);
-      contentDiv.innerHTML +=
-        "<div>An error occurred. Please try again.</div>";
+
+      // Remove overlay and re-enable interaction
+      document.getElementById("waitingOverlay").remove();
+      document.body.style.pointerEvents = "auto";
+      document.body.style.opacity = "1";
+
+      const contentDiv = document.getElementById("content");
+      contentDiv.innerHTML += "<div style='color: red;'>An error occurred. Please try again.</div>";
     });
 }
 
-function setProgressBar(chatHistory){
+
+function setProgressBar(chatHistory, isQuizDone = false){
   const progressDiv = document.getElementById("progressBarr");
   progressDiv.innerHTML = '';
             progressDiv.style.backgroundColor = "white"; // Change background color
             const maxChatLength= 10; // maximum chat sayısı
-            let progressBarPercentage = Math.min((chatHistory.length%10/maxChatLength)*100,100); //burda percentage'in 100ü aşmadığından emin oluyoruz.
-            if(chatHistory.length%10 == 0){
-              progressBarPercentage = Math.min((10/maxChatLength)*100,100); 
+            let progressBarPercentage = 0; 
+            if(chatHistory){
+              progressBarPercentage = Math.min((chatHistory.length%10/maxChatLength)*100,100);//burda percentage'in 100ü aşmadığından emin oluyoruz.
+              if(chatHistory.length%10 == 0){
+                progressBarPercentage = Math.min((10/maxChatLength)*100,100); 
+              }
+            }
+            if(isQuizDone){
+              progressBarPercentage = 0;
             }
             
 
