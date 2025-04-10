@@ -410,18 +410,25 @@ def prepareQuestions():
     response = None
 
     
-    response = llm.invoke(prompt)
+    
     print(response)
     user_id = current_user.id   # Örnek kullanıcı ID'si
     chat_id = current_user.currentChatID   # Örnek chat ID'si
+    # Check if quiz already exists
+    existing_quiz = Quiz.query.filter_by(user_id=user_id, chat_id=chat_id).first()
 
-    # Yeni quiz oluştur
-    new_quiz = Quiz(user_id=user_id, chat_id=chat_id)
-    db.session.add(new_quiz)
-    db.session.commit()  # ID oluşması için önce commit et
-    questions = parse_questions(response, quiz_id=new_quiz.id)
-    db.session.add_all(questions)
-    db.session.commit()
+    if not existing_quiz:
+        response = llm.invoke(prompt)
+        # Create new quiz only if it doesn't exist
+        new_quiz = Quiz(user_id=user_id, chat_id=chat_id)
+        db.session.add(new_quiz)
+        db.session.commit()
+        print(chat_id)
+        print(new_quiz.id)
+        questions = parse_questions(response, quiz_id=new_quiz.id)
+        db.session.add_all(questions)
+        db.session.commit()
+    
     return jsonify({
         "topic": topic,
         "response": response,
@@ -492,7 +499,7 @@ def quiz():
 
     # Soruları al
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
-    #print(questions)
+    print(questions)
     # Soruları JSON formatında frontend'e göndereceksek
     quiz_questions = []
     for question in questions:

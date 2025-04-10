@@ -137,6 +137,7 @@ function submitQuiz(event) {
     localStorage.setItem("quiz_passed", scorePercentage >= passingScore);
     localStorage.setItem("user_answers", JSON.stringify(userAnswers));
     localStorage.setItem("correct_answers", JSON.stringify(correctAnswers));
-    
+    console.log("submit")
+    localStorage.setItem("isSumbitted", true);
     window.location.href = `http://127.0.0.1:5000/quiz_result`;
 }

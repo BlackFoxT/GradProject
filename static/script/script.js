@@ -23,14 +23,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Display all stored chats
         if (chatHistory && chatHistory.length > 0) {
+          let chatLength = chatHistory.length%10;
           if (data.isUser) {
-            setProgressBar(chatHistory);
-              if(chatHistory.length%10 == 0){
-                textarea.disabled = true;
-                //document.getElementById("askButton").textContent = "Start Quiz";
-                document.getElementById("askButton").style.display = "none";
-                document.getElementById("quizButton").style.display = "block";
-              }
+            if(localStorage.getItem("isQuizStarted") && chatLength == 0){
+              chatLength = 0;
+              localStorage.setItem("isQuizStarted", false);
+            }
+            setProgressBar(chatHistory, chatLength);
+            console.log(chatLength)
+            console.log(localStorage.getItem("isSumbitted"))
+            let isSumbitted = localStorage.getItem("isSumbitted")
+            console.log(isSumbitted)
+            if(chatLength == 0 && localStorage.getItem("isSumbitted") === "false"){
+              console.log(19191)
+              textarea.disabled = true;
+              //document.getElementById("askButton").textContent = "Start Quiz";
+              document.getElementById("askButton").style.display = "none";
+              document.getElementById("quizButton").style.display = "block";
+            }
+            if(localStorage.getItem("isSumbitted") == true){
+              console.log(2222)
+              document.getElementById("askButton").style.display = "block";
+              document.getElementById("quizButton").style.display = "none";
+              document.getElementById("exampleFormControlTextarea1").disabled = false;
+            }
           }
               // 0 - 10 chat progress bar güncellenecek  aria-valuenow 10 artıp rengi kırmızıdan yeşile dönsün
               // chat sayısı artıkça kırmızıdan yeşile gidecek
@@ -164,7 +180,13 @@ document.addEventListener("DOMContentLoaded", function () {
                    <div class="chat-question"><strong></strong> ${chat.question}</div>
                    <div><strong></strong> ${chat.response}</div><hr></div>`;
              });*/
-             setProgressBar(data.chats);
+             if(data.chats.length%10 > 0 && data.chats.length%10 < 10){
+              console.log(1683)
+              localStorage.setItem("isQuizStarted", false);
+              localStorage.setItem("isSumbitted", false);
+             }
+             console.log(data.chats.length%10)
+             setProgressBar(data.chats, data.chats.length%10);
           }
           scrollToBottom();
 
@@ -264,15 +286,15 @@ function startQuizz(event) {
   })
     .then((response) => response.json())
     .then((data) => {
+      console.log(data.response)
       // Remove overlay and re-enable interaction
       document.getElementById("waitingOverlay").remove();
       document.body.style.pointerEvents = "auto";
       document.body.style.opacity = "1";
 
-      document.getElementById("askButton").style.display = "block";
-      document.getElementById("quizButton").style.display = "none";
-      document.getElementById("exampleFormControlTextarea1").disabled = false;
-      setProgressBar(null, true)
+      
+      localStorage.setItem("isQuizStarted", true);
+      setProgressBar(null, 0, true)
       window.location.href = `http://127.0.0.1:5000/quiz_start`;
     })
     .catch((error) => {
@@ -289,20 +311,23 @@ function startQuizz(event) {
 }
 
 
-function setProgressBar(chatHistory, isQuizDone = false){
+function setProgressBar(chatHistory,chatLength){
   const progressDiv = document.getElementById("progressBarr");
   progressDiv.innerHTML = '';
             progressDiv.style.backgroundColor = "white"; // Change background color
             const maxChatLength= 10; // maximum chat sayısı
             let progressBarPercentage = 0; 
             if(chatHistory){
-              progressBarPercentage = Math.min((chatHistory.length%10/maxChatLength)*100,100);//burda percentage'in 100ü aşmadığından emin oluyoruz.
-              if(chatHistory.length%10 == 0){
+              progressBarPercentage = chatLength*10;//burda percentage'in 100ü aşmadığından emin oluyoruz.
+              console.log(progressBarPercentage)
+              if(chatLength != 0 && chatLength%10 == 0){
                 progressBarPercentage = Math.min((10/maxChatLength)*100,100); 
               }
             }
-            if(isQuizDone){
+            if(localStorage.getItem("isQuizStarted") == true){
+              console.log(localStorage.getItem("isQuizStarted"))
               progressBarPercentage = 0;
+              console.log(progressBarPercentage)
             }
             
 
