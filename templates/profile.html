@@ -2,7 +2,7 @@
 {% block content %}
     
     <div class="container">
-        <form method="POST" action="{{ url_for('update_information') }}">
+        <form method="POST" action="{{ url_for('profile_routes.update_information') }}">
             <div class="header">
                 <h1>My Profile</h1>
                 <button type="submit" class="save-btn" id="saveProfile">{{ _('Update Information') }}</button>

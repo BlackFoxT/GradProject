@@ -1,80 +1,44 @@
 from flask import Flask, redirect, url_for, render_template, request, flash, jsonify, g, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user, login_required
+from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from flask_babel import Babel, _,lazy_gettext as _l, gettext
-from langchain_community.llms.ollama import Ollama
-from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-# ChatHistory model (storing an array of chats for each topic)
-from sqlalchemy.ext.mutable import MutableList
+from models import db  # Import db from models/__init__.py
+from routes import auth_routes, profile_routes  # Import route files
+from routes.home_routes import home_routes  # Import the new routes
+from bluePrint.language_bp import language_bp  # Import language-related routes
+from processors.babel_processor import inject_babel, inject_locale  # Import context processors
+from utils.language_utils import get_locale, get_timezone  # Import utility functions
+from routes.chat_routes import chat_routes  # Import the chat blueprint
+from routes.quiz_routes import quiz_routes  # Import quiz routes
 
+# Initialize Flask app
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['LANGUAGES'] = ['en', 'tr']
-db = SQLAlchemy(app)
+
+# Initialize db with the app
+db.init_app(app)
+
+# Initialize LoginManager
 login_manager = LoginManager(app)
 
-# Initialize Ollama model
-llm = Ollama(model="llama3.2")
 
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.Text, nullable=False)
-    information = db.relationship('Information', backref='user', lazy=True)
-    chats = db.relationship('ChatHistory', backref='user', lazy=True)
-    # Add currentChatID to store the ID of the current selected chat
-    currentChatID = db.Column(db.Integer, nullable=True)
-
-class Information(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(50))
-    surname = db.Column(db.String(50))
-    telephone_number = db.Column(db.String(15))
-
-class ChatHistory(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    topic = db.Column(db.String(100), nullable=False)
-    chats = db.Column(MutableList.as_mutable(db.JSON), nullable=True)  # Make the list mutable
-    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
-
-class Quiz(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    chat_id = db.Column(db.Integer, db.ForeignKey('chat_history.id'), nullable=False)  # Quiz'in ait olduğu chat
-    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
-    questions = db.relationship('QuizQuestion', backref='quiz', lazy=True, cascade="all, delete-orphan")
-
-class QuizQuestion(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
-    text = db.Column(db.Text, nullable=False)
-    options = db.Column(MutableList.as_mutable(db.JSON), nullable=False)
-    correct_answer = db.Column(db.String(255), nullable=False)
+# Import models after db initialization
+from models.user import User  
+from models.chat_history import ChatHistory
+from models.quiz import Quiz
+from models.information import Information 
+from models.quiz_question import QuizQuestion
 
 selected_chat = None
 
-def get_locale():
-    # Check if the language query parameter is set and valid
-    if 'lang' in request.args:
-        lang = request.args.get('lang')
-        if lang in ['en', 'tr']:
-            session['lang'] = lang
-            return session['lang']
-    # If not set via query, check if we have it stored in the session
-    elif 'lang' in session:
-        return session.get('lang')
-    # Otherwise, use the browser's preferred language
-    return request.accept_languages.best_match(['en', 'tr'])
-
-def get_timezone():
-    user = getattr(g, 'user', None)
-    if user is not None:
-        return user.timezone
+# Example usage in a route
+@app.before_request
+def before_request():
+    g.locale = get_locale()  # Store locale in the global g object
+    g.timezone = get_timezone()  # Store timezone in the global g object
 
 babel = Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
 
@@ -82,477 +46,28 @@ babel = Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/change_language/<lang_code>')
-def change_language(lang_code):
-    session['lang'] = lang_code
-    return redirect(request.referrer or url_for('index'))
 
-@app.route("/")
-def home_page():
-    user_chats = None
-    selected_chat = None
+# Register the blueprint
+app.register_blueprint(language_bp)
 
-    if current_user.is_authenticated:
-        user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
+# Register context processors
+app.context_processor(inject_babel)
+app.context_processor(inject_locale)
 
-    chat_id = request.args.get("chat_id", type=int)
 
-    # Fetch the selected chat content, if chat_id is provided
-    if chat_id:
-        selected_chat = ChatHistory.query.filter_by(id=chat_id).first()
-        
-        # If no chat is found, flash an error message and redirect to home page
-        if selected_chat is None:
-            flash('Selected chat not found', 'error')
-            return redirect(url_for('home_page'))  # Redirect to the homepage if no chat found
-        else:
-            # If a valid chat is found, update currentChatID and save to the database
-            current_user.currentChatID = chat_id
-            db.session.commit()
-    else:
-        # If no chat is selected, set currentChatID to None
-        current_user.currentChatID = None
-        db.session.commit()
+login_manager.login_view = "auth_routes.login_page"  # Redirect to the login page if not authenticated
+# Register home_routes blueprint
+app.register_blueprint(home_routes)
 
-    # Render the home page with the user's chats and the selected chat (if any)
-    return render_template(
-        "index.html",
-        user_chats=user_chats,
-        selected_chat=selected_chat
-    )
 
-@app.route("/chatl")
-@login_required
-def chatl():
-    # Get the 'id' query parameter from the URL
-    chat_id = request.args.get('id', type=int)
-    if chat_id:
-        # Fetch the chat history and ensure it belongs to the current user
-        chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=chat_id).first()
-        if chat_history:
-            current_user.currentChatID = chat_id  # Store the current chat ID
-            # Save the change to the database
-            db.session.commit()
+# Register routes
+app.register_blueprint(auth_routes.auth_bp)  # Register the authentication blueprint
+app.register_blueprint(profile_routes.profile_bp)  # Register the profile blueprint
 
-    # Redirect to home_page with the chat_id as a query parameter
-    return redirect(url_for("home_page", chat_id=chat_id))
+# Register the blueprint
+app.register_blueprint(chat_routes)
 
-@app.route('/setlang')
-def setlang():
-    lang = request.args.get('lang', 'en')
-    session['lang'] = lang
-    return redirect(request.referrer)
-
-@app.context_processor
-def inject_babel():
-    return dict(_=gettext)
-
-@app.context_processor
-def inject_locale():
-    # This makes the function available directly, allowing you to call it in the template
-    return {'get_locale': get_locale}
-
-
-@app.route('/js_translations')
-def js_translations():
-    translations = {
-        'logoutText': gettext('Logout'),
-        'accountText': gettext('Account'),
-        'successTitle': gettext('Success!'),
-        'successText': gettext('You are registered.'),
-        'validEmail': gettext('Please enter a valid email address.')
-    }
-    return jsonify(translations)
-
-@app.route("/login", methods=["GET", "POST"])
-def login_page():
-
-    if current_user.is_authenticated:
-        return redirect(url_for('home_page'))
-
-    if request.method == "POST":
-        email = request.form['email']
-        password = request.form['password']
-        user = User.query.filter_by(email=email).first()
-
-        if user and check_password_hash(user.password, password):
-            login_user(user)
-            return redirect(url_for('home_page'))
-        else:
-            flash("Email or password is incorrect", "error")
-            return redirect(url_for('login_page'))
-
-    return render_template("login.html")
-
-@app.route("/signup", methods=["GET", "POST"])
-def signup_page():
-    if current_user.is_authenticated:
-        return redirect(url_for('home_page'))
-
-    if request.method == "POST":
-        email = request.form['email']
-        password = request.form['password']
-
-        # Check if email already exists
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            flash("This email is already registered", "error")
-            return redirect(url_for('signup_page'))
-
-        # Hash the password before saving to the database
-        hashed_password = generate_password_hash(password)
-
-        # Create a new user with hashed password
-        new_user = User(email=email, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash("Account created successfully! Please log in.", "success")
-        return redirect(url_for('login_page'))
-
-    return render_template("signup.html")
-
-@app.route("/logout")
-def logout():
-    current_user.currentChatID = None
-    # Save the change to the database
-    db.session.commit()
-    logout_user()
-    return redirect(url_for('home_page'))
-
-@app.route("/profile")
-def profile_page():
-    if current_user.is_authenticated:
-        user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
-        current_user.currentChatID = None
-        # Save the change to the database
-        db.session.commit()
-        user_information = Information.query.filter_by(user_id=current_user.id).first()
-        return render_template("profile.html", info=user_information, user_chats=user_chats)
-    else:
-        return redirect(url_for('login_page'))
-
-@app.route('/update_information', methods=['POST'])
-def update_information():
-    if current_user.is_authenticated:
-        name = request.form.get('name')
-        surname = request.form.get('surname')
-        telephone_number = request.form.get('telephone_number')
-
-        user_information = Information.query.filter_by(user_id=current_user.id).first()
-        if user_information:
-            user_information.name = name
-            user_information.surname = surname
-            user_information.telephone_number = telephone_number
-        else:
-            user_information = Information(
-                user_id=current_user.id,
-                name=name,
-                surname=surname,
-                telephone_number=telephone_number
-            )
-            db.session.add(user_information)
-
-        db.session.commit()
-        flash("Information updated successfully!", "success")
-        return redirect(url_for('home_page'))
-    else:
-        flash("You must be logged in to update your information.", "error")
-        return redirect(url_for('login_page'))
-
-@app.route("/get-chat-history", methods=["GET"])
-def get_chat_history():
-    topic = request.args.get("topic", "General")  # Default topic or fetch from user preference
-    if current_user.is_authenticated:
-        if current_user.currentChatID is None:
-            return jsonify({"contentVisible": False, "chats": [],"isUser": True})
-        # For authenticated users, fetch chat history from the database
-
-        chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
-        print(chat_history)
-
-        if chat_history:
-           # print(chat_history.chats)
-            return jsonify({
-                "contentVisible": True,
-                "chats": chat_history.chats,
-                "chatId": current_user.currentChatID,
-                "isUser": True  # Assuming `chats` is JSON serializable
-            })
-        else:
-            return jsonify({"contentVisible": False, "chats": [],"isUser": True})
-    else:
-        # For non-authenticated users, use localStorage or session to fetch chat history
-        chat_history = session.get("chat_history", {})
-
-        return jsonify({
-            "contentVisible": bool(chat_history),  # Check if there are any chats for this topic
-            "chats": chat_history,
-            "isUser": False
-        })
-
-@app.route("/ask", methods=["POST"])
-def ask():
-    user_message = request.json.get('message')
-    #print(user_message)
-    topic = request.json.get('chatTopic')
-    if topic is None:
-        topic = request.json.get('topic', 'General')
-    #print(topic)
-    if not user_message:
-        return jsonify({"error": "Message is required"}), 400
-
-    response = None
-
-    if user_message.startswith('!'):
-        command = user_message[1:].lower()
-
-        if command in ['userinfo', 'kullanıcıbilgisi']:
-            if current_user.is_authenticated:
-                response = "Redirecting to your profile page..."
-            else:
-                response = "You need to be logged in to view your profile."
-
-        elif command in ['quiz', 'sınav']:
-            if current_user.is_authenticated:
-                response = "Redirecting to the quiz page..."
-            else:
-                response = "You need to be logged in to access the quiz page."
-
-        elif command == 'help':
-            response = (
-                "Here are the available commands:\n"
-                "!time / !saat - Get the current server time\n"
-                "!date / !tarih - Show today's date\n"
-                "!userinfo / !kullanıcıbilgisi - Display your account information\n"
-                "!quiz / !sınav - Directly open quiz page\n"
-                "!clearhistory / !temizle - Clear your chat history\n"
-                "!about / !hakkında - Learn more about me\n"
-            )
-        elif command == 'yardım':    
-            response = (
-                "Mevcut komutlar şunlardır:\n"
-                "!time / !saat - Sunucunun mevcut saatini gösterir\n"
-                "!date / !tarih - Bugünün tarihini gösterir\n"
-                "!userinfo / !kullanıcıbilgisi - Kullanıcı bilgilerinizi gösterir\n"
-                "!quiz / !sınav - Sınav sayfasına yönlendirir\n"
-                "!clearhistory / !temizle - Sohbet geçmişinizi siler\n"
-                "!about / !hakkında - Benim hakkımda bilgi verir\n"
-            )
-        elif command == 'time':
-            response = f"The current server time is: {datetime.now().strftime('%H:%M:%S')}"
-        elif command == 'saat':
-            response = f"Sunucu saati: {datetime.now().strftime('%H:%M:%S')}"
-        elif command == 'date':
-            response = f"Today's date is: {datetime.now().strftime('%Y-%m-%d')}"
-        elif command == 'tarih':
-            response = f"Bugünün tarihi: {datetime.now().strftime('%Y-%m-%d')}"
-        elif command == 'about':
-            response = (
-                "I am an educational bot designed to assist you with various topics.\n"
-                "My purpose is to provide helpful information, guide you through lessons, and answer your questions on a variety of subjects.\n"
-            )
-        elif command == 'hakkında':    
-            response = (
-                "Ben bir eğitim botuyum, çeşitli konularda size yardımcı olmak için tasarlandım.\n"
-                "Amacım, size faydalı bilgiler sunmak, derslerde rehberlik yapmak ve birçok konuda sorularınızı cevaplamak.\n"
-            )
-        else:
-            response = "Command cannot be found! Type !help or !yardım to see the available commands."
-    else:
-        response = llm.invoke(user_message)
-    chat_entry = {
-        "question": user_message,
-        "response": response,
-        "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    }
-
-    if current_user.is_authenticated:
-
-        if current_user.currentChatID is None:
-            chat_history = ChatHistory(user_id=current_user.id, topic=topic, chats=[])
-        else:
-            chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
-
-        chat_history.chats.append(chat_entry)
-        db.session.add(chat_history)
-        db.session.commit()
-
-        return jsonify({
-                "topic": topic,
-                "chats": chat_history.chats,
-                "chatId": chat_history.id,
-                "isUser": True  # Assuming `chats` is JSON serializable
-            })
-
-    return jsonify({
-        "topic": topic,
-        "chat_entry": chat_entry,
-        "isUser": False
-    })
-
-@app.route("/prepareQuestions", methods=["POST"])
-def prepareQuestions():
-    chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
-    topic = chat_history.topic
-    if topic is None:
-        topic = "General"
-    print(topic)
-    prompt = "Generate only " + str(10) + " multiple-choice questions about " + topic + ". Provide the correct answer for each question. Use the following format:\n\n" + \
-            "Question: [Write the question here]\n" + \
-            "Choices:\n" + \
-            "A) [Option A]\n" + \
-            "B) [Option B]\n" + \
-            "C) [Option C]\n" + \
-            "D) [Option D]\n" + \
-            "Correct Answer: [Write the correct option letter, e.g., A), B), C), or D)]\n\n" + \
-            "Ensure the questions strictly follow this format and are consistent."
-
-    response = None
-
-    
-    
-    print(response)
-    user_id = current_user.id   # Örnek kullanıcı ID'si
-    chat_id = current_user.currentChatID   # Örnek chat ID'si
-    # Check if quiz already exists
-    existing_quiz = Quiz.query.filter_by(user_id=user_id, chat_id=chat_id).first()
-
-    if not existing_quiz:
-        response = llm.invoke(prompt)
-        # Create new quiz only if it doesn't exist
-        new_quiz = Quiz(user_id=user_id, chat_id=chat_id)
-        db.session.add(new_quiz)
-        db.session.commit()
-        print(chat_id)
-        print(new_quiz.id)
-        questions = parse_questions(response, quiz_id=new_quiz.id)
-        db.session.add_all(questions)
-        db.session.commit()
-    
-    return jsonify({
-        "topic": topic,
-        "response": response,
-        "isUser": True,
-        "chatId": chat_id
-    })
-
-@app.route("/quiz_start")
-def quiz_start():
-    chat_id = current_user.currentChatID
-    print(chat_id)
-    if chat_id is None:
-        flash("No chat selected", "error")
-        return redirect(url_for('home_page'))
-
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
-    if not quiz:
-        flash("Quiz not found", "error")
-        return redirect(url_for('home_page'))
-
-    return render_template("quiz_start.html", quiz=quiz)
-
-@app.route("/get-quiz-questions", methods=["GET"])
-def get_quiz_questions():
-    
-    if current_user.is_authenticated:
-        chat_id = current_user.currentChatID
-        if chat_id is None:
-            flash("No chat selected", "error")
-            return redirect(url_for('home_page'))
-
-        quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
-        if not quiz:
-            flash("Quiz not found", "error")
-            return redirect(url_for('home_page'))
-
-        # Soruları al
-        questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
-        
-        # Soruları JSON formatında frontend'e göndereceksek
-        quiz_questions = []
-        for question in questions:
-            quiz_questions.append({
-                'question': question.text,
-                'options': question.options,
-                'correct_answer': question.correct_answer
-            })
-        return jsonify({
-            "questions": quiz_questions
-        })
-    else:
-        return jsonify({
-            "questions": None
-        })
-
-@app.route("/quiz")
-def quiz():
-    chat_id = current_user.currentChatID
-    print(chat_id)
-    if chat_id is None:
-        flash("No chat selected", "error")
-        return redirect(url_for('home_page'))
-
-    print(current_user.id)
-    # Quiz'i ve soruları veritabanından çek
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
-    if not quiz:
-        flash("Quiz not found", "error")
-        return redirect(url_for('home_page'))
-
-    print(quiz.id)
-    # Soruları al
-    questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
-    print(questions)
-    # Soruları JSON formatında frontend'e göndereceksek
-    quiz_questions = []
-    for question in questions:
-        quiz_questions.append({
-            'question': question.text,
-            'options': question.options
-        })
-    print(quiz_questions)
-    return render_template("quiz.html", quiz=quiz, questions=quiz_questions)
-
-@app.route("/quiz_result")
-def quiz_result():
-    return render_template("quiz_result.html")
-
-
-import re
-
-def parse_questions(raw_text, quiz_id):
-    pattern = re.compile(
-        r'\d+\.\s+(.+?)\nChoices:\nA\)\s(.+?)\nB\)\s(.+?)\nC\)\s(.+?)\nD\)\s(.+?)\nCorrect Answer:\s([A-D])\)',
-        re.DOTALL
-    )
-
-    answer_map = {
-        'A': 0,
-        'B': 1,
-        'C': 2,
-        'D': 3
-    }
-
-    questions = []
-
-    matches = pattern.findall(raw_text)
-    for match in matches:
-        question_text = match[0].strip()
-        options = [match[1].strip(), match[2].strip(), match[3].strip(), match[4].strip()]
-        correct_answer_index = answer_map[match[5]]
-        correct_answer = options[correct_answer_index]
-
-        questions.append(
-            QuizQuestion(
-                quiz_id=quiz_id,
-                text=question_text,
-                options=options,
-                correct_answer=correct_answer
-            )
-        )
-
-    return questions
+app.register_blueprint(quiz_routes)
 
 
 if __name__ == "__main__":

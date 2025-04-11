@@ -21,7 +21,7 @@
             </div>
             <div class="d-flex justify-content-end w-25">
                 <button class="quiz-buttons border border-0 rounded-3 w-50" id="nextButton" onclick="nextQuestion(event);">Next</button>
-                <a class="d-block text-decoration-none w-50" href="{{ url_for('quiz_result') }}">
+                <a class="d-block text-decoration-none w-50" href="{{ url_for('quiz_routes.quiz_result') }}">
                     <button class="quiz-buttons border border-0 rounded-3 w-100" id="submit-button" style="display: none;" onclick="submitQuiz(event);">Submit</button>
                 </a>
             </div>
