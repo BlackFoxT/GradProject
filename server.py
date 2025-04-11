@@ -493,12 +493,14 @@ def quiz():
         flash("No chat selected", "error")
         return redirect(url_for('home_page'))
 
+    print(current_user.id)
     # Quiz'i ve soruları veritabanından çek
     quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_page'))
 
+    print(quiz.id)
     # Soruları al
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
     print(questions)

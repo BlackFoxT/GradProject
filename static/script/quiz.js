@@ -57,7 +57,7 @@ fetch("/get-quiz-questions", {
     });
 
 const timer = document.getElementById("time-left");
-let timeLeft = 60;
+let timeLeft = 600;
 
 timer.textContent = `${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? '0' : ''}${timeLeft % 60}`;
 
