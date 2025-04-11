@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div id="failure-card" style="display:none;">
+    <div id="failure-card">
         <div class="d-flex flex-column align-items-center justify-content-center">
             <div>
               <img id="b-picture" src="/static/images/Red-Cross-Mark-Download-PNG.png" alt="check-icon" />
@@ -73,76 +73,5 @@
 
   </div>
 </div>
-<!-- 
-<script>
-    // Sonuçları localStorage'dan al
-    const score = localStorage.getItem("quiz_score");
-    const point = localStorage.getItem("quiz_point");
-    const passed = localStorage.getItem("quiz_passed") === 'true';
 
-    // Sonuçları sayfada güncelle
-    document.getElementById("score-table").textContent = `${score}%`;
-    document.getElementById("point-table").textContent = `${point}`;
-
-    //passing point ve score dynamic şekilde değişiyor
-    const passingScore=70;
-    const passingPoint=7;
-
-    document.getElementById("passing-score").textContent = `PASSING SCORE: ${passingScore}%`;
-    document.getElementById("passing-point").textContent = `PASSING POINT: ${passingPoint}`;
-
-    if (passed) {
-        document.getElementById("succes-card").style.display = "block";
-        document.getElementById("failure-card").style.display = "none";
-    } else {
-        document.getElementById("succes-card").style.display = "none";
-        document.getElementById("failure-card").style.display = "block";
-    }
-
-
-    const userAnswers = JSON.parse(localStorage.getItem("user_answers") || "[]");
-    const correctAnswers = JSON.parse(localStorage.getItem("correct_answers") || "[]");
-    console.log(userAnswers)
-
-
-    const tableBody = document.getElementById("answer-table-body");
-
-    for (let i = 0; i < userAnswers.length; i++) {
-        const tr = document.createElement("tr");
-
-        const indexTd = document.createElement("td");
-        indexTd.textContent = i + 1;
-
-        const userTd = document.createElement("td");
-        userTd.textContent = userAnswers[i];
-
-        const correctTd = document.createElement("td");
-        correctTd.textContent = correctAnswers[i];
-
-        const resultTd = document.createElement("td");
-        resultTd.innerHTML = userAnswers[i] === correctAnswers[i]
-            ? '<span class="text-success fw-bold">✔</span>'
-            : '<span class="text-danger fw-bold">✘</span>';
-
-        tr.appendChild(indexTd);
-        tr.appendChild(userTd);
-        tr.appendChild(correctTd);
-        tr.appendChild(resultTd);
-
-        tableBody.appendChild(tr);
-    }
-    //overwrite olmaması için localStorage'dan verilerin iş bittikten sonra silinmesi lazım
-    //alternatif bir yol bulunabilir.
-    window.onload = function() {
-        setTimeout(() => {
-            localStorage.removeItem("quiz_score");
-            localStorage.removeItem("quiz_point");
-            localStorage.removeItem("quiz_passed");
-            localStorage.removeItem("user_answers");
-            localStorage.removeItem("correct_answers");
-        }, 1000);
-    };
-
-</script>
--->
 {% endblock content %}

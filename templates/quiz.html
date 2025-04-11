@@ -17,12 +17,12 @@
 
         <div id="navigation-buttons" class="d-flex align-items-center justify-content-between">
             <div class="w-25">
-                <button class="quiz-buttons border border-0 rounded-3 w-50 px-2" id="back-button" style="display: none;" onclick="BackQuestion(event);">Back</button>
+                <button class="quiz-buttons border border-0 rounded-3 w-50 px-2" id="back-button" onclick="BackQuestion(event);">Back</button>
             </div>
             <div class="d-flex justify-content-end w-25">
                 <button class="quiz-buttons border border-0 rounded-3 w-50" id="nextButton" onclick="nextQuestion(event);">Next</button>
                 <a class="d-block text-decoration-none w-50" href="{{ url_for('quiz_result') }}">
-                    <button class="quiz-buttons border border-0 rounded-3 w-100" id="submit-button" style="display: none;" onclick="submitQuiz(event);">Submit</button>
+                    <button class="quiz-buttons border border-0 rounded-3 w-100" id="submit-button" onclick="submitQuiz(event);">Submit</button>
                 </a>
             </div>
         </div>

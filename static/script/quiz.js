@@ -48,7 +48,7 @@ fetch("/get-quiz-questions", {
     .then((data) => {
         questions = data.questions;
         correctAnswers = questions.map(q => q.correct_answer);
-        userAnswers = new Array(questions.length).fill(" "); // default olarak hepsini "X" şeklinde ekliyoruz
+        userAnswers = new Array(questions.length).fill(" "); // default olarak hepsini " " şeklinde ekliyoruz
         renderQuestion(currentQuestionIndex);
     })
     .catch((error) => {

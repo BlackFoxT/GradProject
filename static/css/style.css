@@ -17,6 +17,20 @@
   top: 0;
 }
 
+.row {
+  min-height: 700px; 
+  margin-bottom: 40px;
+}
+
+.mainpart {
+  min-height: 800px;
+}
+
+main {
+  min-height: 700px;
+  margin-top: 200px;
+}
+
 #userDropdown {
   width: 40px;
   height: 40px;
@@ -34,7 +48,10 @@
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   transition: left 0.3s ease;
   z-index: 1040;
-  padding-bottom: 500px;
+  padding-bottom: 50px;
+  margin-top: 60px;
+  padding-top: 10px;
+  margin-bottom: 50px;
 }
 
 #sidebar.show {
@@ -94,6 +111,15 @@
   overflow-y: auto;
   margin-bottom: 40px;
   margin-top: 10px;
+  scroll-behavior: smooth;
+}
+
+#hiddenContent-else {
+  display: none;
+  height: 85%;
+  overflow-y: auto;
+  margin-bottom: 40px;
+  margin-top: 80px;
   scroll-behavior: smooth;
 }
 
@@ -261,6 +287,7 @@ body.modal-open {
 #back-button {
   background-color: #ffffff;
   color: black;
+  display: none;
 }
 
 #back-button:hover {
@@ -281,6 +308,7 @@ body.modal-open {
 #submit-button {
   background-color: #4CAF50;
   color: white;
+  display: none;
 }
 
 #submit-button:hover {
@@ -364,4 +392,8 @@ img #b-picture {
   height: 70px;  
   background-color: rgb(49, 49, 49);
   z-index: 9999;
+}
+
+#quizButton {
+  display: none; 
 }

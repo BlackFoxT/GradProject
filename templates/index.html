@@ -16,7 +16,7 @@
     <div class="container-fluid" id="progressBarr"></div>
     <div class="container-fluid" id="hiddenContent"></div>
     {% else %}
-    <div class="container-fluid" id="hiddenContent" style="margin-top: 80px;"></div>
+    <div class="container-fluid" id="hiddenContent-else"></div>
     {% endif %}
     
     <div class="container-fluid" id="content">
@@ -33,7 +33,7 @@
                     <button type="submit" class="btn btn-secondary" id="askButton">
                         {{ _('Ask') }}
                     </button>
-                    <button class="btn btn-secondary" id="quizButton" style="display: none;" onclick="startQuizz(event);">start Quiz
+                    <button class="btn btn-secondary" id="quizButton" onclick="startQuizz(event);">start Quiz
                     </button>
                 </div>
             </form>

@@ -83,7 +83,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const textarea = document.getElementById("exampleFormControlTextarea1");
   const progressDiv = document.getElementById("progressBarr");
   
-
   // Event listener for form submission (sending messages)
   const messageForm = document.getElementById("messageForm");
   if (messageForm) {
@@ -308,7 +307,6 @@ function startQuizz(event) {
     });
 }
 
-
 function setProgressBar(chatHistory,chatLength,chatId){
   const progressDiv = document.getElementById("progressBarr");
   progressDiv.innerHTML = '';
@@ -328,7 +326,6 @@ function setProgressBar(chatHistory,chatLength,chatId){
               console.log(progressBarPercentage)
             }
             
-
             function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
               let hue = 120-(percentage *1.2);
               return `hsl(${hue},100%,50%)`;
@@ -337,13 +334,10 @@ function setProgressBar(chatHistory,chatLength,chatId){
             let progressBarColor = getProgressBarColor(progressBarPercentage);
             progressDiv.innerHTML += `
               <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
- <div id="progressBar" 
-                class="progress-bar" 
-                role="progressbar" 
+                <div id="progressBar" class="progress-bar" role="progressbar" 
                 style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
                 aria-valuenow="${progressBarPercentage}" 
-                aria-valuemin="0" 
-                aria-valuemax="100" 
-                display="block">                </div>
+                aria-valuemin="0" aria-valuemax="100" display="block">
+                </div>
               </div>`;
 }
