@@ -19,7 +19,7 @@ function renderQuestion(index) {
         label.textContent = option;
 
         input.addEventListener("change", () => {
-            userAnswers[index] = input.value; // default X yerine seçim kaydediliyor
+            userAnswers[index] = input.value;
         });
 
         // Seçilen cevabı göster
@@ -48,7 +48,7 @@ fetch("/get-quiz-questions", {
     .then((data) => {
         questions = data.questions;
         correctAnswers = questions.map(q => q.correct_answer);
-        userAnswers = new Array(questions.length).fill("X"); // boşları "X" olarak işaretliyoruz
+        userAnswers = new Array(questions.length).fill(" "); // default olarak hepsini "X" şeklinde ekliyoruz
         renderQuestion(currentQuestionIndex);
     })
     .catch((error) => {

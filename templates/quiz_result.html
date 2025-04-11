@@ -1,28 +1,25 @@
-{% extends "layouts/empty_layout.html" %}
-{% block title %}Quiz Result{% endblock title %}
+{% extends "layouts/empty_layout.html" %} {% block title %}Quiz Result{% endblock title %}
 {% block content %}
 
 <div class="d-flex justify-content-center align-items-center px-5">
-  <div
-    class="quiz-result-card d-flex flex-column justify-content-center align-items-center w-75 p-5 border border-light shadow-lg rounded-5"
-  >
+  <div class="quiz-result-card d-flex flex-column justify-content-center align-items-center w-75 p-5 border border-light shadow-lg rounded-5">
     <h1>Quiz Results</h1>
     <br />
 
     <div id="succes-card">
-    <div class="d-flex flex-column align-items-center justify-content-center">
-        <div>
-        <img id="b-picture" src="/static/images/Check-PNG-File.png" alt="check-icon" />
+      <div class="d-flex flex-column align-items-center justify-content-center">
+          <div>
+            <img id="b-picture" src="/static/images/Check-PNG-File.png" alt="check-icon" />
+          </div>
+        <p class="text-success fw-bold" id="success-message">Nice job, you passed!</p>
       </div>
-      <p class="text-success fw-bold" id="success-message">Nice job, you passed!</p>
-    </div>
     </div>
 
     <div id="failure-card" style="display:none;">
         <div class="d-flex flex-column align-items-center justify-content-center">
             <div>
-            <img id="b-picture" src="/static/images/Red-Cross-Mark-Download-PNG.png" alt="check-icon" />
-          </div>
+              <img id="b-picture" src="/static/images/Red-Cross-Mark-Download-PNG.png" alt="check-icon" />
+            </div>
           <p class="text-danger fw-bold" id="failure-message">Sorry, you failed!</p>
         </div>
     </div>
@@ -40,9 +37,7 @@
       </div>
 
       <div class="col-md-6">
-        <div
-          class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border"
-        >
+        <div class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border">
           <h5>YOUR POINTS</h5>
           <h1 id="point-table"></h1>
           <div>
@@ -78,7 +73,7 @@
 
   </div>
 </div>
-
+<!-- 
 <script>
     // Sonuçları localStorage'dan al
     const score = localStorage.getItem("quiz_score");
@@ -149,5 +144,5 @@
     };
 
 </script>
-
+-->
 {% endblock content %}

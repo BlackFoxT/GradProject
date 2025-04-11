@@ -16,12 +16,10 @@ endblock title %} {% block content %}
 
         <form method="POST" action="{{ url_for('signup_page') }}">
             <div id="signup-mail-input" class="mb-3">
-                <input type="email" class="form-control" id="signup-email" name="email"
-                    placeholder="{{ _('Email Address') }}" required />
+                <input type="email" class="form-control" id="signup-email" name="email" placeholder="{{ _('Email Address') }}" required />
             </div>
             <div id="signup-password-input" class="mb-3">
-                <input type="password" class="form-control" id="signup-password" name="password"
-                    placeholder="{{ _('Password') }}" required />
+                <input type="password" class="form-control" id="signup-password" name="password" placeholder="{{ _('Password') }}" required />
             </div>
             <button type="button" id="signup-next-button" class="btn btn-success w-100">
                 {{ _('Continue') }}
@@ -52,13 +50,11 @@ endblock title %} {% block content %}
                 <span class="authLogoText">{{ _('Continue with Google') }}</span>
             </button>
             <button class="btn btn-outline-secondary d-grid align-items-center authLogoButton">
-                <img src="https://auth.openai.com/assets/microsoft-logo-BUXxQnXH.svg" alt="Microsoft"
-                    class="authLogoImage" />
+                <img src="https://auth.openai.com/assets/microsoft-logo-BUXxQnXH.svg" alt="Microsoft" class="authLogoImage" />
                 <span class="authLogoText">{{ _('Continue with Microsoft') }}</span>
             </button>
             <button class="btn btn-outline-secondary d-grid align-items-center authLogoButton">
-                <img src="https://auth.openai.com/assets/apple-logo-vertical-full-bleed-tAoxPOUx.svg" alt="Apple"
-                    class="authLogoImage" />
+                <img src="https://auth.openai.com/assets/apple-logo-vertical-full-bleed-tAoxPOUx.svg" alt="Apple" class="authLogoImage" />
                 <span class="authLogoText">{{ _('Continue with Apple') }}</span>
             </button>
         </div>

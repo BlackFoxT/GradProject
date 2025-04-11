@@ -1,5 +1,5 @@
-{% extends "layouts/profile_layout.html" %} {% block title %} Profile Page {% endblock
-    title %} {% block content %}
+{% extends "layouts/profile_layout.html" %} {% block title %} Profile Page {% endblock title %}
+{% block content %}
     
     <div class="container">
         <form method="POST" action="{{ url_for('update_information') }}">
@@ -10,17 +10,15 @@
     
             <div class="profile-section">
                 <div class="profile-image">
-                    <img src="/api/placeholder/150/150" alt="Profile Picture">
+                    <img src="" alt="Profile Picture">
                     <button class="change-photo-btn">Change Photo</button>
                     <div class="form-group">
                         <label for="name" class="form-label"><strong>{{ _('Name') }}</strong></label>
-                        <input type="text" class="form-control" id="name" name="name"
-                            value="{{ info.name if info else '' }}" />
+                        <input type="text" class="form-control" id="name" name="name" value="{{ info.name if info else '' }}" />
                     </div>
                     <div class="form-group">
                         <label for="surname" class="form-label"><strong>{{ _('Surname') }}</strong></label>
-                        <input type="text" class="form-control" id="surname" name="surname"
-                            value="{{ info.surname if info else '' }}" />
+                        <input type="text" class="form-control" id="surname" name="surname" value="{{ info.surname if info else '' }}" />
                     </div>
                     <div class="form-group password-group">
                         <label>Current Password</label>
@@ -53,8 +51,7 @@
     
                         <div class="form-group">
                             <label for="telephone_number" class="form-label"><strong>{{ _('Phone Number') }}</strong></label>
-                            <input type="text" class="form-control" id="telephone_number" name="telephone_number"
-                                value="{{ info.telephone_number if info else '' }}" />
+                            <input type="text" class="form-control" id="telephone_number" name="telephone_number" value="{{ info.telephone_number if info else '' }}" />
                         </div>
     
                         <div class="form-group">
@@ -76,12 +73,12 @@
                         <h3>Payment Methods</h3>
                         <div class="card-list">
                             <div class="card-item">
-                                <img src="/api/placeholder/80/30" alt="Visa">
+                                <img src="" alt="Visa">
                                 <p>**** **** **** 4242</p>
                                 <span class="expiry">Exp: 12/25</span>
                             </div>
                             <div class="card-item">
-                                <img src="/api/placeholder/80/30" alt="Mastercard">
+                                <img src="" alt="Mastercard">
                                 <p>**** **** **** 5555</p>
                                 <span class="expiry">Exp: 09/24</span>
                             </div>
@@ -92,4 +89,5 @@
             </div>
         </form>
     </div>
+    
     {% endblock content %}

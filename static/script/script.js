@@ -13,8 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!data.isUser) {
         chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
       } else {
-        chatHistory = data.chats;
-       
+        chatHistory = data.chats;    
       }
 
       // Show content if chat history or content is visible
@@ -68,15 +67,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const toggleSidebarButton = document.getElementById("toggle-sidebar");
   const sidebar = document.getElementById("sidebar");
   // Ensure the sidebar is shown by default
-  if(sidebar){
+  if(sidebar) {
     sidebar.classList.add("show");
     if (toggleSidebarButton && sidebar) {
       toggleSidebarButton.addEventListener("click", function () {
         sidebar.classList.toggle("show");
       });
     }
-  }
-  
+  } 
 
   const contentDiv = document.getElementById("hiddenContent");
   
@@ -88,114 +86,116 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event listener for form submission (sending messages)
   const messageForm = document.getElementById("messageForm");
-  messageForm.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the default form submission
-    const message = textarea.value.trim();
-    if (!message) {
-      textarea.focus();
-      return;
-    }
-    textarea.value = "";
+  if (messageForm) {
+    messageForm.addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent the default form submission
+      const message = textarea.value.trim();
+      if (!message) {
+        textarea.focus();
+        return;
+      }
+      textarea.value = "";
 
-    // Display the user's message immediately
-    contentDiv.innerHTML += `
-      <div class="chat-item">
-        <div class="chat-question"><strong></strong> ${message}</div></div>`;
-    contentDiv.style.display = "block";
-    header.style.display = "none";
-    chatDiv.style.marginTop = "10px";
+      // Display the user's message immediately
+      contentDiv.innerHTML += `
+        <div class="chat-item">
+          <div class="chat-question"><strong></strong> ${message}</div></div>`;
+      contentDiv.style.display = "block";
+      header.style.display = "none";
+      chatDiv.style.marginTop = "10px";
 
-    // Send the message to the Flask backend
-    fetch("/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: message, chatTopic: localStorage.getItem("chatTopic")}),
-    })
-      .then((response) => response.json())
-      .then((data) => {
+      // Send the message to the Flask backend
+      fetch("/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: message, chatTopic: localStorage.getItem("chatTopic")}),
+      })
+        .then((response) => response.json())
+        .then((data) => {
 
-        if (data.chats || data.chat_entry) {
-          if (!data.isUser) {
-            // For unauthenticated users, store chat in localStorage temporarily
-            let chatHistory =
-              JSON.parse(localStorage.getItem("chatHistory")) || [];
-            chatHistory.push(data.chat_entry);
-            localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-            //console.log("Stored chat in localStorage:", data.chat_entry);
-            contentDiv.innerHTML = ``;
-            // Append new chat after displaying existing history
-            chatHistory.forEach((chat) => {
-              contentDiv.innerHTML += `
-                <div class="chat-item">
-                  <div class="chat-question"><strong></strong> ${chat.question}</div>
-                  <div><strong></strong> ${chat.response}</div><hr></div>`;
-            });
-          } else {
-            localStorage.removeItem("chatTopic");
-            //console.log( data.chats.length)
-            if(data.chats.length%10 == 0){
-              textarea.disabled = true;
-              //document.getElementById("askButton").textContent = "Start Quiz";
-              document.getElementById("askButton").style.display = "none";
-              document.getElementById("quizButton").style.display = "block";
-            }
-            if (data.chats.length === 1) {
-              window.location.href = `http://127.0.0.1:5000/?chat_id=${data.chatId}`;
-            } else {
-              contentDiv.innerHTML = ""; // Clear previous content
-
-              data.chats.forEach((chat) => {
+          if (data.chats || data.chat_entry) {
+            if (!data.isUser) {
+              // For unauthenticated users, store chat in localStorage temporarily
+              let chatHistory =
+                JSON.parse(localStorage.getItem("chatHistory")) || [];
+              chatHistory.push(data.chat_entry);
+              localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+              //console.log("Stored chat in localStorage:", data.chat_entry);
+              contentDiv.innerHTML = ``;
+              // Append new chat after displaying existing history
+              chatHistory.forEach((chat) => {
                 contentDiv.innerHTML += `
                   <div class="chat-item">
                     <div class="chat-question"><strong></strong> ${chat.question}</div>
-                    <div><strong></strong> ${chat.response}</div>
-                    <hr>
-                  </div>`;
+                    <div><strong></strong> ${chat.response}</div><hr></div>`;
               });
-              const lastChat = data.chats[data.chats.length - 1];
-              //console.log(lastChat.question.slice(1))
-              //console.log(lastChat.question.slice(1).localeCompare('userinfo')
-              if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
-                directCommand(lastChat.question.slice(1));
+            } else {
+              localStorage.removeItem("chatTopic");
+              //console.log( data.chats.length)
+              if(data.chats.length%10 == 0){
+                textarea.disabled = true;
+                //document.getElementById("askButton").textContent = "Start Quiz";
+                document.getElementById("askButton").style.display = "none";
+                document.getElementById("quizButton").style.display = "block";
+              }
+              if (data.chats.length === 1) {
+                window.location.href = `http://127.0.0.1:5000/?chat_id=${data.chatId}`;
+              } else {
+                contentDiv.innerHTML = ""; // Clear previous content
+
+                data.chats.forEach((chat) => {
+                  contentDiv.innerHTML += `
+                    <div class="chat-item">
+                      <div class="chat-question"><strong></strong> ${chat.question}</div>
+                      <div><strong></strong> ${chat.response}</div>
+                      <hr>
+                    </div>`;
+                });
+                const lastChat = data.chats[data.chats.length - 1];
+                //console.log(lastChat.question.slice(1))
+                //console.log(lastChat.question.slice(1).localeCompare('userinfo')
+                if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
+                  directCommand(lastChat.question.slice(1));
+                }
+
+                /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
+                  console.log(data.chats[data.chats.length-1].question)
+                  directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
+                }*/                 
               }
 
-              /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
-                 console.log(data.chats[data.chats.length-1].question)
-                 directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
-               }*/                 
+              //console.log(data.chats);
+              // contentDiv.innerHTML = ``;
+              // Display the updated chat history
+              /* data.chats.forEach((chat) => {
+                contentDiv.innerHTML += `
+                  <div class="chat-item">
+                    <div class="chat-question"><strong></strong> ${chat.question}</div>
+                    <div><strong></strong> ${chat.response}</div><hr></div>`;
+              });*/
+              if(data.chats.length%10 > 0 && data.chats.length%10 < 10){
+                console.log(1683)
+                localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
+                localStorage.setItem("isSumbittedChatID" + data.chatId, false);
+              }
+              console.log(data.chats.length%10)
+              setProgressBar(data.chats, data.chats.length%10,data.chatId);
             }
+            scrollToBottom();
 
-            //console.log(data.chats);
-            // contentDiv.innerHTML = ``;
-            // Display the updated chat history
-            /* data.chats.forEach((chat) => {
-               contentDiv.innerHTML += `
-                 <div class="chat-item">
-                   <div class="chat-question"><strong></strong> ${chat.question}</div>
-                   <div><strong></strong> ${chat.response}</div><hr></div>`;
-             });*/
-             if(data.chats.length%10 > 0 && data.chats.length%10 < 10){
-              console.log(1683)
-              localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
-              localStorage.setItem("isSumbittedChatID" + data.chatId, false);
-             }
-             console.log(data.chats.length%10)
-             setProgressBar(data.chats, data.chats.length%10,data.chatId);
+          } else if (data.error) {
+            contentDiv.innerHTML += `<div>Error: ${data.error}</div>`;
           }
-          scrollToBottom();
-
-        } else if (data.error) {
-          contentDiv.innerHTML += `<div>Error: ${data.error}</div>`;
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        contentDiv.innerHTML +=
-          "<div>An error occurred. Please try again.</div>";
-      });
-  });
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          contentDiv.innerHTML +=
+            "<div>An error occurred. Please try again.</div>";
+        });
+    });
+  }
 });
 
 function directCommand(command) {
@@ -208,12 +208,14 @@ function directCommand(command) {
     window.location.href = `http://127.0.0.1:5000/quiz_start`;
   }
 }
-function scrollToBottom() {
 
+function scrollToBottom() {
   var hiddenContent = document.getElementById("hiddenContent");
-  //if (hiddenContent) console.log("hi");
-  hiddenContent.scrollTop = hiddenContent.scrollHeight;
+  if (hiddenContent) { 
+    hiddenContent.scrollTop = hiddenContent.scrollHeight;
+  }
 }
+
 function openTopic(event) {
   // Display the modal and backdrop
   const topicDiv = document.getElementById("enterTopic");
