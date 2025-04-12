@@ -114,15 +114,6 @@ main {
   scroll-behavior: smooth;
 }
 
-#hiddenContent-else {
-  display: none;
-  height: 85%;
-  overflow-y: auto;
-  margin-bottom: 40px;
-  margin-top: 80px;
-  scroll-behavior: smooth;
-}
-
 #content {
   margin-top: 170px;
   padding-right: 150px;

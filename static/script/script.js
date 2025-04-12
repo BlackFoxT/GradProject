@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
       let chatHistory = null;
       if (!data.isUser) {
         chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+        contentDiv.style.marginTop = "80px";
       } else {
         chatHistory = data.chats;    
       }
-
       // Show content if chat history or content is visible
       if (data.contentVisible || chatHistory.length > 0) {
         contentDiv.style.display = "block";
