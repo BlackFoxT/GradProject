@@ -40,4 +40,4 @@ def update_information():
 
     db.session.commit()
     flash("Information updated successfully!", "success")
-    return redirect(url_for('profile_routes.profile_page'))
+    return redirect(url_for('home_routes.home_page'))
