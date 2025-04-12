@@ -11,7 +11,7 @@
             {% endif %} {% endfor %}
         </div>
         {% endif %} {% endwith %}
-        <form method="POST" action="{{ url_for('login_page') }}">
+        <form method="POST" action="{{ url_for('auth_routes.login_page') }}">
             <div id="login-mail-input" class="mb-3">
                 <input type="email" class="form-control" id="login-email" name="email" placeholder="{{ _('Email Address') }}" required />
             </div>
@@ -29,7 +29,7 @@
         <div class="text-center mt-3">
             <p>
                 <span>{{ _('Do not have an account?') }}</span>
-                <a href="{{ url_for('signup_page') }}" class="text-decoration-none">{{ _('Sign Up') }}</a>
+                <a href="{{ url_for('auth_routes.signup_page') }}" class="text-decoration-none">{{ _('Sign Up') }}</a>
             </p>
         </div>
 

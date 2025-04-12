@@ -12,10 +12,10 @@
 
 <body>
     <div class = "languages-login">
-        <a href="{{ url_for('change_language', lang_code='tr') }}">
+        <a href="{{ url_for('language_routes.change_language', lang_code='tr') }}">
             <img src="{{ url_for('static', filename='images/Türkçe.jpg') }}" alt="Türkçe"/>
         </a>
-        <a href="{{ url_for('change_language', lang_code='en') }}">
+        <a href="{{ url_for('language_routes.change_language', lang_code='en') }}">
             <img src="{{ url_for('static', filename='images/English.png') }}" alt="English"/>
         </a>
     </div>

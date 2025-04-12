@@ -37,10 +37,10 @@
             <div class="navbar-nav ms-auto d-flex align-items-center" id="navbarNav">
                 <ul class="navbar-brand d-flex align-items-center">
                     <li class="nav-item d-flex" id="change_language">
-                        <a href="{{ url_for('change_language', lang_code='tr') }}">
+                        <a href="{{ url_for('language_routes.change_language', lang_code='tr') }}">
                             <img src="{{ url_for('static', filename='images/Türkçe.jpg') }}" alt="Türkçe" class="language-flag" />
                         </a>
-                        <a href="{{ url_for('change_language', lang_code='en') }}">
+                        <a href="{{ url_for('language_routes.change_language', lang_code='en') }}">
                             <img src="{{ url_for('static', filename='images/English.png') }}" alt="English" class="language-flag" />
                         </a>
                     </li>
@@ -48,10 +48,10 @@
                         <img src="{{ url_for('static', filename='images/user.png') }}" class="rounded-circle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" />
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('profile_page') }}">{{ _('My Profile') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('profile_routes.profile_page') }}">{{ _('My Profile') }}</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('auth_routes.logout') }}">{{ _('Logout') }}</a>
                             </li>
                         </ul>
                     </li>
@@ -60,7 +60,7 @@
 
             {% else %}
 
-            <a class="navbar-brand" href="{{ url_for('home_page') }}"><img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo"/></a>
+            <a class="navbar-brand" href="{{ url_for('home_routes.home_page') }}"><img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo"/></a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -69,24 +69,24 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item d-flex" id="change_language">
-                        <a href="{{ url_for('change_language', lang_code='tr') }}">
+                        <a href="{{ url_for('language_routes.change_language', lang_code='tr') }}">
                             <img src="{{ url_for('static', filename='images/Türkçe.jpg') }}" alt="Türkçe" class="language-flag" />
                         </a>
-                        <a href="{{ url_for('change_language', lang_code='en') }}">
+                        <a href="{{ url_for('language_routes.change_language', lang_code='en') }}">
                             <img src="{{ url_for('static', filename='images/English.png') }}" alt="English" class="language-flag" />
                         </a>
                     </li>
                     <li class="nav-item d-none d-lg-block">
-                        <a class="btn btn-dark me-2" href="{{ url_for('signup_page') }}">{{ _('Sign Up') }}</a>
+                        <a class="btn btn-dark me-2" href="{{ url_for('auth_routes.signup_page') }}">{{ _('Sign Up') }}</a>
                     </li>
                     <li class="nav-item d-none d-lg-block">
-                        <a class="btn btn-light border border-dark" href="{{ url_for('login_page') }}">{{ _('Login')}}</a>
+                        <a class="btn btn-light border border-dark" href="{{ url_for('auth_routes.login_page') }}">{{ _('Login')}}</a>
                     </li>
                     <li class="nav-item d-lg-none">
-                        <a class="nav-link" href="{{ url_for('signup_page') }}">{{ _('Sign Up') }}</a>
+                        <a class="nav-link" href="{{ url_for('auth_routes.signup_page') }}">{{ _('Sign Up') }}</a>
                     </li>
                     <li class="nav-item d-lg-none">
-                        <a class="nav-link" href="{{ url_for('login_page') }}">{{ _('Login') }}</a>
+                        <a class="nav-link" href="{{ url_for('auth_routes.login_page') }}">{{ _('Login') }}</a>
                     </li>
                 </ul>
             </div>
@@ -104,7 +104,7 @@
                     {% if user_chats %}
                     {% for chat in user_chats %}
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ url_for('chatl', id=chat.id) }}">">
+                        <a class="nav-link text-dark" href="{{ url_for('chat_routes.chatl', id=chat.id) }}">">
                             <span>{{ chat.topic }}</span>
                         </a>
                     </li>
