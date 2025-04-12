@@ -88,7 +88,7 @@
                     {% if user_chats %}
                     {% for chat in user_chats %}
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="{{ url_for('chat_routes.chatl', id=chat.id) }}">">
+                        <a class="nav-link text-dark" href="{{ url_for('chat_routes.chatl', id=chat.id) }}">
                             <span>{{ chat.topic }}</span>
                         </a>
                     </li>
