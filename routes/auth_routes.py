@@ -10,7 +10,7 @@ auth_bp = Blueprint('auth_routes', __name__)
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login_page():
     if current_user.is_authenticated:
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     if request.method == "POST":
         email = request.form['email']
@@ -29,7 +29,7 @@ def login_page():
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup_page():
     if current_user.is_authenticated:
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     if request.method == "POST":
         email = request.form['email']

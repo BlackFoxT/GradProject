@@ -23,18 +23,32 @@ def update_information():
     name = request.form.get('name')
     surname = request.form.get('surname')
     telephone_number = request.form.get('telephone_number')
+    birth_date = request.form.get('birth_date')
+    gender = request.form.get('gender')
+    address = request.form.get('adress')
+    language = request.form.get('language')
+    
 
     user_information = Information.query.filter_by(user_id=current_user.id).first()
     if user_information:
         user_information.name = name
         user_information.surname = surname
         user_information.telephone_number = telephone_number
+        user_information.birth_date = birth_date
+        user_information.gender = gender
+        user_information.address = address
+        user_information.language = language
+
     else:
         user_information = Information(
             user_id=current_user.id,
             name=name,
             surname=surname,
-            telephone_number=telephone_number
+            telephone_number = telephone_number,
+            birth_date = birth_date,
+            gender = gender,
+            address = address,
+            language = language
         )
         db.session.add(user_information)
 
