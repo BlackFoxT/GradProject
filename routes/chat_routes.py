@@ -1,5 +1,5 @@
 # chat_routes.py
-from flask import Blueprint, request, jsonify, session, redirect, url_for
+from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template, flash
 from datetime import datetime
 from models import db
 from models.chat_history import ChatHistory
@@ -91,7 +91,7 @@ def ask():
                 "!time / !saat - Get the current server time\n"
                 "!date / !tarih - Show today's date\n"
                 "!userinfo / !kullanıcıbilgisi - Display your account information\n"
-                "!quiz / !sınav - Directly open quiz page\n"
+                "!note / !note - Directly open note page\n"
                 "!clearhistory / !temizle - Clear your chat history\n"
                 "!about / !hakkında - Learn more about me\n"
             )
@@ -101,7 +101,7 @@ def ask():
                 "!time / !saat - Sunucunun mevcut saatini gösterir\n"
                 "!date / !tarih - Bugünün tarihini gösterir\n"
                 "!userinfo / !kullanıcıbilgisi - Kullanıcı bilgilerinizi gösterir\n"
-                "!quiz / !sınav - Sınav sayfasına yönlendirir\n"
+                "!note / !note - note sayfasına yönlendirir\n"
                 "!clearhistory / !temizle - Sohbet geçmişinizi siler\n"
                 "!about / !hakkında - Benim hakkımda bilgi verir\n"
             )
@@ -156,3 +156,44 @@ def ask():
         "chat_entry": chat_entry,
         "isUser": False
     })
+
+
+@chat_routes.route("/note")
+@login_required
+def note():
+    user_chats = None
+    selected_chat = None
+
+    if current_user.is_authenticated:
+        user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
+
+    chat_id = request.args.get("chat_id", type=int)
+    print(chat_id)
+    # Fetch the selected chat content, if chat_id is provided
+    if chat_id:
+        selected_chat = ChatHistory.query.filter_by(id=chat_id).first()
+        
+        # If no chat is found, flash an error message and redirect to home page
+        if selected_chat.id != current_user.id:
+            flash('Unathenticated chat is found, you can not enter !!!', 'error')
+            return redirect(url_for('home_routes.home_page'))  # Redirect to the homepage if no chat found
+        
+        # If no chat is found, flash an error message and redirect to home page
+        if selected_chat is None:
+            flash('Selected chat not found', 'error')
+            return redirect(url_for('home_routes.home_page'))  # Redirect to the homepage if no chat found
+        else:
+            # If a valid chat is found, update currentChatID and save to the database
+            current_user.currentChatID = chat_id
+            db.session.commit()
+    else:
+        # If no chat is selected, set currentChatID to None
+        current_user.currentChatID = None
+        db.session.commit()
+
+    # Render the home page with the user's chats and the selected chat (if any)
+    return render_template(
+        "note.html",
+        user_chats=user_chats,
+        selected_chat=selected_chat
+    )

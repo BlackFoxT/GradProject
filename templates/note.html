@@ -1,0 +1,19 @@
+{% extends "layouts/layout.html" %} {% block title %}Welcome{% endblock title %}
+{% block content %}
+
+<div class="flash-container position-absolute top-0 start-50 translate-middle-x p-3">
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }} fade show shadow" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+</div>
+
+<div class="container-fluid mt-5">
+    <div class="note-page">
+        Burayı değiş bu class csste zaten var oradan başlayın...
+    </div>
+</div>
+{% endblock content %}

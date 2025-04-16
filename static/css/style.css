@@ -388,3 +388,10 @@ footer {
 #quizButton {
   display: none; 
 }
+
+.note-page{
+  margin-bottom: 50px;
+  height: 500px;
+  background-color: #e72fb9;
+  color: #210404;
+}

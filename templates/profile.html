@@ -10,8 +10,8 @@
     
             <div class="profile-section">
                 <div class="profile-image">
-                    <img src="" alt="Profile Picture">
-                    <button class="change-photo-btn">Change Photo</button>
+                    <img src="{{ url_for('static', filename='images/user.png') }}" alt="Profile Picture">
+                    <button  class="change-photo-btn">Change Photo</button>
                     <div class="form-group">
                         <label for="name" class="form-label"><strong>{{ _('Name') }}</strong></label>
                         <input type="text" class="form-control" id="name" name="name" value="{{ info.name if info else '' }}" />

@@ -155,8 +155,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 const lastChat = data.chats[data.chats.length - 1];
                 //console.log(lastChat.question.slice(1))
                 //console.log(lastChat.question.slice(1).localeCompare('userinfo')
-                if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0) {
-                  directCommand(lastChat.question.slice(1));
+                if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0
+                || lastChat.question.slice(1).localeCompare('note') == 0) {
+                  directCommand(lastChat.question.slice(1),data.chatId);
                 }
 
                 /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
@@ -197,14 +198,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-function directCommand(command) {
+function directCommand(command, chat_id) {
   console.log("Redirecting to profile:", command);
   if (command.localeCompare('userinfo') == 0) {
 
     window.location.href = `http://127.0.0.1:5000/profile`; // Redirects to the profile page
   }
-  if (command.localeCompare('quiz') == 0) {
+  else if (command.localeCompare('quiz') == 0) {
     window.location.href = `http://127.0.0.1:5000/quiz_start`;
+  }
+  else if (command.localeCompare('note') == 0) {
+    window.location.href = `http://127.0.0.1:5000/note?chat_id=${chat_id}`;
   }
 }
 
