@@ -174,7 +174,7 @@ def note():
         selected_chat = ChatHistory.query.filter_by(id=chat_id).first()
         
         # If no chat is found, flash an error message and redirect to home page
-        if selected_chat.id != current_user.id:
+        if selected_chat.user_id != current_user.id:
             flash('Unathenticated chat is found, you can not enter !!!', 'error')
             return redirect(url_for('home_routes.home_page'))  # Redirect to the homepage if no chat found
         
