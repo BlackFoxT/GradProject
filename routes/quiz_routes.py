@@ -19,22 +19,24 @@ def prepare_questions():
     # Get the topic from chat history
     chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
     topic = chat_history.topic if chat_history.topic else "General"
+    
 
-    prompt = "Generate only " + str(10) + " multiple-choice questions about " + topic + ". Provide the correct answer for each question. Use the following format:\n\n" + \
-            "Question: [Write the question here]\n" + \
-            "Choices:\n" + \
-            "A) [Option A]\n" + \
-            "B) [Option B]\n" + \
-            "C) [Option C]\n" + \
-            "D) [Option D]\n" + \
-            "Correct Answer: [Write the correct option letter, e.g., A), B), C), or D)]\n\n" + \
-            "Ensure the questions strictly follow this format and are consistent."
-
-    response = None
+    
     # Check if quiz already exists
      # 🧹 Delete existing quiz and its questions if exists
     existing_quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID).first()
     if existing_quiz:
+        chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=current_user.currentChatID).first()
+        quizResult = QuizResult.query.filter_by(chatId=current_user.currentChatID).first()
+        
+        quizScore = quizResult.score
+        print(quizScore)
+        if quizScore >= 10 :
+            if chat_history.difficulty == "easy" :
+                chat_history.difficulty = "medium"
+            else:
+                chat_history.difficulty = "hard"
+            
         # Delete associated questions
         QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
 
@@ -43,17 +45,30 @@ def prepare_questions():
 
         db.session.delete(existing_quiz)
         db.session.commit()
-    else:
-        # Generate quiz and save
-        response = llm.invoke(prompt)
-        new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID)
-        db.session.add(new_quiz)
-        db.session.commit()
 
-        # Parse questions and store them
-        questions = parse_questions(response, quiz_id=new_quiz.id)
-        db.session.add_all(questions)
-        db.session.commit()
+    difficulty = chat_history.difficulty
+    print(difficulty)
+    prompt = "Generate only " + str(10) + " multiple-choice questions about " + topic + " and the difficulty level is " + difficulty + ". Provide the correct answer for each question. Use the following format:\n\n" + \
+            "Question: [Write the question here]\n" + \
+            "Choices:\n" + \
+            "A) [Option A]\n" + \
+            "B) [Option B]\n" + \
+            "C) [Option C]\n" + \
+            "D) [Option D]\n" + \
+            "Correct Answer: [Write the correct option letter, e.g., A), B), C), or D)]\n\n" + \
+            "Ensure the questions strictly follow this format and are consistent."
+   
+    response = None
+    # Generate quiz and save
+    response = llm.invoke(prompt)
+    new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID)
+    db.session.add(new_quiz)
+    db.session.commit()
+
+    # Parse questions and store them
+    questions = parse_questions(response, quiz_id=new_quiz.id)
+    db.session.add_all(questions)
+    db.session.commit()
 
     return jsonify({
         "topic": topic,
@@ -81,12 +96,12 @@ def get_quiz_questions():
     chat_id = current_user.currentChatID
     if chat_id is None:
         flash("No chat selected", "error")
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
     if not quiz:
         flash("Quiz not found", "error")
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
     quiz_questions = [{"question": q.text, "options": q.options, "correct_answer": q.correct_answer} for q in questions]
@@ -98,12 +113,12 @@ def quiz():
     chat_id = current_user.currentChatID
     if chat_id is None:
         flash("No chat selected", "error")
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
     if not quiz:
         flash("Quiz not found", "error")
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     existing_result = QuizResult.query.filter_by(chatId=chat_id).first()
     if existing_result:

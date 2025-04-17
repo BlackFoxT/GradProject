@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 
-                <a class="navbar-brand" id="toggle-logo" href="#" onclick="location.reload(); return false;">
+                <a class="navbar-brand" id="toggle-logo" href="{{ url_for('home_routes.home_page') }}">
                     <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo"/>
                 </a>
                   

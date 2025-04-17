@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
   })
     .then((response) => response.json())
     .then((data) => {
-      let chatHistory = null;
+      if(contentDiv){
+        let chatHistory = null;
       if (!data.isUser) {
         chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
         contentDiv.style.marginTop = "80px";
@@ -57,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         chatDiv.style.marginTop = "10px";
       }
       scrollToBottom();
+      }
     })
     .catch((error) => {
       console.error("Error fetching chat history:", error);
@@ -336,12 +338,11 @@ function setProgressBar(chatHistory,chatLength,chatId){
             }
 
             let progressBarColor = getProgressBarColor(progressBarPercentage);
+            console.log(progressBarColor)
             progressDiv.innerHTML += `
-              <div class="progress mb-3" id="progressBarContainer" style="height: 10px;">
                 <div id="progressBar" class="progress-bar" role="progressbar" 
-                style="width: ${progressBarPercentage}%; background-color: ${progressBarColor};" 
+                style="width: ${progressBarPercentage}%; background-color: ${progressBarColor}; height: 10px;" 
                 aria-valuenow="${progressBarPercentage}" 
                 aria-valuemin="0" aria-valuemax="100" display="block">
-                </div>
-              </div>`;
+                </div>`;
 }
