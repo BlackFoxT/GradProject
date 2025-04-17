@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, flash, redirect, url_for, render_template
+from flask import Blueprint, jsonify, flash, redirect, url_for, render_template, request
 from models import db
 from models.quiz import Quiz
 from models.quiz_question import QuizQuestion
+from models.quiz_result import QuizResult
 from flask_login import current_user
 import re
 # Import models after db initialization
@@ -31,8 +32,18 @@ def prepare_questions():
 
     response = None
     # Check if quiz already exists
+     # 🧹 Delete existing quiz and its questions if exists
     existing_quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID).first()
-    if not existing_quiz:
+    if existing_quiz:
+        # Delete associated questions
+        QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
+
+        # Optionally delete the quiz result too if you have that
+        QuizResult.query.filter_by(chatId=current_user.currentChatID).delete()
+
+        db.session.delete(existing_quiz)
+        db.session.commit()
+    else:
         # Generate quiz and save
         response = llm.invoke(prompt)
         new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID)
@@ -56,12 +67,12 @@ def quiz_start():
     chat_id = current_user.currentChatID
     if chat_id is None:
         flash("No chat selected", "error")
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
     if not quiz:
         flash("Quiz not found", "error")
-        return redirect(url_for('home_page'))
+        return redirect(url_for('home_routes.home_page'))
 
     return render_template("quiz_start.html", quiz=quiz)
 
@@ -94,6 +105,11 @@ def quiz():
         flash("Quiz not found", "error")
         return redirect(url_for('home_page'))
 
+    existing_result = QuizResult.query.filter_by(chatId=chat_id).first()
+    if existing_result:
+        QuizResult.query.filter_by(chatId=current_user.currentChatID).delete()
+        db.session.commit()
+
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
     quiz_questions = [{"question": q.text, "options": q.options} for q in questions]
 
@@ -102,6 +118,43 @@ def quiz():
 @quiz_routes.route("/quiz_result")
 def quiz_result():
     return render_template("quiz_result.html")
+
+@quiz_routes.route('/quiz/submit', methods=['POST'])
+def submit_quiz():
+    data = request.get_json()
+    result = QuizResult(
+        chatId=data['chatId'],
+        score=data['score'],
+        point=data['point'],
+        passed=data['passed'],
+        userAnswers=data['userAnswers'],
+        correctAnswers=data['correctAnswers']
+    )
+    db.session.add(result)
+    db.session.commit()
+    return jsonify({'message': 'Quiz result saved to database.'}), 201
+
+@quiz_routes.route('/quiz/result', methods=['GET'])
+def get_quiz_result():
+    chat_id = current_user.currentChatID
+    result = QuizResult.query.filter_by(chatId=chat_id).first()
+    
+    if not result:
+        return jsonify({"error": "Result not found"}), 404
+
+    print(len(result.userAnswers))
+    # Convert model to dict manually
+    result_dict = {
+        "score": result.score,
+        "point": result.point,
+        "passed": result.passed,
+        "userAnswers": result.userAnswers,        # assuming it's a list (e.g., JSON column)
+        "correctAnswers": result.correctAnswers   # same here
+    }
+    #print(result_dict)
+
+    return jsonify(result_dict)
+
 
 
 def parse_questions(raw_text, quiz_id):
@@ -136,3 +189,4 @@ def parse_questions(raw_text, quiz_id):
         )
 
     return questions
+

@@ -130,15 +130,27 @@ function submitQuiz(event) {
 
     const scorePercentage = Math.round((correct / questions.length) * 100);
     const passingScore = 70;
-    const point = correct;
-    
-    localStorage.setItem("quiz_score", scorePercentage);
-    localStorage.setItem("quiz_point", point);
-    localStorage.setItem("quiz_passed", scorePercentage >= passingScore);
-    localStorage.setItem("user_answers", JSON.stringify(userAnswers));
-    localStorage.setItem("correct_answers", JSON.stringify(correctAnswers));
-    console.log("submit")
-    console.log("Chat ID:", chatId);  
+    //const point = correct;
+    const result = {
+        chatId: chatId,
+        score: scorePercentage,
+        point: correct,
+        passed: scorePercentage >= passingScore,
+        userAnswers: userAnswers,
+        correctAnswers: correctAnswers,
+    };
+    fetch('http://127.0.0.1:5000/quiz/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(result),
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Submitted to DB:", data);
+        window.location.href = `http://127.0.0.1:5000/quiz_result`;
+    })
+    .catch(err => {
+        console.error("Error submitting:", err);
+    });
     localStorage.setItem("isSumbittedChatID" + chatId, true);
-    window.location.href = `http://127.0.0.1:5000/quiz_result`;
 }

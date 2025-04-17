@@ -1,16 +1,27 @@
-window.onload = function () {
-    const scoreEl = document.getElementById("score-table");
-    const pointEl = document.getElementById("point-table");
-    const passingScoreEl = document.getElementById("passing-score");
-    const passingPointEl = document.getElementById("passing-point");
-    const successCardEl = document.getElementById("succes-card");
-    const failureCardEl = document.getElementById("failure-card");
-    const tableBody = document.getElementById("answer-table-body");
+fetch("/quiz/result", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+})
+    .then((response) => response.json())
+    .then((data) => {
+        console.log(data)
+        const scoreEl = document.getElementById("score-table");
+        const pointEl = document.getElementById("point-table");
+        const passingScoreEl = document.getElementById("passing-score");
+        const passingPointEl = document.getElementById("passing-point");
+        const successCardEl = document.getElementById("succes-card");
+        const failureCardEl = document.getElementById("failure-card");
+        const tableBody = document.getElementById("answer-table-body");
 
-    if (scoreEl && pointEl && passingScoreEl && passingPointEl && successCardEl && failureCardEl && tableBody) {
-        const score = localStorage.getItem("quiz_score");
-        const point = localStorage.getItem("quiz_point");
-        const passed = localStorage.getItem("quiz_passed") === 'true';
+        if (!scoreEl || !pointEl || !passingScoreEl || !passingPointEl || !successCardEl || !failureCardEl || !tableBody) return;
+
+        const score = data.score;
+        const point = data.point;
+        const passed = data.passed;
+        const userAnswers = data.userAnswers;
+        const correctAnswers = data.correctAnswers;
 
         scoreEl.textContent = `${score}%`;
         pointEl.textContent = `${point}`;
@@ -29,9 +40,6 @@ window.onload = function () {
             failureCardEl.style.display = "block";
         }
 
-        const userAnswers = JSON.parse(localStorage.getItem("user_answers") || "[]");
-        const correctAnswers = JSON.parse(localStorage.getItem("correct_answers") || "[]");
-
         for (let i = 0; i < userAnswers.length; i++) {
             const tr = document.createElement("tr");
 
@@ -40,7 +48,6 @@ window.onload = function () {
 
             const userTd = document.createElement("td");
             userTd.textContent = userAnswers[i];
-
             const correctTd = document.createElement("td");
             correctTd.textContent = correctAnswers[i];
 
@@ -56,14 +63,7 @@ window.onload = function () {
 
             tableBody.appendChild(tr);
         }
-
-        // localStorage temizliği
-        setTimeout(() => {
-            localStorage.removeItem("quiz_score");
-            localStorage.removeItem("quiz_point");
-            localStorage.removeItem("quiz_passed");
-            localStorage.removeItem("user_answers");
-            localStorage.removeItem("correct_answers");
-        }, 1000);
-    }
-};
+    })
+    .catch((error) => {
+        console.error("Error fetching quiz result:", error);
+    });
