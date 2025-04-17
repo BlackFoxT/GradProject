@@ -389,9 +389,50 @@ footer {
   display: none; 
 }
 
-.note-page{
-  margin-bottom: 50px;
-  height: 500px;
-  background-color: #e72fb9;
-  color: #210404;
+
+.container-fluid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.note {
+  width: 200px;
+  height: 200px;
+  background-color: #fff475;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: text;
+  outline: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.note:focus {
+  background-color: #ffe066;
+  transform: scale(1.02);
+}
+
+#add-note {
+  width: 200px;
+  height: 200px;
+  background-color: #e0e0e0;
+  color: #555;
+  font-size: 64px;
+  font-weight: bold;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+#add-note:hover {
+  background-color: #d0d0d0;
+  transform: scale(1.05);
 }

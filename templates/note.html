@@ -12,8 +12,10 @@
 </div>
 
 <div class="container-fluid mt-5">
-    <div class="note-page">
-        Burayı değiş bu class csste zaten var oradan başlayın...
-    </div>
+    <div class="note" contenteditable="true">Click here to type...</div>
+    <div id="add-note">+</div>
 </div>
+
+<script src="{{ url_for('static', filename='script/note.js') }}"></script>
 {% endblock content %}
+
