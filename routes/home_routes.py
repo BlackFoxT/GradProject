@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import current_user
 from models import db
 from models.chat_history import ChatHistory
+from models.information import Information
 
 home_routes = Blueprint('home_routes', __name__)
 
@@ -9,8 +10,10 @@ home_routes = Blueprint('home_routes', __name__)
 def home_page():
     user_chats = None
     selected_chat = None
+    user_information = None
 
     if current_user.is_authenticated:
+        user_information = Information.query.filter_by(user_id=current_user.id).first()
         user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
 
     chat_id = request.args.get("chat_id", type=int)
@@ -18,7 +21,6 @@ def home_page():
     # Fetch the selected chat content, if chat_id is provided
     if chat_id:
         selected_chat = ChatHistory.query.filter_by(id=chat_id).first()
-        print(selected_chat.id)
         # If no chat is found, flash an error message and redirect to home page
         if selected_chat.user_id != current_user.id:
             flash('Unathenticated chat is found, you can not enter !!!', 'error')
@@ -40,5 +42,6 @@ def home_page():
     return render_template(
         "index.html",
         user_chats=user_chats,
-        selected_chat=selected_chat
+        selected_chat=selected_chat,
+        info=user_information
     )

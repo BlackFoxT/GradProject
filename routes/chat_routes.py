@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, session, redirect, url_for, rende
 from datetime import datetime
 from models import db
 from models.chat_history import ChatHistory
+from models.information import Information
 from flask_login import current_user, login_required
 from routes.llm import llm  # Assuming this is where llm.invoke is defined
 
@@ -14,6 +15,7 @@ chat_routes = Blueprint('chat_routes', __name__)
 def chatl():
     # Get the 'id' query parameter from the URL
     chat_id = request.args.get('id', type=int)
+    
     if chat_id:
         # Fetch the chat history and ensure it belongs to the current user
         chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=chat_id).first()
@@ -163,10 +165,12 @@ def ask():
 def note():
     user_chats = None
     selected_chat = None
-
+    user_information = None
+    
     if current_user.is_authenticated:
+        user_information = Information.query.filter_by(user_id=current_user.id).first()
         user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
-
+        
     chat_id = request.args.get("chat_id", type=int)
     print(chat_id)
     # Fetch the selected chat content, if chat_id is provided
@@ -195,5 +199,6 @@ def note():
     return render_template(
         "note.html",
         user_chats=user_chats,
-        selected_chat=selected_chat
+        selected_chat=selected_chat,
+        info=user_information
     )
