@@ -4,6 +4,8 @@ from flask_login import login_required, current_user
 from models.chat_history import ChatHistory
 from models.information import Information
 from models import db
+from utils.file_upload import save_profile_image
+
 
 # Create a blueprint for profile-related routes
 profile_bp = Blueprint('profile_routes', __name__)
@@ -29,6 +31,8 @@ def update_information():
     gender = request.form.get('gender')
     address = request.form.get('address')
     language = request.form.get('language')
+    file = request.files.get('profile_image')
+    image_path = save_profile_image(file)
     
 
     user_information = Information.query.filter_by(user_id=current_user.id).first()
@@ -40,7 +44,6 @@ def update_information():
         user_information.gender = gender
         user_information.address = address
         user_information.language = language
-
     else:
         user_information = Information(
             user_id=current_user.id,
@@ -54,6 +57,9 @@ def update_information():
         )
         db.session.add(user_information)
 
+    if image_path:
+        user_information.profile_image = image_path
+        
     db.session.commit()
     flash("Information updated successfully!", "success")
     return redirect(url_for('home_routes.home_page'))

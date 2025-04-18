@@ -10,5 +10,4 @@ class Information(db.Model):
     gender = db.Column(db.String(10))
     address = db.Column(db.String(255))
     language = db.Column(db.String(20))
-
-# img için string ile tutup sonra ekstra file açıp onda biraz özellik eklemek gerekiyor
+    profile_image = db.Column(db.String(200), nullable=True)

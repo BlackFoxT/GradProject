@@ -2,7 +2,7 @@
 {% block content %}
     
     <div class="container">
-        <form method="POST" action="{{ url_for('profile_routes.update_information') }}">
+        <form method="POST" action="{{ url_for('profile_routes.update_information') }}" enctype="multipart/form-data">
             <div class="header">
                 <h1>My Profile</h1>
                 <button type="submit" class="save-btn" id="saveProfile">{{ _('Update Information') }}</button>
@@ -10,8 +10,8 @@
     
             <div class="profile-section">
                 <div class="profile-image">
-                    <img src="{{ url_for('static', filename='images/user.png') }}" alt="Profile Picture">
-                    <button  class="change-photo-btn">Change Photo</button>
+                    <img src="{{ url_for('static', filename=info.profile_image or 'images/user.png') }}" alt="Profile Picture">
+                    <input type="file" name="profile_image"/>
                     <div class="form-group">
                         <label for="name" class="form-label"><strong>{{ _('Name') }}</strong></label>
                         <input type="text" class="form-control" id="name" name="name" value="{{ info.name if info else '' }}" />
