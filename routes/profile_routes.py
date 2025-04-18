@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models.chat_history import ChatHistory
@@ -23,9 +24,10 @@ def update_information():
     name = request.form.get('name')
     surname = request.form.get('surname')
     telephone_number = request.form.get('telephone_number')
-    birth_date = request.form.get('birth_date')
+    birth_date_str = request.form.get('birth_date')
+    birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d').date() if birth_date_str else None
     gender = request.form.get('gender')
-    address = request.form.get('adress')
+    address = request.form.get('address')
     language = request.form.get('language')
     
 

@@ -51,7 +51,7 @@
 .profile-section {
   display: grid;
   grid-template-columns: 280px 1fr;
-  gap: 0;
+  gap: 30px;
 }
 
 /* Profile Image Section */

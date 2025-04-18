@@ -32,16 +32,16 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Gender</label>
-                            <select>
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
+                            <select name="gender">
+                                <option value="Male" {% if info and info.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if info and info.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if info and info.gender == 'Other' %}selected{% endif %}>Other</option>
                             </select>
                         </div>
     
                         <div class="form-group">
-                            <label>Birth Date</label>
-                            <input type="date">
+                            <label for="birth_date">Birth Date</label>
+                            <input type="date" name="birth_date" value="{{ info.birth_date if info else '' }}">
                         </div>
     
                         <div class="form-group">
@@ -55,16 +55,16 @@
                         </div>
     
                         <div class="form-group">
-                            <label>Address</label>
-                            <input type="text" placeholder="Enter your address" value="{{ info.address if info else '' }}">
+                            <label for="address">Address</label>
+                            <input type="text" id="address" name="address" placeholder="Enter your address" value="{{ info.address if info else '' }}">
                         </div>
     
                         <div class="form-group">
                             <label>Language</label>
-                            <select  value="{{ info.language if info else '' }}">
-                                <option>English</option>
-                                <option>Spanish</option>
-                                <option>French</option>
+                            <select name="language">
+                                <option value="English" {% if info and info.language == 'English' %}selected{% endif %}>English</option>
+                                <option value="Spanish" {% if info and info.language == 'Spanish' %}selected{% endif %}>Spanish</option>
+                                <option value="French" {% if info and info.language == 'French' %}selected{% endif %}>French</option>
                             </select>
                         </div>
                     </div>
