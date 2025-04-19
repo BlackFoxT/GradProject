@@ -8,3 +8,7 @@ class ChatHistory(db.Model):
     chats = db.Column(MutableList.as_mutable(db.JSON), nullable=True)
     difficulty = db.Column(db.String(100), nullable=False, default="easy")
     timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+    realchat_count = db.Column(db.Integer, nullable=False, default=0)
+    extrachat = db.Column(db.Integer, nullable=False, default=0)
+    is_sumbitted = db.Column(db.Boolean, nullable=False, default=False)
+    is_quizstarted = db.Column(db.Boolean, nullable=False, default=False)

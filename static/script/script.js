@@ -23,21 +23,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Display all stored chats
         if (chatHistory && chatHistory.length > 0) {
-          let chatLength = chatHistory.length%10;
+          let chatLength = data.chatCount % 10;
           if (data.isUser) {
-            if(localStorage.getItem("isQuizStartedChatID" + data.chatId) && chatLength == 0){
+            if(data.isQuizStarted && chatLength == 0){
               chatLength = 0;
-              localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
+              //localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
             }
             setProgressBar(chatHistory, chatLength,data.chatId);
-            if(chatLength == 0 && localStorage.getItem("isSumbittedChatID" + data.chatId) === "false"){
+            if(chatLength == 0 && data.extraChat == 0){
               console.log(19191)
               textarea.disabled = true;
               //document.getElementById("askButton").textContent = "Start Quiz";
               document.getElementById("askButton").style.display = "none";
               document.getElementById("quizButton").style.display = "block";
             }
-            if(localStorage.getItem("isSumbittedChatID" + data.chatId) == true){
+            if(data.isQuizSubmitted == true){
               console.log(2222)
               document.getElementById("askButton").style.display = "block";
               document.getElementById("quizButton").style.display = "none";
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
       contentDiv.style.display = "block";
       header.style.display = "none";
       chatDiv.style.marginTop = "10px";
-
+      
       // Send the message to the Flask backend
       fetch("/ask", {
         method: "POST",
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then((response) => response.json())
         .then((data) => {
-
+          
           if (data.chats || data.chat_entry) {
             if (!data.isUser) {
               // For unauthenticated users, store chat in localStorage temporarily
@@ -135,7 +135,8 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
               localStorage.removeItem("chatTopic");
               //console.log( data.chats.length)
-              if(data.chats.length%10 == 0){
+              let chatLength = data.chatCount % 10;
+              if(chatLength == 0 && data.extraChat == 0){
                 textarea.disabled = true;
                 //document.getElementById("askButton").textContent = "Start Quiz";
                 document.getElementById("askButton").style.display = "none";
@@ -177,13 +178,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="chat-question"><strong></strong> ${chat.question}</div>
                     <div><strong></strong> ${chat.response}</div><hr></div>`;
               });*/
-              if(data.chats.length%10 > 0 && data.chats.length%10 < 10){
-                console.log(1683)
+             /* if(chatLength > 0 && chatLength < 10){
                 localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
-                localStorage.setItem("isSumbittedChatID" + data.chatId, false);
-              }
-              console.log(data.chats.length%10)
-              setProgressBar(data.chats, data.chats.length%10,data.chatId);
+                //localStorage.setItem("isSumbittedChatID" + data.chatId, false);
+              }*/
+              
+              setProgressBar(data.chats, chatLength, data.chatId, data.isQuizSubmitted);
             }
             scrollToBottom();
 
@@ -296,7 +296,7 @@ function startQuizz(event) {
       document.body.style.opacity = "1";
 
       
-      localStorage.setItem("isQuizStartedChatID" + data.chatId, true);
+      //localStorage.setItem("isQuizStartedChatID" + data.chatId, true);
       setProgressBar(null, 0, true)
       window.location.href = `http://127.0.0.1:5000/quiz_start`;
     })
@@ -313,7 +313,7 @@ function startQuizz(event) {
     });
 }
 
-function setProgressBar(chatHistory,chatLength,chatId){
+function setProgressBar(chatHistory,chatLength,chatId,isQuizStarted){
   const progressDiv = document.getElementById("progressBarr");
   progressDiv.innerHTML = '';
             progressDiv.style.backgroundColor = "white"; // Change background color
@@ -321,15 +321,12 @@ function setProgressBar(chatHistory,chatLength,chatId){
             let progressBarPercentage = 0; 
             if(chatHistory){
               progressBarPercentage = chatLength*10;//burda percentage'in 100ü aşmadığından emin oluyoruz.
-              console.log(progressBarPercentage)
               if(chatLength != 0 && chatLength%10 == 0){
                 progressBarPercentage = Math.min((10/maxChatLength)*100,100); 
               }
             }
-            if(localStorage.getItem("isQuizStartedChatID" + chatId) == true){
-              console.log(localStorage.getItem("isQuizStartedChatID" + chatId))
+            if(isQuizStarted == true){
               progressBarPercentage = 0;
-              console.log(progressBarPercentage)
             }
             
             function getProgressBarColor(percentage){ //percentage'i hsl e göre hesaplıyoruz
@@ -338,7 +335,6 @@ function setProgressBar(chatHistory,chatLength,chatId){
             }
 
             let progressBarColor = getProgressBarColor(progressBarPercentage);
-            console.log(progressBarColor)
             progressDiv.innerHTML += `
                 <div id="progressBar" class="progress-bar" role="progressbar" 
                 style="width: ${progressBarPercentage}%; background-color: ${progressBarColor}; height: 10px;" 

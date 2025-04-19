@@ -19,9 +19,9 @@ def prepare_questions():
     # Get the topic from chat history
     chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
     topic = chat_history.topic if chat_history.topic else "General"
-    
+    chat_history.is_quizstarted = True
 
-    
+    response = None
     # Check if quiz already exists
      # 🧹 Delete existing quiz and its questions if exists
     existing_quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID).first()
@@ -29,22 +29,32 @@ def prepare_questions():
         chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=current_user.currentChatID).first()
         quizResult = QuizResult.query.filter_by(chatId=current_user.currentChatID).first()
         
-        quizScore = quizResult.score
-        print(quizScore)
-        if quizScore >= 10 :
-            if chat_history.difficulty == "easy" :
-                chat_history.difficulty = "medium"
-            else:
-                chat_history.difficulty = "hard"
+        
+        if quizResult:
+            quizScore = quizResult.score
+            print(quizScore)
+            if quizScore >= 70 :
+                if chat_history.difficulty == "easy" :
+                    chat_history.difficulty = "medium"
+                else:
+                    chat_history.difficulty = "hard"
             
-        # Delete associated questions
-        QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
+            # Delete associated questions
+            QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
 
-        # Optionally delete the quiz result too if you have that
-        QuizResult.query.filter_by(chatId=current_user.currentChatID).delete()
+            # Optionally delete the quiz result too if you have that
+            QuizResult.query.filter_by(chatId=current_user.currentChatID).delete()
 
-        db.session.delete(existing_quiz)
-        db.session.commit()
+            db.session.delete(existing_quiz)
+            db.session.commit()
+
+        else:
+            return jsonify({
+                "topic": topic,
+                "response": response,
+                "isUser": True,
+                "chatId": current_user.currentChatID
+            })  
 
     difficulty = chat_history.difficulty
     print(difficulty)
@@ -58,7 +68,7 @@ def prepare_questions():
             "Correct Answer: [Write the correct option letter, e.g., A), B), C), or D)]\n\n" + \
             "Ensure the questions strictly follow this format and are consistent."
    
-    response = None
+        
     # Generate quiz and save
     response = llm.invoke(prompt)
     new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID)
@@ -136,6 +146,8 @@ def quiz_result():
 
 @quiz_routes.route('/quiz/submit', methods=['POST'])
 def submit_quiz():
+    chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=current_user.currentChatID).first()
+    chat_history.is_sumbitted = True
     data = request.get_json()
     result = QuizResult(
         chatId=data['chatId'],

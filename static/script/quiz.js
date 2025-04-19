@@ -152,5 +152,5 @@ function submitQuiz(event) {
     .catch(err => {
         console.error("Error submitting:", err);
     });
-    localStorage.setItem("isSumbittedChatID" + chatId, true);
+    //localStorage.setItem("isSumbittedChatID" + chatId, true);
 }

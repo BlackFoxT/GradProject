@@ -38,14 +38,20 @@ def get_chat_history():
 
         chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
         print(chat_history)
-
+        if chat_history.is_quizstarted or chat_history.realchat_count == 0:
+              chat_history.is_quizstarted = False
+            
         if chat_history:
            # print(chat_history.chats)
-            return jsonify({
+            return jsonify({# Assuming `chats` is JSON serializable
                 "contentVisible": True,
                 "chats": chat_history.chats,
                 "chatId": current_user.currentChatID,
-                "isUser": True  # Assuming `chats` is JSON serializable
+                "chatCount":  chat_history.realchat_count,
+                "isQuizSubmitted": chat_history.is_sumbitted,
+                "isQuizStarted": chat_history.is_quizstarted,
+                "extraChat": chat_history.extrachat,
+                "isUser": True  
             })
         else:
             return jsonify({"contentVisible": False, "chats": [],"isUser": True})
@@ -71,8 +77,9 @@ def ask():
         return jsonify({"error": "Message is required"}), 400
 
     response = None
-
+    realchatflag = False
     if user_message.startswith('!'):
+        realchatflag = True
         command = user_message[1:].lower()
 
         if command in ['userinfo', 'kullanıcıbilgisi']:
@@ -142,15 +149,31 @@ def ask():
         else:
             chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
 
+        if chat_history.realchat_count is None:
+            chat_history.realchat_count = 0
+        chat_history.extrachat = 0
+        if realchatflag is False:
+            chat_history.realchat_count += 1
+        else:
+            print(12)
+            chat_history.extrachat = 1
+
+        if chat_history.realchat_count > 0 or chat_history.realchat_count < 10:
+            chat_history.is_sumbitted = False
+            chat_history.is_quizstarted = False
         chat_history.chats.append(chat_entry)
         db.session.add(chat_history)
         db.session.commit()
 
-        return jsonify({
+        return jsonify({ # Assuming `chats` is JSON serializable
                 "topic": topic,
                 "chats": chat_history.chats,
+                "chatCount":  chat_history.realchat_count,
                 "chatId": chat_history.id,
-                "isUser": True  # Assuming `chats` is JSON serializable
+                "isQuizSubmitted": chat_history.is_sumbitted,
+                "isQuizStarted": chat_history.is_quizstarted,
+                "extraChat": chat_history.extrachat,
+                "isUser": True 
             })
 
     return jsonify({
