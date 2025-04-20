@@ -33,6 +33,7 @@ def profile_page():
         topic = current_chat.topic if current_chat else "Unknown Topic"
         difficulty = getattr(quiz, 'difficulty', 'Normal')
         result_list.append({
+            "difficulty": difficulty,
             "title": f"{topic} - {difficulty} Quiz",
             "score": result.score,
             "correct": result.point,
