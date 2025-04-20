@@ -34,6 +34,7 @@ function renderQuestion(index) {
 }
 
 let currentQuestionIndex = 0;
+let quiz_id = null;
 let questions = null;
 let userAnswers = [];
 let correctAnswers = [];
@@ -46,6 +47,7 @@ fetch("/get-quiz-questions", {
 })
     .then((response) => response.json())
     .then((data) => {
+        quiz_id = data.quiz_id;
         questions = data.questions;
         correctAnswers = questions.map(q => q.correct_answer);
         userAnswers = new Array(questions.length).fill(" "); // default olarak hepsini " " şeklinde ekliyoruz
@@ -128,14 +130,14 @@ function submitQuiz(event) {
         console.log(`Correct Answer: ${correctAnswers[i]}`);
     }
 
-    const scorePercentage = Math.round((correct / questions.length) * 100);
-    const passingScore = 70;
+    const scorePercentage = correct * 10;
+    const passingScore = 7;
     //const point = correct;
     const result = {
-        chatId: chatId,
+        quiz_id: quiz_id,
         score: scorePercentage,
         point: correct,
-        passed: scorePercentage >= passingScore,
+        passed: correct >= passingScore,
         userAnswers: userAnswers,
         correctAnswers: correctAnswers,
     };

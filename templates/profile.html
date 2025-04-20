@@ -72,67 +72,29 @@
                     <div class="quiz-history">
                         <h3>
                             Quiz History
-                            <a href="#" class="view-all">View All</a>
                         </h3>
                         <div class="quiz-list">
+                            {% for quiz in quiz_results %}
                             <div class="quiz-item">
                                 <div class="quiz-header">
-                                    <h4 class="quiz-title">Introduction to JavaScript</h4>
-                                    <span class="quiz-score score-high">90%</span>
+                                    <h4 class="quiz-title">{{ quiz.title }}</h4>
+                                    <span class="quiz-score score-{{ 'high' if quiz.score >= 80 else 'medium' if quiz.score >= 60 else 'low' }}">{{ quiz.score }}%</span>
                                 </div>
                                 <div class="quiz-progress-bar">
-                                    <div class="quiz-progress progress-high" style="width: 90%"></div>
+                                    <div class="quiz-progress progress-{{ 'high' if quiz.score >= 80 else 'medium' if quiz.score >= 60 else 'low' }}" style="width: 90%"></div>
                                 </div>
                                 <div class="quiz-details">
                                     <div class="quiz-info">
-                                        <span>Questions: 20</span>
-                                        <span>Correct: 18</span>
-                                        <span>Time: 15 min</span>
+                                        <span>Questions: {{ quiz.total }}</span>
+                                        <span>Correct: {{ quiz.correct }}</span>
+                                        <span>Time: {{ quiz.time }} min</span>
                                     </div>
-                                    <div class="quiz-date">Completed on Mar 15, 2025</div>
+                                    <div class="quiz-date">Completed on {{ quiz.date }}</div>
                                 </div>
                             </div>
-                            
-                            <div class="quiz-item">
-                                <div class="quiz-header">
-                                    <h4 class="quiz-title">CSS Flexbox and Grid</h4>
-                                    <span class="quiz-score score-medium">75%</span>
-                                </div>
-                                <div class="quiz-progress-bar">
-                                    <div class="quiz-progress progress-medium" style="width: 75%"></div>
-                                </div>
-                                <div class="quiz-details">
-                                    <div class="quiz-info">
-                                        <span>Questions: 16</span>
-                                        <span>Correct: 12</span>
-                                        <span>Time: 12 min</span>
-                                    </div>
-                                    <div class="quiz-date">Completed on Mar 10, 2025</div>
-                                </div>
-                            </div>
-                            
-                            <div class="quiz-item">
-                                <div class="quiz-header">
-                                    <h4 class="quiz-title">Advanced React Patterns</h4>
-                                    <span class="quiz-score score-low">55%</span>
-                                </div>
-                                <div class="quiz-progress-bar">
-                                    <div class="quiz-progress progress-low" style="width: 55%"></div>
-                                </div>
-                                <div class="quiz-details">
-                                    <div class="quiz-info">
-                                        <span>Questions: 25</span>
-                                        <span>Correct: 14</span>
-                                        <span>Time: 30 min</span>
-                                    </div>
-                                    <div class="quiz-date">Completed on Feb 28, 2025</div>
-                                </div>
-                            </div>
-                            
-                            <div class="take-new-quiz-btn">
-                                <span>+ Take New Quiz</span>
-                            </div>
+                            {% endfor %}
                         </div>
+                        
                     </div>
                 </div>
             </div>

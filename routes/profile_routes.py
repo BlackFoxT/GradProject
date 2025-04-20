@@ -3,6 +3,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models.chat_history import ChatHistory
 from models.information import Information
+from models.quiz import Quiz
+from models.quiz_result import QuizResult
 from models import db
 from utils.file_upload import save_profile_image
 
@@ -18,7 +20,27 @@ def profile_page():
     # Save the change to the database
     db.session.commit()
     user_information = Information.query.filter_by(user_id=current_user.id).first()
-    return render_template("profile.html", info=user_information, user_chats=user_chats)
+    quizzes = (
+        db.session.query(Quiz, QuizResult)
+        .join(QuizResult, Quiz.id == QuizResult.quiz_id)
+        .filter(Quiz.user_id == current_user.id)
+        .order_by(QuizResult.timestamp.desc())
+        .all()
+    )
+    result_list = []
+    for quiz, result in quizzes:
+        current_chat = ChatHistory.query.filter_by(id=quiz.chat_id).first()
+        topic = current_chat.topic if current_chat else "Unknown Topic"
+        difficulty = getattr(quiz, 'difficulty', 'Normal')
+        result_list.append({
+            "title": f"{topic} - {difficulty} Quiz",
+            "score": result.score,
+            "correct": result.point,
+            "total": 10,
+            "time": 10,
+            "date": result.timestamp.strftime("%b %d, %Y")
+        })
+    return render_template("profile.html", info=user_information, user_chats=user_chats, quiz_results=result_list)
 
 @profile_bp.route('/update_information', methods=['POST'])
 @login_required
@@ -63,3 +85,4 @@ def update_information():
     db.session.commit()
     flash("Information updated successfully!", "success")
     return redirect(url_for('home_routes.home_page'))
+

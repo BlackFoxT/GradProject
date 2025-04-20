@@ -24,28 +24,28 @@ def prepare_questions():
     response = None
     # Check if quiz already exists
      # 🧹 Delete existing quiz and its questions if exists
-    existing_quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID).first()
+    existing_quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID, difficulty=chat_history.difficulty).first()
     if existing_quiz:
         chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=current_user.currentChatID).first()
-        quizResult = QuizResult.query.filter_by(chatId=current_user.currentChatID).first()
-        
+        quizResult = QuizResult.query.filter_by(quiz_id=existing_quiz.id).first()
         
         if quizResult:
             quizScore = quizResult.score
             print(quizScore)
-            if quizScore >= 70 :
+            if chat_history.difficulty == "hard":
+                QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
+                QuizResult.query.filter_by(quiz_id=existing_quiz.id).delete()
+            elif quizScore >= 70 :
                 if chat_history.difficulty == "easy" :
                     chat_history.difficulty = "medium"
                 else:
                     chat_history.difficulty = "hard"
-            
-            # Delete associated questions
-            QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
+            else:
+                # Delete associated questions
+                QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
+                # Optionally delete the quiz result too if you have that
+                QuizResult.query.filter_by(quiz_id=existing_quiz.id).delete()
 
-            # Optionally delete the quiz result too if you have that
-            QuizResult.query.filter_by(chatId=current_user.currentChatID).delete()
-
-            db.session.delete(existing_quiz)
             db.session.commit()
 
         else:
@@ -56,9 +56,8 @@ def prepare_questions():
                 "chatId": current_user.currentChatID
             })  
 
-    difficulty = chat_history.difficulty
-    print(difficulty)
-    prompt = "Generate only " + str(10) + " multiple-choice questions about " + topic + " and the difficulty level is " + difficulty + ". Provide the correct answer for each question. Use the following format:\n\n" + \
+    print(chat_history.difficulty)
+    prompt = "Generate only " + str(10) + " multiple-choice questions about " + topic + " and the difficulty level is " + chat_history.difficulty + ". Provide the correct answer for each question. Use the following format:\n\n" + \
             "Question: [Write the question here]\n" + \
             "Choices:\n" + \
             "A) [Option A]\n" + \
@@ -71,7 +70,7 @@ def prepare_questions():
         
     # Generate quiz and save
     response = llm.invoke(prompt)
-    new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID)
+    new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID, difficulty=chat_history.difficulty)
     db.session.add(new_quiz)
     db.session.commit()
 
@@ -94,7 +93,8 @@ def quiz_start():
         flash("No chat selected", "error")
         return redirect(url_for('home_routes.home_page'))
 
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
+    chat_history = ChatHistory.query.filter_by(id=chat_id).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id, difficulty=chat_history.difficulty).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_routes.home_page'))
@@ -108,7 +108,8 @@ def get_quiz_questions():
         flash("No chat selected", "error")
         return redirect(url_for('home_routes.home_page'))
 
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
+    chat_history = ChatHistory.query.filter_by(id=chat_id).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id, difficulty=chat_history.difficulty).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_routes.home_page'))
@@ -116,7 +117,7 @@ def get_quiz_questions():
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
     quiz_questions = [{"question": q.text, "options": q.options, "correct_answer": q.correct_answer} for q in questions]
 
-    return jsonify({"questions": quiz_questions})
+    return jsonify({"quiz_id":quiz.id, "questions": quiz_questions})
 
 @quiz_routes.route("/quiz")
 def quiz():
@@ -125,14 +126,15 @@ def quiz():
         flash("No chat selected", "error")
         return redirect(url_for('home_routes.home_page'))
 
-    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id).first()
+    chat_history = ChatHistory.query.filter_by(id=chat_id).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id, difficulty=chat_history.difficulty).first()
     if not quiz:
         flash("Quiz not found", "error")
         return redirect(url_for('home_routes.home_page'))
 
-    existing_result = QuizResult.query.filter_by(chatId=chat_id).first()
+    existing_result = QuizResult.query.filter_by(quiz_id=quiz.id).first()
     if existing_result:
-        QuizResult.query.filter_by(chatId=current_user.currentChatID).delete()
+        QuizResult.query.filter_by(quiz_id=quiz.id).delete()
         db.session.commit()
 
     questions = QuizQuestion.query.filter_by(quiz_id=quiz.id).all()
@@ -150,7 +152,7 @@ def submit_quiz():
     chat_history.is_sumbitted = True
     data = request.get_json()
     result = QuizResult(
-        chatId=data['chatId'],
+        quiz_id=data['quiz_id'],
         score=data['score'],
         point=data['point'],
         passed=data['passed'],
@@ -164,8 +166,10 @@ def submit_quiz():
 @quiz_routes.route('/quiz/result', methods=['GET'])
 def get_quiz_result():
     chat_id = current_user.currentChatID
-    result = QuizResult.query.filter_by(chatId=chat_id).first()
-    
+    chat_history = ChatHistory.query.filter_by(id=chat_id).first()
+    quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=chat_id, difficulty=chat_history.difficulty).first()
+    result = QuizResult.query.filter_by(quiz_id=quiz.id).first()
+
     if not result:
         return jsonify({"error": "Result not found"}), 404
 
@@ -181,8 +185,6 @@ def get_quiz_result():
     #print(result_dict)
 
     return jsonify(result_dict)
-
-
 
 def parse_questions(raw_text, quiz_id):
     pattern = re.compile(
