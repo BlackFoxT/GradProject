@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (chatHistory && chatHistory.length > 0) {
           let chatLength = data.chatCount % 10;
           if (data.isUser) {
+            console.log(15)
+            document.getElementById("takeNoteButton").style.display = "block";
             if(data.isQuizStarted && chatLength == 0){
               chatLength = 0;
               //localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
@@ -134,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
               });
             } else {
               localStorage.removeItem("chatTopic");
+              document.getElementById("takeNoteButton").style.display = "block";
               //console.log( data.chats.length)
               let chatLength = data.chatCount % 10;
               if(chatLength == 0 && data.extraChat == 0){
@@ -256,7 +259,9 @@ function closeTopic() {
   // Enable interactions with the page
   document.body.classList.remove("modal-open");
 }
-
+function takeNote(event) {
+  window.location.href = `http://127.0.0.1:5000/note`;
+}
 function startQuizz(event) {
   // Disable entire page interaction
   document.body.style.pointerEvents = "none";

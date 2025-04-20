@@ -194,7 +194,7 @@ def note():
         user_information = Information.query.filter_by(user_id=current_user.id).first()
         user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
         
-    chat_id = request.args.get("chat_id", type=int)
+    chat_id = current_user.currentChatID
     print(chat_id)
     # Fetch the selected chat content, if chat_id is provided
     if chat_id:

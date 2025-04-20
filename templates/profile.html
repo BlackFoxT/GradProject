@@ -81,7 +81,7 @@
                                     <span class="quiz-score score-{{ 'high' if quiz.difficulty == 'easy' else 'medium' if quiz.difficulty == 'medium' else 'low' }}">{{ quiz.score }}%</span>
                                 </div>
                                 <div class="quiz-progress-bar">
-                                    <div class="quiz-progress progress-{{ 'high' if quiz.difficulty == 'easy' else 'medium' if quiz.difficulty == 'medium' else 'low' }}" style="width: 90%"></div>
+                                    <div class="quiz-progress progress-{{ 'high' if quiz.difficulty == 'easy' else 'medium' if quiz.difficulty == 'medium' else 'low' }}" style="width: {{ quiz.correct * 10 }}%"></div>
                                 </div>
                                 <div class="quiz-details">
                                     <div class="quiz-info">

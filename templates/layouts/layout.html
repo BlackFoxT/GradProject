@@ -45,7 +45,7 @@
                         </a>
                     </li>
                     <li class="nav-item ms-3">
-                        <img src="{{ url_for('static', filename=(info.profile_image if info else 'images/user.png')) }}" class="rounded-circle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" />
+                        <img src="{{ url_for('static', filename=(info.profile_image if info.profile_image else 'images/user.png')) }}" class="rounded-circle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" />
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('profile_routes.profile_page') }}">{{ _('My Profile') }}</a>

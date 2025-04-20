@@ -130,6 +130,8 @@ main {
   border-style: none;
   border-radius: 25px;
   background-color: rgb(240, 242, 242);
+  margin-right: 5%;
+  margin-left: 40px;
 }
 
 .modal {
