@@ -8,3 +8,4 @@ class User(UserMixin, db.Model):
     information = db.relationship('Information', backref='user', lazy=True)
     chats = db.relationship('ChatHistory', backref='user', lazy=True)
     currentChatID = db.Column(db.Integer, nullable=True)
+    

@@ -10,6 +10,7 @@ from processors.babel_processor import inject_babel, inject_locale  # Import con
 from utils.language_utils import get_locale, get_timezone  # Import utility functions
 from routes.chat_routes import chat_routes  # Import the chat blueprint
 from routes.quiz_routes import quiz_routes  # Import quiz routes
+from routes.note_routes import note_routes  # Import note routes
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -31,6 +32,7 @@ from models.chat_history import ChatHistory
 from models.quiz import Quiz
 from models.information import Information 
 from models.quiz_question import QuizQuestion
+from models.notes import Note
 
 selected_chat = None
 
@@ -68,6 +70,7 @@ app.register_blueprint(profile_routes.profile_bp)  # Register the profile bluepr
 app.register_blueprint(chat_routes)
 
 app.register_blueprint(quiz_routes)
+app.register_blueprint(note_routes)
 
 
 if __name__ == "__main__":
