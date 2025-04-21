@@ -1,4 +1,4 @@
-{% extends "layouts/empty_layout_quiz.html" %} {% block title %}Quiz{% endblock title%}
+{% extends "layouts/empty_layout_quiz_part.html" %} {% block title %}Quiz{% endblock title%}
 {% block content %}
 
 <div class="d-flex justify-content-center align-items-center vh-100 px-5">
@@ -21,9 +21,7 @@
             </div>
             <div class="d-flex justify-content-end w-25">
                 <button class="quiz-buttons border border-0 rounded-3 w-50" id="nextButton" onclick="nextQuestion(event);">Next</button>
-                <a class="d-block text-decoration-none w-50" href="{{ url_for('quiz_routes.quiz_result') }}">
-                    <button class="quiz-buttons border border-0 rounded-3 w-100" id="submit-button" onclick="submitQuiz(event);">Submit</button>
-                </a>
+                <button class="quiz-buttons border border-0 rounded-3 w-100" id="submit-button" onclick="submitQuiz(event);">Submit</button>
             </div>
         </div>
 

@@ -35,6 +35,7 @@ def prepare_questions():
             if chat_history.difficulty == "hard":
                 QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
                 QuizResult.query.filter_by(quiz_id=existing_quiz.id).delete()
+                db.session.delete(existing_quiz)
             elif quizScore >= 70 :
                 if chat_history.difficulty == "easy" :
                     chat_history.difficulty = "medium"
@@ -45,6 +46,7 @@ def prepare_questions():
                 QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
                 # Optionally delete the quiz result too if you have that
                 QuizResult.query.filter_by(quiz_id=existing_quiz.id).delete()
+                db.session.delete(existing_quiz)
 
             db.session.commit()
 

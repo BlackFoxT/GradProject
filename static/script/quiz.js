@@ -91,9 +91,12 @@ function BackQuestion(event) {
         renderQuestion(currentQuestionIndex);
         nextButton.style.display = "block";
         submitButton.style.display = "none";
+        submitButton.disabled = true;
+        
     }
     if (currentQuestionIndex == 0) {
         backButton.style.display = "none";
+        backButton.disabled = true;
     }
 }
 
@@ -107,10 +110,13 @@ function nextQuestion(event) {
         currentQuestionIndex++;
         renderQuestion(currentQuestionIndex);
         backButton.style.display = "block";
+        backButton.disabled = false;
 
         if (currentQuestionIndex === questions.length - 1) {
             submitButton.style.display = "block";
+            submitButton.disabled = false;
             nextButton.style.display = "none";
+            nextButton.disabled = true;
         }
     }
 }
