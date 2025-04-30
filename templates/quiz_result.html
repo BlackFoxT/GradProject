@@ -3,7 +3,7 @@
 
 <div class="d-flex justify-content-center align-items-center px-5">
   <div class="quiz-result-card d-flex flex-column justify-content-center align-items-center w-75 p-5 border border-light shadow-lg rounded-5">
-    <h1>Quiz Results</h1>
+    <h1>{{ _('Quiz Results') }}</h1>
     <br />
 
     <div id="succes-card">
@@ -11,7 +11,7 @@
           <div>
             <img id="b-picture" src="/static/images/Check-PNG-File.png" alt="check-icon" />
           </div>
-        <p class="text-success fw-bold" id="success-message">Nice job, you passed!</p>
+        <p class="text-success fw-bold" id="success-message">{{ _('Nice job, you passed!') }}</p>
       </div>
     </div>
 
@@ -20,14 +20,14 @@
             <div>
               <img id="b-picture" src="/static/images/Red-Cross-Mark-Download-PNG.png" alt="check-icon" />
             </div>
-          <p class="text-danger fw-bold" id="failure-message">Sorry, you failed!</p>
+          <p class="text-danger fw-bold" id="failure-message">{{ _('Sorry, you failed!') }}</p>
         </div>
     </div>
 
     <div class="row my-4 w-75">
       <div class="col-md-6">
         <div class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border">
-          <h5>YOUR SCORE</h5>
+          <h5>{{ _('YOUR SCORE') }}</h5>
           <h1 id="score-table"></h1>
           <div>
             <hr />
@@ -38,7 +38,7 @@
 
       <div class="col-md-6">
         <div class="score-box d-flex flex-column align-items-center justify-content-center h-100 w-100 border">
-          <h5>YOUR POINTS</h5>
+          <h5>{{ _('YOUR POINTS') }}</h5>
           <h1 id="point-table"></h1>
           <div>
             <hr />
@@ -49,22 +49,22 @@
     </div>
 
     <div class="d-flex align-items-center justify-content-around w-75">
-      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/`;">Back to Chat</button>
-      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/profile`;">Go to Profile</button>
-      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">Retry Quiz</button>
+      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/`;">{{ _('Back to Chat') }}</button>
+      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/profile`;">{{ _('Go to Profile') }}</button>
+      <button class="btn btn-primary" onclick="window.location.href = `http://127.0.0.1:5000/quiz_start`;">{{ _('Retry Quiz') }}</button>
     </div>
     
     <hr class="my-4 w-75" />
 
     <div class="w-75">
-      <h3 class="text-center mb-3">Your Answers vs Correct Answers</h3>
+      <h3 class="text-center mb-3">{{ _('Your Answers vs Correct Answers') }}</h3>
       <table class="table table-bordered text-center">
         <thead class="table-light">
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Your Answer</th>
-            <th scope="col">Correct Answer</th>
-            <th scope="col">Result</th>
+            <th scope="col">{{ _('Your Answer') }}</th>
+            <th scope="col">{{ _('Correct Answer') }}</th>
+            <th scope="col">{{ _('Result') }}</th>
           </tr>
         </thead>
         <tbody id="answer-table-body"></tbody>

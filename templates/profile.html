@@ -4,7 +4,7 @@
     <div class="container">
         <form method="POST" action="{{ url_for('profile_routes.update_information') }}" enctype="multipart/form-data">
             <div class="header">
-                <h1>My Profile</h1>
+                <h1>{{ _('My Profile') }}</h1>
                 <button type="submit" class="save-btn" id="saveProfile">{{ _('Update Information') }}</button>
             </div>
     
@@ -21,9 +21,9 @@
                         <input type="text" class="form-control" id="surname" name="surname" value="{{ info.surname if info else '' }}" />
                     </div>
                     <div class="form-group password-group">
-                        <label>Current Password</label>
+                        <label>{{ _('Current Password') }}</label>
                         <input type="password" placeholder="Current password" readonly>
-                        <label>New Password</label>
+                        <label>{{ _('New Password') }}</label>
                         <input type="password" placeholder="New password" disabled>
                     </div>
                 </div>
@@ -31,21 +31,22 @@
                 <div class="form-content">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Gender</label>
+                            <label>{{ _('Gender') }}</label>
                             <select name="gender">
                                 <option value="Male" {% if info and info.gender == 'Male' %}selected{% endif %}>Male</option>
                                 <option value="Female" {% if info and info.gender == 'Female' %}selected{% endif %}>Female</option>
                                 <option value="Other" {% if info and info.gender == 'Other' %}selected{% endif %}>Other</option>
+                                <!-- Optionları değişirsek hata yeriz-->
                             </select>
                         </div>
     
                         <div class="form-group">
-                            <label for="birth_date">Birth Date</label>
+                            <label for="birth_date">{{ _('Birth Date') }}</label>
                             <input type="date" name="birth_date" value="{{ info.birth_date if info else '' }}">
                         </div>
     
                         <div class="form-group">
-                            <label>Email</label>
+                            <label>{{ _('Email') }}</label>
                             <input type="email" value="{{ current_user.email }}" readonly>
                         </div>
     
@@ -55,23 +56,25 @@
                         </div>
     
                         <div class="form-group">
-                            <label for="address">Address</label>
+                            <label for="address">{{ _('Address') }}</label>
                             <input type="text" id="address" name="address" placeholder="Enter your address" value="{{ info.address if info else '' }}">
                         </div>
     
                         <div class="form-group">
-                            <label>Language</label>
+                            <label>{{ _('Language') }}</label>
                             <select name="language">
                                 <option value="English" {% if info and info.language == 'English' %}selected{% endif %}>English</option>
                                 <option value="Spanish" {% if info and info.language == 'Spanish' %}selected{% endif %}>Spanish</option>
                                 <option value="French" {% if info and info.language == 'French' %}selected{% endif %}>French</option>
+                                <option value="Turkish" {% if info and info.language == 'Turkish' %}selected{% endif %}>Turkish</option>
+                                <!-- Aynı şekilde optionları değişmedim hata çıkabilir diye-->
                             </select>
                         </div>
                     </div>
     
                     <div class="quiz-history">
                         <h3>
-                            Quiz History
+                            {{ _(' Quiz History') }}
                         </h3>
                         <div class="quiz-list">
                             {% for quiz in quiz_results %}
@@ -82,14 +85,15 @@
                                 </div>
                                 <div class="quiz-progress-bar">
                                     <div class="quiz-progress progress-{{ 'high' if quiz.difficulty == 'easy' else 'medium' if quiz.difficulty == 'medium' else 'low' }}" style="width: {{ quiz.correct * 10 }}%"></div>
+                                    <!-- Eğer çeviride patlarsa style kısmında silip deneyebilirsin-->
                                 </div>
                                 <div class="quiz-details">
                                     <div class="quiz-info">
-                                        <span>Questions: {{ quiz.total }}</span>
-                                        <span>Correct: {{ quiz.correct }}</span>
-                                        <span>Time: {{ quiz.time }} min</span>
+                                        <span>{{ _('Questions: ') }} {{ quiz.total }}</span>
+                                        <span>{{ _('Correct: ') }} {{ quiz.correct }}</span>
+                                        <span>{{ _('Time: ') }} {{ quiz.time }} min</span>
                                     </div>
-                                    <div class="quiz-date">Completed on {{ quiz.date }}</div>
+                                    <div class="quiz-date">{{ _('Completed on ') }} {{ quiz.date }}</div>
                                 </div>
                             </div>
                             {% endfor %}

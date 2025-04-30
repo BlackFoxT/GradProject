@@ -12,13 +12,13 @@
 </div>
 
 <div class="container-fluid mt-5" id="note-container" style="display: block;">
-    <button id="closeNote" style="display: none;" onclick="closeNote(1);">back</button>
+    <button id="closeNote" style="display: none;" onclick="closeNote(1);">{{ _('Back') }}</button>
     <div class="note-row">
         <form id="noteForm-1">
         <div class="note" id="note1" onclick="openNote(event, 1);">Click here to type...
-
+            <!-- DATABASEYE ATILDIĞI İÇİN BUNU DEĞİŞMESİN-->
         </div>
-        <button type="submit" id="submitNote1" style="display: none; margin-top: 5px;">Save</button>
+        <button type="submit" id="submitNote1" style="display: none; margin-top: 5px;">{{ _('Save') }}</button>
     </form>
         <div id="add-note">+</div>
     </div>

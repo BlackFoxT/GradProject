@@ -19,14 +19,14 @@
             <div class="backdrop" id="backdrop"></div>
                 <div class="enterTopic" id="enterTopic">
                     <div class="topic-header">
-                        <h5 class="topic-title" id="chatTopicLabel">Enter Chat Topic</h5>
+                        <h5 class="topic-title" id="chatTopicLabel">{{ _('Enter Chat Topic') }}</h5>
                     </div>
                     <div class="topic-body">
                          <input type="text" id="chatTopic" class="form-control" placeholder="Enter topic..." autofocus>
                     </div>
                     <div class="topic-footer">
-                        <button type="button" class="btn btn-secondary" href="#" onclick="closeTopic(event);">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="startChat" onclick="startChat(event);">Start Chat</button>
+                        <button type="button" class="btn btn-secondary" href="#" onclick="closeTopic(event);">{{ _('Cancel') }}</button>
+                        <button type="button" class="btn btn-primary" id="startChat" onclick="startChat(event);">{{ _('Start Chat') }}</button>
                     </div>
                 </div>
                 
@@ -111,7 +111,7 @@
                     {% endfor %}
                     {% else %}
                     <li class="nav-item">
-                        <span class="text-muted">No chat history available.</span>
+                        <span class="text-muted">{{ _('No chat history available.') }}</span>
                     </li>
                     {% endif %}
                 </ul>
@@ -123,7 +123,7 @@
         </div>
         <footer class="d-flex justify-content-center align-items-center border-top w-100 px-0">
             <div class="d-flex flex-row align-items-end justify-content-end w-100">
-                <span class="contact-us-text w-25 mb-3 text-center text-light">CONTACT US</span>
+                <span class="contact-us-text w-25 mb-3 text-center text-light">{{ _('CONTACT US') }}</span>
                 <ul class="d-flex align-items-center justify-content-center w-25 list-unstyled">
                     <li><a href="#" class="mx-2 fs-5 text-secondary"><i class="footer-contact-us-icons fa-brands fa-facebook-f"></i></a></li>
                     <li><a href="#" class="mx-2 fs-5 text-secondary"><i class="footer-contact-us-icons fa-brands fa-x-twitter"></i></a></li>

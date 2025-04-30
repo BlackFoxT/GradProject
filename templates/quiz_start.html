@@ -3,30 +3,30 @@
 
 <div class="d-flex justify-content-center align-items-center vh-100 px-5">
     <div class="d-flex flex-column justify-content-evenly w-75 p-5 border border-light rounded-5 bg-success-subtle quizStartTemplate">
-        <h1>QUIZ TIME!</h1>
+        <h1>{{ _('QUIZ TIME!') }}</h1>
 
         <div>
-            <p>Read the instructions before starting.</p>
+            <p>{{ _('Read the instructions before starting.') }}</p>
             <ul id="quiz-info-list">
-                <li>The questions are a mix of <strong>multiple-choice</strong> and <strong>true/false</strong> formats.
+                <li>{{ _('The questions are a mix of ') }}<strong>{{ _('multiple-choice') }}</strong>{{ _(' and ') }}<strong>{{ _('true/false') }}</strong>{{ _(' formats.') }}
                 </li>
-                <li>You can use the <strong>Next</strong> and <strong>Back</strong> buttons to navigate between
-                    questions.</li>
-                <li>Once submitted you <strong> Cannot Change</strong> your answers.</li>
-                <li>If you do not submit your answers before the time runs out, they will <strong>automatically be
-                        submitted</strong>.</li>
-                <li>Make sure to stay focused and manage your time wisely.</li>
+                <li>{{ _(' You can use the  ') }}<strong>{{ _(' Next ') }}</strong>{{ _(' and ') }}<strong>{{ _(' Back ') }}</strong> {{ _(' buttons to navigate between
+                    questions. ') }}</li>
+                <li>{{ _('Once submitted you ') }}<strong>{{ _(' Cannot Change') }}</strong>{{ _(' your answers.') }}</li>
+                <li>{{ _('If you do not submit your answers before the time runs out, they will ') }}<strong>{{ _('automatically be
+                    submitted.') }}</strong>.</li>
+                <li>{{ _('Make sure to stay focused and manage your time wisely.') }}</li>
             </ul>
         </div>
-        <p class="fs-5">You have <span class="fs-4 fw-bold redSpan">20 Questions</span> and <span
-                class="fs-4 fw-bold redSpan"> 10 Minutes</span>.</p>
+        <p class="fs-5">{{ _('You have') }}<span class="fs-4 fw-bold redSpan">{{ _('10 Questions') }}</span>{{ _(' and ') }}<span
+                class="fs-4 fw-bold redSpan">{{ _('10 Minutes') }}</span>.</p>
 
-        <p>Click the <strong>Start Quiz</strong> button when you are ready. Good luck!</p>
-
+        <p>{{ _('Click the') }} <strong>{{ _('Start Quiz') }}</strong>{{ _(' button when you are ready. Good luck!') }} </p>
+        <!-- Eğer çeviri berbat olursa bu strongları kaldırıp tek cümleye alabiliriz-->
         <div class="w-25">
             <a href="{{ url_for('quiz_routes.quiz') }}">
                 <button class="border border-0 rounded-3 w-50" id="quiz-start-button">
-                    Start Quiz
+                    {{ _('Start Quiz') }}
                 </button>
             </a>            
         </div>
