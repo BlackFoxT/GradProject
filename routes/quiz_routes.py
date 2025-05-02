@@ -59,26 +59,34 @@ def prepare_questions():
             })  
 
     print(chat_history.difficulty)
-    prompt = "Generate only " + str(10) + " multiple-choice questions about " + topic + " and the difficulty level is " + chat_history.difficulty + ". Provide the correct answer for each question. Use the following format:\n\n" + \
-            "Question: [Write the question here]\n" + \
-            "Choices:\n" + \
-            "A) [Option A]\n" + \
-            "B) [Option B]\n" + \
-            "C) [Option C]\n" + \
-            "D) [Option D]\n" + \
-            "Correct Answer: [Write the correct option letter, e.g., A), B), C), or D)]\n\n" + \
-            "Ensure the questions strictly follow this format and are consistent."
+    prompt = (
+        f"Generate exactly 10 multiple-choice questions about {topic} at a {chat_history.difficulty} difficulty level. "
+        "Each question must strictly follow **this exact format**:\n\n"
+        "Question: [Your question here]\n"
+        "Choices:\n"
+        "A) [Option A]\n"
+        "B) [Option B]\n"
+        "C) [Option C]\n"
+        "D) [Option D]\n"
+        "Correct Answer: [One of A, B, C, or D ONLY — no explanations]\n\n"
+        "Do not include explanations or commentary. Return only the formatted questions exactly as shown above. "
+        "Ensure consistent formatting for all 10 questions, with no additional content before or after the questions."
+    )
+
    
         
     # Generate quiz and save
     response = llm.invoke(prompt)
+    #print(response)
     new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID, difficulty=chat_history.difficulty)
     db.session.add(new_quiz)
     db.session.commit()
 
     # Parse questions and store them
     questions = parse_questions(response, quiz_id=new_quiz.id)
-    db.session.add_all(questions)
+    #print("--------------------------")
+    #print(questions)
+    db.session.add_all(questions[:10])
     db.session.commit()
 
     return jsonify({
@@ -189,21 +197,24 @@ def get_quiz_result():
     return jsonify(result_dict)
 
 def parse_questions(raw_text, quiz_id):
+    # Regular expression to extract questions
+    #cleaned_text = re.sub(r"<think>.*?</think>", "", raw_text, flags=re.DOTALL)
+    #print(raw_text)
+     # Updated pattern
     pattern = re.compile(
-        r'\d+\.\s+(.+?)\nChoices:\nA\)\s(.+?)\nB\)\s(.+?)\nC\)\s(.+?)\nD\)\s(.+?)\nCorrect Answer:\s([A-D])\)',
+        r"Question:\s*(.*?)\s*Choices:\s*A\)\s*(.*?)\s*B\)\s*(.*?)\s*C\)\s*(.*?)\s*D\)\s*(.*?)\s*Correct Answer:\s*([ABCD])",
         re.DOTALL
     )
-
     answer_map = {
-        'A': 0,
-        'B': 1,
-        'C': 2,
-        'D': 3
+    'A': 0,
+    'B': 1,
+    'C': 2,
+    'D': 3
     }
 
     questions = []
-
     matches = pattern.findall(raw_text)
+    print(matches)
     for match in matches:
         question_text = match[0].strip()
         options = [match[1].strip(), match[2].strip(), match[3].strip(), match[4].strip()]

@@ -106,7 +106,8 @@ document.addEventListener("DOMContentLoaded", function () {
       contentDiv.style.display = "block";
       header.style.display = "none";
       chatDiv.style.marginTop = "10px";
-      
+      scrollToBottom();
+      document.getElementById("askButton").disabled = true;
       // Send the message to the Flask backend
       fetch("/ask", {
         method: "POST",
@@ -189,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
               setProgressBar(data.chats, chatLength, data.chatId, data.isQuizSubmitted);
             }
             scrollToBottom();
-
+            document.getElementById("askButton").disabled = false;
           } else if (data.error) {
             contentDiv.innerHTML += `<div>Error: ${data.error}</div>`;
           }

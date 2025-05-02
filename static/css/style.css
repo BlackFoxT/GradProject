@@ -110,7 +110,7 @@ main {
   height: 85%;
   overflow-y: auto;
   margin-bottom: 40px;
-  margin-top: 10px;
+  margin-top: 100px;
   scroll-behavior: smooth;
 }
 
@@ -373,9 +373,15 @@ img #b-picture {
 }
 
 #progressBarr {
+  position: fixed;
+  top: 80px;               /* 80px from top */
+  left: 100;
+  width: 80%;             /* full width */
   min-height: 20px;
-  margin-top: 80px;
+  z-index: 9999;           /* stays on top */
+  background-color: #f8f9fa00; /* optional light background */
 }
+
 
 footer {
   position: relative; 

@@ -1,9 +1,11 @@
 from langchain_community.llms.ollama import Ollama
 
 # Initialize Ollama model
-llm = Ollama(model="llama3.2")
+llm = Ollama(model="deepseek-r1:7b")
 
-# Optionally, you can also define a function to invoke the model:
+# Invoke the model:
 def invoke_message(message):
     response = llm.invoke(message)
+    
     return response
+

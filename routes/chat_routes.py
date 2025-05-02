@@ -6,6 +6,8 @@ from models.chat_history import ChatHistory
 from models.information import Information
 from flask_login import current_user, login_required
 from routes.llm import llm  # Assuming this is where llm.invoke is defined
+import re
+import markdown
 
 # Create a Blueprint for chat-related routes
 chat_routes = Blueprint('chat_routes', __name__)
@@ -136,6 +138,8 @@ def ask():
             response = "Command cannot be found! Type !help or !yardım to see the available commands."
     else:
         response = llm.invoke(user_message)
+        #response = clean_response(response)
+        response = markdown.markdown(response)
     chat_entry = {
         "question": user_message,
         "response": response,
@@ -175,13 +179,16 @@ def ask():
                 "extraChat": chat_history.extrachat,
                 "isUser": True 
             })
-
     return jsonify({
         "topic": topic,
         "chat_entry": chat_entry,
         "isUser": False
     })
 
+    
+def clean_response(text):
+    # Remove <think>...</think> or any other XML-like tags
+    return re.sub(r"<[^>]+>", "", text).strip()
 
 @chat_routes.route("/note")
 @login_required

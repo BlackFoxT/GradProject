@@ -92,7 +92,7 @@ function BackQuestion(event) {
         nextButton.style.display = "block";
         submitButton.style.display = "none";
         submitButton.disabled = true;
-        
+        nextButton.disabled = false;
     }
     if (currentQuestionIndex == 0) {
         backButton.style.display = "none";
