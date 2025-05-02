@@ -4,6 +4,10 @@ from datetime import datetime
 from models import db
 from models.chat_history import ChatHistory
 from models.information import Information
+from models.quiz import Quiz
+from models.quiz_question import QuizQuestion
+from models.quiz_result import QuizResult
+from models.notes import Note
 from flask_login import current_user, login_required
 from routes.llm import llm  # Assuming this is where llm.invoke is defined
 import re
@@ -185,10 +189,48 @@ def ask():
         "isUser": False
     })
 
-    
-def clean_response(text):
-    # Remove <think>...</think> or any other XML-like tags
-    return re.sub(r"<[^>]+>", "", text).strip()
+@chat_routes.route('/chat/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_chat(id):
+    # Get the chat
+    chat_history = ChatHistory.query.filter_by(id=id).first_or_404()
+
+    # Delete related Quiz
+    existing_quiz = Quiz.query.filter_by(
+        user_id=current_user.id,
+        chat_id=chat_history.id,
+        difficulty=chat_history.difficulty
+    ).first()
+
+    if existing_quiz:
+        # Delete all quiz questions
+        quiz_questions = QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).all()
+        for question in quiz_questions:
+            db.session.delete(question)
+
+        # Delete related QuizResult
+        quiz_result = QuizResult.query.filter_by(quiz_id=existing_quiz.id).first()
+        if quiz_result:
+            db.session.delete(quiz_result)
+
+        db.session.delete(existing_quiz)
+
+    # Delete related Notes
+    notes = Note.query.filter_by(user_id=current_user.id, chat_id=chat_history.id).all()
+    if notes:
+        for note in notes:
+            db.session.delete(note)
+
+        # Delete the chat history
+    db.session.delete(chat_history)
+
+    db.session.commit()
+    flash('Chat and all related data have been deleted.', 'success')
+    ##return redirect(url_for('chat_routes.chat_list'))  # update this if your route name is different
+
+
+    return redirect(url_for('home_routes.home_page'))  # Replace with your actual chat list route name
+
 
 @chat_routes.route("/note")
 @login_required
