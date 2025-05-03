@@ -415,7 +415,7 @@ footer {
   padding: 12px;
   font-size: 16px;
   border-radius: 12px;
-  
+  overflow: hidden;
   cursor: pointer;
   outline: none;
   transition: background-color 0.3s, transform 0.2s;
@@ -467,7 +467,12 @@ footer {
   cursor: text;
   outline: none;
   transition: background-color 0.3s, transform 0.2s;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
+
 
 #closeNote,
 .note-button {

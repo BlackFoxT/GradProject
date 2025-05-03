@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(notes.length)
       notes.forEach((note) => {
         console.log(note.note_id)
-        if(note.note_id > 1){
+        if(note.note_id >= 1){
             addNotes(note.note_id, note.text);
         }
         else{
@@ -39,7 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });*/
     
     const form = document.getElementById("noteForm-1");
-    form.addEventListener("submit", handleNoteSubmit(1));
+    if(form){
+        form.addEventListener("submit", handleNoteSubmit(1));
     function handleNoteSubmit(noteCount) {
         return function(event) {
             event.preventDefault();
@@ -67,6 +68,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         };
     }
+    }
+    
 });
 
 function addNotes(noteId, text){
@@ -75,7 +78,10 @@ function addNotes(noteId, text){
     const noteContainer = document.getElementsByClassName("note");
     const allRows = container.querySelectorAll(".note-row");
         let targetRow = allRows[allRows.length - 1]; // Get the last row
-        const notesInRow = targetRow.querySelectorAll(".note").length;
+        if(targetRow.querySelectorAll(".note")) notesInRow = targetRow.querySelectorAll(".note").length;
+        else notesInRow = 0
+        console.log(notesInRow)
+        
 
         let maxNotesInRow = 3;
         
@@ -111,6 +117,7 @@ function addNotes(noteId, text){
             saveButton.id = "submitNote" + noteCount;
             saveButton.type = "submit";
             saveButton.innerText = "Save";
+            saveButton.style.display = "none";
             saveButton.className = "note-button";
 
             // Append note and button to the form
@@ -136,6 +143,7 @@ function addNotes(noteId, text){
         } else {
             const notes = document.querySelectorAll('.note');
             const noteCount = notes.length+1;
+            console.log(noteCount)
             const id = "note" + noteCount;
             const newNote = document.createElement("div");
             newNote.id = id;
@@ -180,7 +188,7 @@ function saveNote(event, number){
             const id = "submitNote" + number;
             document.getElementById(id).style.display="none";
             closeNote(number);
-        
+            console.log(number)
             fetch("/saveNote", {
                 method: "POST",
                 headers: {
@@ -198,9 +206,11 @@ function saveNote(event, number){
     //}
 }
 function openNote(event, number){
+    
     const noteElement = event.currentTarget;
     const allNotes = document.querySelectorAll('.note');
     localStorage.setItem("content", 1); // Store in localStorage
+    console.log(number)
     allNotes.forEach(note => {
         if (note !== noteElement) {
             note.style.display = "none"; 
@@ -218,6 +228,17 @@ function openNote(event, number){
     
     noteElement.contentEditable = "true";
     scrollToTop()
+    const div = document.querySelector('.openedNote');
+    if (div) { 
+        div.scrollTop = div.scrollHeight;
+    }
+    if (div && div.scrollHeight > div.clientHeight) {
+        // Scroll the div to its bottom
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: "smooth" // for a smooth scroll effect
+          });
+      }
 }
 
 function closeNote(number){
@@ -247,6 +268,13 @@ function scrollToTop() {
       behavior: "smooth" // for a smooth scroll effect
     });
   }
+ /* function scrollToBottom() {
+    console.log("12212")
+    const div = document.querySelector('.openedNote');
+    if (div) { 
+        div.scrollTop = div.scrollHeight;
+    }
+  }*/
   
 // Create a form to wrap the note and save button
 /*const form = document.createElement("form");

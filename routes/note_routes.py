@@ -10,9 +10,10 @@ note_routes = Blueprint('note_routes', __name__)
 @note_routes.route("/saveNote", methods=["POST"])
 def saveNote():
     content = request.json.get('content')
+    num = request.json.get('number')
     notes = Note.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID).all()
     number = len(notes)+1
-    note = Note.query.filter_by(user_id=current_user.id, note_id=number, chat_id=current_user.currentChatID).first()
+    note = Note.query.filter_by(user_id=current_user.id, note_id=num, chat_id=current_user.currentChatID).first()
 
     if note is None:
         note = Note(user_id=current_user.id, chat_id=current_user.currentChatID, note_id=number, text=content)
