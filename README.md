@@ -11,7 +11,7 @@ Before downloading this project, you should have **Ollama** installed.
 [Download Ollama](https://ollama.com/)
 
 After installing it, run the following command in CMD:
-`ollama run llama3.2`
+`ollama run deepseek-r1:7b`
 
 Make sure Ollama is running while using the project.
 
