@@ -111,8 +111,7 @@ function addNotes(noteId, text){
             saveButton.id = "submitNote" + noteCount;
             saveButton.type = "submit";
             saveButton.innerText = "Save";
-            saveButton.style.display = "none";
-            saveButton.style.marginTop = "5px";
+            saveButton.className = "note-button";
 
             // Append note and button to the form
             form.appendChild(newNote);
@@ -154,8 +153,8 @@ function addNotes(noteId, text){
             saveButton.type = "submit";
             saveButton.innerText = "Save";
             saveButton.style.display = "none";
-            saveButton.style.marginTop = "5px";
-
+            saveButton.className = "note-button";
+            
             // Add note and button to form
             form.appendChild(newNote);
             form.appendChild(saveButton);

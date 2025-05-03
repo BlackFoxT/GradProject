@@ -468,3 +468,28 @@ footer {
   outline: none;
   transition: background-color 0.3s, transform 0.2s;
 }
+
+#closeNote,
+.note-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#closeNote:hover,
+.note-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+#closeNote:active,
+.note-button:active {
+    transform: scale(0.95);
+}
