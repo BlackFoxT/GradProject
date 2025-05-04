@@ -40,3 +40,16 @@ def get_note_history():
         for note in notes
     ]
     return jsonify(notes_data), 200
+
+@note_routes.route('/note/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_note(id):
+    note = Note.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID, note_id=id).first()
+    if note:
+        db.session.delete(note)
+        db.session.commit()
+
+
+    db.session.commit()
+    flash('Note have been deleted.', 'success')
+    return redirect(url_for('chat_routes.note')) 

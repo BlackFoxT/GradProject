@@ -128,6 +128,35 @@ function addNotes(noteId, text){
             form.addEventListener("submit", function (event) {
                 saveNote(event, noteCount);
             });
+            if(noteId){
+                // === Delete Form ===
+                const deleteForm = document.createElement("form");
+                deleteForm.method = "POST";
+                deleteForm.action = `/chat/delete/${noteId}`; // Replace with dynamic route if needed
+                deleteForm.onsubmit = function () {
+                    return confirm("Are you sure you want to delete this note?");
+                };
+
+                // Hidden method override input
+                const hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "_method";
+                hiddenInput.value = "DELETE";
+
+                // Delete button
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "submit";
+                deleteButton.className = "btn btn-sm btn-white";
+                deleteButton.innerText = "🗑️";
+
+                // Append to delete form
+                deleteForm.appendChild(hiddenInput);
+                deleteForm.appendChild(deleteButton);
+
+                // Append delete form after the note
+                form.appendChild(deleteForm);
+            }
+        
 
             // Append form to the new row
             newRow.appendChild(form);
@@ -169,6 +198,34 @@ function addNotes(noteId, text){
             form.addEventListener("submit", function (event) {
                 saveNote(event, noteCount);
             });
+            if(noteId){
+                // === Delete Form ===
+                const deleteForm = document.createElement("form");
+                deleteForm.method = "POST";
+                deleteForm.action = `/note/delete/${noteId}`; // Replace with dynamic route if needed
+                deleteForm.onsubmit = function () {
+                    return confirm("Are you sure you want to delete this note?");
+                };
+
+                // Hidden method override input
+                const hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "_method";
+                hiddenInput.value = "DELETE";
+
+                // Delete button
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "submit";
+                deleteButton.className = "btn btn-sm btn-white";
+                deleteButton.innerText = "🗑️";
+
+                // Append to delete form
+                deleteForm.appendChild(hiddenInput);
+                deleteForm.appendChild(deleteButton);
+
+                // Append delete form after the note
+                form.appendChild(deleteForm);
+            }
             // Add the form to the DOM
             targetRow.insertBefore(form, addNoteButton);
            // targetRow.insertBefore(newNote, addNoteButton);
