@@ -131,6 +131,8 @@ function addNotes(noteId, text){
             if(noteId){
                 // === Delete Form ===
                 const deleteForm = document.createElement("form");
+                deleteForm.id = "deleteform" + noteCount;
+                deleteForm.classList.add("deleteform");
                 deleteForm.method = "POST";
                 deleteForm.action = `/chat/delete/${noteId}`; // Replace with dynamic route if needed
                 deleteForm.onsubmit = function () {
@@ -171,7 +173,10 @@ function addNotes(noteId, text){
             container.appendChild(newRow);
         } else {
             const notes = document.querySelectorAll('.note');
-            const noteCount = notes.length+1;
+            let noteCount = notes.length+1;
+            if(noteId){
+                noteCount = noteId;
+            } 
             console.log(noteCount)
             const id = "note" + noteCount;
             const newNote = document.createElement("div");
@@ -201,6 +206,8 @@ function addNotes(noteId, text){
             if(noteId){
                 // === Delete Form ===
                 const deleteForm = document.createElement("form");
+                deleteForm.id = "deleteform" + noteCount;
+                deleteForm.classList.add("deleteform");
                 deleteForm.method = "POST";
                 deleteForm.action = `/note/delete/${noteId}`; // Replace with dynamic route if needed
                 deleteForm.onsubmit = function () {
@@ -244,6 +251,11 @@ function saveNote(event, number){
             //localStorage.setItem("note" + number, content);
             const id = "submitNote" + number;
             document.getElementById(id).style.display="none";
+            const allDeleteForm = document.querySelectorAll('.deleteform');
+            allDeleteForm.forEach(form => {
+                form.style.display = "block"; 
+        
+            });
             closeNote(number);
             console.log(number)
             fetch("/saveNote", {
@@ -277,6 +289,13 @@ function openNote(event, number){
     noteElement.classList.add("openedNote");
     document.getElementById("add-note").style.display="none";
     document.getElementById("closeNote").style.display="block";
+    // Hide delete button
+    //document.getElementById("deleteform" + number).style.display = "none";
+    const allDeleteForm = document.querySelectorAll('.deleteform');
+    allDeleteForm.forEach(form => {
+            form.style.display = "none"; 
+        
+    });
     const id = "submitNote" + number;
     document.getElementById(id).style.display="block";
     document.getElementById("closeNote").addEventListener("click", function () {
@@ -309,6 +328,12 @@ function closeNote(number){
         document.getElementById("closeNote").style.display="none";
         document.getElementById("submitNote" + number).style.display="none";
         const allNotes = document.querySelectorAll('.note');
+        //document.getElementById("deleteform" + number).style.display = "block";
+        const allDeleteForm = document.querySelectorAll('.deleteform');
+        allDeleteForm.forEach(form => {
+            form.style.display = "block"; 
+        
+        });
 
         allNotes.forEach(note => {
             note.style.display = "block"; 
