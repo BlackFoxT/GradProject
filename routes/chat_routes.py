@@ -225,7 +225,7 @@ def delete_chat(id):
     db.session.delete(chat_history)
 
     db.session.commit()
-    flash('Chat and all related data have been deleted.', 'success')
+    #flash('Chat and all related data have been deleted.', 'success')
     ##return redirect(url_for('chat_routes.chat_list'))  # update this if your route name is different
 
 

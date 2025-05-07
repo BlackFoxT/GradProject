@@ -62,12 +62,12 @@
 
             <a class="navbar-brand" href="{{ url_for('home_routes.home_page') }}"><img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo"/></a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto bg-white border-bottom border-dark">
                     <li class="nav-item d-flex" id="change_language">
                         <a href="{{ url_for('language_routes.change_language', lang_code='tr') }}">
                             <img src="{{ url_for('static', filename='images/Türkçe.jpg') }}" alt="Türkçe" class="language-flag" />

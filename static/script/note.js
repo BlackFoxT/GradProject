@@ -2,9 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch("/get-note-history")
     .then((response) => response.json())
     .then((notes) => {
-        console.log(notes.length)
+       // console.log(notes.length)
       notes.forEach((note) => {
-        console.log(note.note_id)
+      //  console.log(note.note_id)
         if(note.note_id >= 1){
             addNotes(note.note_id, note.text);
         }
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("content", 2); // Store in localStorage
     });*/
     
-    const form = document.getElementById("noteForm-1");
+    /*const form = document.getElementById("noteForm-1");
     if(form){
         form.addEventListener("submit", handleNoteSubmit(1));
     function handleNoteSubmit(noteCount) {
@@ -68,175 +68,237 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         };
     }
-    }
+    }*/
     
 });
 
 function addNotes(noteId, text){
+   
+        
+
+        
+        const notes = document.querySelectorAll('.note');
+        let noteCount = notes.length+1;
+        //let num = noteCount;
+        if(noteId){
+            addNoteDiv(noteId, 0, text)
+        } //num = noteId;
+        else{
+            fetch("/askForNote", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ number : noteCount}),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data.number)
+                    noteCount = data.number;
+                    addNoteDiv(null, noteCount, null)
+    
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+        }
+        //console.log(num)
+    console.log(noteCount)
+        // If the last row already has the maximum number of notes (4), create a new row
+        
+}
+let index = 0;
+function addNoteDiv(noteId, noteCount, text){
     const addNoteButton = document.getElementById("add-note");
     const container = document.getElementById("note-container");
     const noteContainer = document.getElementsByClassName("note");
     const allRows = container.querySelectorAll(".note-row");
-        let targetRow = allRows[allRows.length - 1]; // Get the last row
-        if(targetRow.querySelectorAll(".note")) notesInRow = targetRow.querySelectorAll(".note").length;
-        else notesInRow = 0
-        console.log(notesInRow)
+    let targetRow = allRows[allRows.length - 1]; // Get the last row
+    if(targetRow.querySelectorAll(".note")) notesInRow = targetRow.querySelectorAll(".note").length;
+    else notesInRow = 0
+    console.log(notesInRow)
+    console.log(noteCount)
+    const notes = document.querySelectorAll('.note');
+    let maxNotesInRow = 3;
+    if (notesInRow >= maxNotesInRow) {
+        // Create a new row
+        const newRow = document.createElement("div");
+        newRow.classList.add("note-row");
+
+       
+        //console.log(noteCount)
+        let id = "note" + noteCount;
+        while (document.getElementById(id)) {
+            noteCount++;
+            id = "note" + noteCount;
+          }
+        // Create and add the new note
+        console.log(id)
         
-
-        let maxNotesInRow = 3;
         
-
-        // If the last row already has the maximum number of notes (4), create a new row
-        if (notesInRow >= maxNotesInRow) {
-            // Create a new row
-            const newRow = document.createElement("div");
-            newRow.classList.add("note-row");
-
-            const notes = document.querySelectorAll('.note');
-            const noteCount = notes.length+1;
-            //console.log(noteCount)
-            const id = "note" + noteCount;
-            // Create and add the new note
-            const newNote = document.createElement("div");
-            
-            newNote.classList.add("note");
-            newNote.id = id;
-            newNote.addEventListener("click", function(event) {
-                openNote(event, noteCount);
-            });
-
-           // newNote.contentEditable = "true";
-           if(noteId) newNote.innerText = text
-           else newNote.innerText = "Click here to type...";
-            
-            // Create the form and save button
-            const form = document.createElement("form");
-            form.id = "noteForm" + noteCount;
-
-            const saveButton = document.createElement("button");
-            saveButton.id = "submitNote" + noteCount;
-            saveButton.type = "submit";
-            saveButton.innerText = "Save";
-            saveButton.style.display = "none";
-            saveButton.className = "note-button";
-
-            // Append note and button to the form
-            form.appendChild(newNote);
-            form.appendChild(saveButton);
-            //console.log(noteCount)
-            // Handle form submission
-            form.addEventListener("submit", function (event) {
-                saveNote(event, noteCount);
-            });
-            if(noteId){
-                // === Delete Form ===
-                const deleteForm = document.createElement("form");
-                deleteForm.id = "deleteform" + noteCount;
-                deleteForm.classList.add("deleteform");
-                deleteForm.method = "POST";
-                deleteForm.action = `/chat/delete/${noteId}`; // Replace with dynamic route if needed
-                deleteForm.onsubmit = function () {
-                    return confirm("Are you sure you want to delete this note?");
-                };
-
-                // Hidden method override input
-                const hiddenInput = document.createElement("input");
-                hiddenInput.type = "hidden";
-                hiddenInput.name = "_method";
-                hiddenInput.value = "DELETE";
-
-                // Delete button
-                const deleteButton = document.createElement("button");
-                deleteButton.type = "submit";
-                deleteButton.className = "btn btn-sm btn-white";
-                deleteButton.innerText = "🗑️";
-
-                // Append to delete form
-                deleteForm.appendChild(hiddenInput);
-                deleteForm.appendChild(deleteButton);
-
-                // Append delete form after the note
-                form.appendChild(deleteForm);
-            }
-        
-
-            // Append form to the new row
-            newRow.appendChild(form);
-
-            // Remove the add button from the old row
-            targetRow.removeChild(addNoteButton);
-
-            // Append the add button to the new row
-            newRow.appendChild(addNoteButton);
-
-            // Append the new row to the container
-            container.appendChild(newRow);
-        } else {
-            const notes = document.querySelectorAll('.note');
-            let noteCount = notes.length+1;
-            if(noteId){
-                noteCount = noteId;
-            } 
-            console.log(noteCount)
-            const id = "note" + noteCount;
-            const newNote = document.createElement("div");
-            newNote.id = id;
-            newNote.classList.add("note");
-            newNote.addEventListener("click", function(event) {
-                openNote(event, noteCount);
-            });
-            if(noteId) newNote.innerText = text
-            else newNote.innerText = "Click here to type...";
-            const form = document.createElement("form");
-            form.id = "noteForm" + noteCount;
-            // Create the save button
-            const saveButton = document.createElement("button");
-            saveButton.id = "submitNote" + noteCount;
-            saveButton.type = "submit";
-            saveButton.innerText = "Save";
-            saveButton.style.display = "none";
-            saveButton.className = "note-button";
-            
-            // Add note and button to form
-            form.appendChild(newNote);
-            form.appendChild(saveButton);
-            form.addEventListener("submit", function (event) {
-                saveNote(event, noteCount);
-            });
-            if(noteId){
-                // === Delete Form ===
-                const deleteForm = document.createElement("form");
-                deleteForm.id = "deleteform" + noteCount;
-                deleteForm.classList.add("deleteform");
-                deleteForm.method = "POST";
-                deleteForm.action = `/note/delete/${noteId}`; // Replace with dynamic route if needed
-                deleteForm.onsubmit = function () {
-                    return confirm("Are you sure you want to delete this note?");
-                };
-
-                // Hidden method override input
-                const hiddenInput = document.createElement("input");
-                hiddenInput.type = "hidden";
-                hiddenInput.name = "_method";
-                hiddenInput.value = "DELETE";
-
-                // Delete button
-                const deleteButton = document.createElement("button");
-                deleteButton.type = "submit";
-                deleteButton.className = "btn btn-sm btn-white";
-                deleteButton.innerText = "🗑️";
-
-                // Append to delete form
-                deleteForm.appendChild(hiddenInput);
-                deleteForm.appendChild(deleteButton);
-
-                // Append delete form after the note
-                form.appendChild(deleteForm);
-            }
-            // Add the form to the DOM
-            targetRow.insertBefore(form, addNoteButton);
-           // targetRow.insertBefore(newNote, addNoteButton);
+        if (document.getElementById(id)) {
+            index++;
         }
+        console.log(index)
+        const newNote = document.createElement("div");
+        
+        newNote.classList.add("note");
+        newNote.id = id;
+        newNote.addEventListener("click", function(event) {
+            openNote(event, noteCount, index);
+        });
+        
+       // newNote.contentEditable = "true";
+       if(noteId) newNote.innerText = text
+       else newNote.innerText = "Click here to type...";
+        
+        // Create the form and save button
+        const form = document.createElement("form");
+        form.id = "noteForm" + noteCount;
+        
+        const saveButton = document.createElement("button");
+        if(noteId){
+            saveButton.id = "submitNote" + noteId;
+        }
+        else{
+            saveButton.id = "submitNote" + noteCount;
+        }
+        
+        saveButton.type = "submit";
+        saveButton.innerText = "Save";
+        saveButton.style.display = "none";
+        saveButton.className = "note-button";
+
+        // Append note and button to the form
+        form.appendChild(newNote);
+        form.appendChild(saveButton);
+        //console.log(noteCount)
+        // Handle form submission
+        form.addEventListener("submit", function (event) {
+            saveNote(event, noteCount);
+        });
+        if(noteId){
+            // === Delete Form ===
+            const deleteForm = document.createElement("form");
+            deleteForm.id = "deleteform" + noteCount;
+            deleteForm.classList.add("deleteform");
+            deleteForm.method = "POST";
+            deleteForm.action = `/chat/delete/${noteId}`; // Replace with dynamic route if needed
+            deleteForm.onsubmit = function () {
+                return confirm("Are you sure you want to delete this note?");
+            };
+
+            // Hidden method override input
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "_method";
+            hiddenInput.value = "DELETE";
+
+            // Delete button
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "submit";
+            deleteButton.className = "btn btn-sm btn-white";
+            deleteButton.innerText = "🗑️";
+
+            // Append to delete form
+            deleteForm.appendChild(hiddenInput);
+            deleteForm.appendChild(deleteButton);
+
+            // Append delete form after the note
+            form.appendChild(deleteForm);
+        }
+    
+
+        // Append form to the new row
+        newRow.appendChild(form);
+
+        // Remove the add button from the old row
+        targetRow.removeChild(addNoteButton);
+
+        // Append the add button to the new row
+        newRow.appendChild(addNoteButton);
+
+        // Append the new row to the container
+        container.appendChild(newRow);
+    } else {
+       // const notes = document.querySelectorAll('.note');
+        //let noteCount = notes.length+1;
+        if(noteId){
+            noteCount = noteId;
+        } 
+      //  console.log(noteCount)
+        let id = "note" + noteCount;
+        
+        while (document.getElementById(id)) {
+            noteCount++;
+            id = "note" + noteCount;
+          }
+        console.log(index)
+        const newNote = document.createElement("div");
+        newNote.id = id;
+        
+        newNote.classList.add("note");
+        newNote.addEventListener("click", function(event) {
+            openNote(event, noteCount, index);
+        });
+        if(noteId) newNote.innerText = text
+        else newNote.innerText = "Click here to type...";
+        const form = document.createElement("form");
+        form.id = "noteForm" + noteCount;
+        // Create the save button
+        const saveButton = document.createElement("button");
+        if(noteId){
+            saveButton.id = "submitNote" + noteId;
+        }
+        else{
+            saveButton.id = "submitNote" + noteCount;
+        }
+        
+        saveButton.type = "submit";
+        saveButton.innerText = "Save";
+        saveButton.style.display = "none";
+        saveButton.className = "note-button";
+        
+        // Add note and button to form
+        form.appendChild(newNote);
+        form.appendChild(saveButton);
+        form.addEventListener("submit", function (event) {
+            saveNote(event, noteCount);
+        });
+        if(noteId){
+            // === Delete Form ===
+            const deleteForm = document.createElement("form");
+            deleteForm.id = "deleteform" + noteCount;
+            deleteForm.classList.add("deleteform");
+            deleteForm.method = "POST";
+            deleteForm.action = `/note/delete/${noteId}`; // Replace with dynamic route if needed
+            deleteForm.onsubmit = function () {
+                return confirm("Are you sure you want to delete this note?");
+            };
+
+            // Hidden method override input
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "_method";
+            hiddenInput.value = "DELETE";
+
+            // Delete button
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "submit";
+            deleteButton.className = "btn btn-sm btn-white";
+            deleteButton.innerText = "🗑️";
+
+            // Append to delete form
+            deleteForm.appendChild(hiddenInput);
+            deleteForm.appendChild(deleteButton);
+
+            // Append delete form after the note
+            form.appendChild(deleteForm);
+        }
+        // Add the form to the DOM
+        targetRow.insertBefore(form, addNoteButton);
+       // targetRow.insertBefore(newNote, addNoteButton);
+    }
 }
 
 function saveNote(event, number){
@@ -267,25 +329,54 @@ function saveNote(event, number){
               })
                 .then((response) => response.json())
                 .then((data) => {
+                    
 
         })
         .catch((error) => {
           console.error("Error:", error);
         });
+        location.reload();
     //}
 }
-function openNote(event, number){
+function openNote(event, number, indext){
     
-    const noteElement = event.currentTarget;
+    const noteid = "note" + number;
+    const noteElement = document.getElementById(noteid);
     const allNotes = document.querySelectorAll('.note');
     localStorage.setItem("content", 1); // Store in localStorage
     console.log(number)
-    allNotes.forEach(note => {
-        if (note !== noteElement) {
-            note.style.display = "none"; 
-        }
-    });
-    noteElement.classList.remove("note");
+    const notesArray = Array.from(allNotes); // convert to array
+    console.log(indext)
+    const matches = notesArray.filter(note => note === noteElement);
+    console.log(matches)
+   // if (indext > 0) {
+        //let i = 0;
+        allNotes.forEach(note => {
+           /* console.log(i)
+            if(i === index){
+                noteElement = note;
+                console.log(i)
+            }*/
+            /*if(note === noteElement && i !== index){
+                i++;
+                note.style.display = "none"; 
+                console.log(i)
+            }*/
+            
+            if (note !== noteElement) {
+                note.style.display = "none";
+            }
+            
+        }); 
+   // }
+    /*else{
+        allNotes.forEach(note => {
+            if (note !== noteElement) {
+                note.style.display = "none"; 
+            }
+        }); */
+    //}
+        noteElement.classList.remove("note");
     noteElement.classList.add("openedNote");
     document.getElementById("add-note").style.display="none";
     document.getElementById("closeNote").style.display="block";
@@ -297,8 +388,10 @@ function openNote(event, number){
         
     });
     const id = "submitNote" + number;
+    console.log(number)
     document.getElementById(id).style.display="block";
     document.getElementById("closeNote").addEventListener("click", function () {
+        console.log(number)
         closeNote(number);
     });
     
@@ -318,7 +411,9 @@ function openNote(event, number){
 }
 
 function closeNote(number){
+    console.log(number)
     const id = "note" + number;
+    console.log(id)
     const noteElement = document.getElementById(id);
     if (noteElement) {
 

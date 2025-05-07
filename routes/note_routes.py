@@ -12,8 +12,16 @@ def saveNote():
     print(request.json.get('number'))
     content = request.json.get('content')
     num = request.json.get('number')
+    number = num
+    
     notes = Note.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID).all()
-    number = len(notes)+1
+    if notes:
+        last_note = Note.query.filter_by(
+            user_id=current_user.id,
+            chat_id=current_user.currentChatID
+        ).order_by(Note.note_id.desc()).first()
+        print(last_note.note_id)
+        number = last_note.note_id + 1 if last_note else 1
     note = Note.query.filter_by(user_id=current_user.id, note_id=num, chat_id=current_user.currentChatID).first()
     print(current_user.id)
     print(current_user.currentChatID)
@@ -26,6 +34,7 @@ def saveNote():
         note.text = content
 
     db.session.commit()
+    #flash('Note have been saved.', 'success')
     return jsonify({})
 
 @note_routes.route("/get-note-history", methods=["GET"])
@@ -57,3 +66,22 @@ def delete_note(id):
     db.session.commit()
     flash('Note have been deleted.', 'success')
     return redirect(url_for('chat_routes.note')) 
+
+
+@note_routes.route("/askForNote", methods=["POST"])
+def askNote():
+    number = request.json.get('number')
+    notes = Note.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID).all()
+    if notes:
+        last_note = Note.query.filter_by(
+            user_id=current_user.id,
+            chat_id=current_user.currentChatID
+        ).order_by(Note.note_id.desc()).first()
+        print(last_note.note_id)
+        number = last_note.note_id + 1 if last_note else 1
+    #number = len(notes)+1
+    #note = Note.query.filter_by(user_id=current_user.id, note_id=num, chat_id=current_user.currentChatID).first()
+    #print(number)
+
+    #flash('Note have been saved.', 'success')
+    return jsonify({"number": number})

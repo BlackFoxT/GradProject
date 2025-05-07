@@ -229,7 +229,9 @@ function openTopic(event) {
   // Display the modal and backdrop
   const topicDiv = document.getElementById("enterTopic");
   const backdrop = document.getElementById("backdrop");
-
+  const progressBar = document.getElementById("progressBarr");
+progressBar.style.zIndex = "-1";
+//progressBar.style.height = "15px";
   topicDiv.style.display = "block";  // Show the modal
   backdrop.style.display = "block";  // Show the backdrop
 
@@ -240,7 +242,7 @@ function startChat(event) {
   event.preventDefault(); // Prevent any unintended form submission
 
   const topicInput = document.getElementById("chatTopic").value.trim();
-
+  document.getElementById("progressBarr").style.zIndex = "0";
   if (topicInput) {
       localStorage.setItem("chatTopic", topicInput); // Store in localStorage
       closeTopic(); // Hide the topic popup
@@ -248,6 +250,7 @@ function startChat(event) {
   } else {
       alert("Please enter a topic before starting the chat."); // Validation message
   }
+  
 }
 
 function closeTopic() {
@@ -256,7 +259,7 @@ function closeTopic() {
 
   topicDiv.style.display = "none";  // Hide the modal
   backdrop.style.display = "none";  // Hide the backdrop
-
+  document.getElementById("progressBarr").style.zIndex = "0";
   // Enable interactions with the page
   document.body.classList.remove("modal-open");
 }
