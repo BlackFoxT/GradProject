@@ -42,9 +42,11 @@
                 </form>
                 
             </div>
-            <button class="btn btn-secondary h-50" id="takeNoteButton" style="display: none;" onclick="takeNote(event);">{{ _('Take Note') }}
-            </button>
-        </div>
+            
+            {% if current_user.is_authenticated %}
+                <button class="take-note-button" id="takeNoteButton" onclick="takeNote(event);"><i class="fas fa-pen"></i> {{ _('Take Note') }}</button>
+            {% endif %}
+            </div>
     </div>
 </div>
 {% endblock content %}

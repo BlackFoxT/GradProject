@@ -307,6 +307,22 @@
   border-color: #4285f4;
 }
 
+footer {
+  width: 100%;
+  background-color: rgb(49, 49, 49);
+  color: white;
+  padding: 10px 0;
+  position: relative;
+  z-index: 9999;
+}
+
+
+.footer-contact-us-icons:hover {
+  font-size: larger;
+  color: #2196F3;
+}
+
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .profile-section {
