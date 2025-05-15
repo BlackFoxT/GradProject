@@ -43,12 +43,12 @@ def get_chat_history():
         # For authenticated users, fetch chat history from the database
 
         chat_history = ChatHistory.query.filter_by(id=current_user.currentChatID).first()
-        print(chat_history)
+
         if chat_history.is_quizstarted or chat_history.realchat_count == 0:
               chat_history.is_quizstarted = False
             
         if chat_history:
-           # print(chat_history.chats)
+
             return jsonify({# Assuming `chats` is JSON serializable
                 "contentVisible": True,
                 "chats": chat_history.chats,
@@ -74,16 +74,17 @@ def get_chat_history():
 @chat_routes.route("/ask", methods=["POST"])
 def ask():
     user_message = request.json.get('message')
-    #print(user_message)
     topic = request.json.get('chatTopic')
+
     if topic is None:
         topic = request.json.get('topic', 'General')
-    #print(topic)
+    
     if not user_message:
         return jsonify({"error": "Message is required"}), 400
 
     response = None
     realchatflag = False
+
     if user_message.startswith('!'):
         realchatflag = True
         command = user_message[1:].lower()
@@ -142,7 +143,6 @@ def ask():
             response = "Command cannot be found! Type !help or !yardım to see the available commands."
     else:
         response = llm.invoke(user_message)
-        #response = clean_response(response)
         response = markdown.markdown(response)
     chat_entry = {
         "question": user_message,
@@ -163,7 +163,6 @@ def ask():
         if realchatflag is False:
             chat_history.realchat_count += 1
         else:
-            print(12)
             chat_history.extrachat = 1
 
         if chat_history.realchat_count > 0 or chat_history.realchat_count < 10:
@@ -217,19 +216,16 @@ def delete_chat(id):
 
     # Delete related Notes
     notes = Note.query.filter_by(user_id=current_user.id, chat_id=chat_history.id).all()
+
     if notes:
         for note in notes:
             db.session.delete(note)
 
-        # Delete the chat history
+    # Delete the chat history
     db.session.delete(chat_history)
-
     db.session.commit()
-    #flash('Chat and all related data have been deleted.', 'success')
-    ##return redirect(url_for('chat_routes.chat_list'))  # update this if your route name is different
 
-
-    return redirect(url_for('home_routes.home_page'))  # Replace with your actual chat list route name
+    return redirect(url_for('home_routes.home_page')) 
 
 
 @chat_routes.route("/note")
@@ -244,20 +240,19 @@ def note():
         user_chats = ChatHistory.query.filter_by(user_id=current_user.id).all()
         
     chat_id = current_user.currentChatID
-    print(chat_id)
-    # Fetch the selected chat content, if chat_id is provided
+    
     if chat_id:
         selected_chat = ChatHistory.query.filter_by(id=chat_id).first()
         
         # If no chat is found, flash an error message and redirect to home page
         if selected_chat.user_id != current_user.id:
             flash('Unathenticated chat is found, you can not enter !!!', 'error')
-            return redirect(url_for('home_routes.home_page'))  # Redirect to the homepage if no chat found
+            return redirect(url_for('home_routes.home_page')) 
         
         # If no chat is found, flash an error message and redirect to home page
         if selected_chat is None:
             flash('Selected chat not found', 'error')
-            return redirect(url_for('home_routes.home_page'))  # Redirect to the homepage if no chat found
+            return redirect(url_for('home_routes.home_page'))  
         else:
             # If a valid chat is found, update currentChatID and save to the database
             current_user.currentChatID = chat_id

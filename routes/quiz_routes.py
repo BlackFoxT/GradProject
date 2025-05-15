@@ -23,7 +23,7 @@ def prepare_questions():
 
     response = None
     # Check if quiz already exists
-     # 🧹 Delete existing quiz and its questions if exists
+    # Delete existing quiz and its questions if exists
     existing_quiz = Quiz.query.filter_by(user_id=current_user.id, chat_id=current_user.currentChatID, difficulty=chat_history.difficulty).first()
     if existing_quiz:
         chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=current_user.currentChatID).first()
@@ -31,7 +31,6 @@ def prepare_questions():
         
         if quizResult:
             quizScore = quizResult.score
-            print(quizScore)
             if chat_history.difficulty == "hard":
                 QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
                 QuizResult.query.filter_by(quiz_id=existing_quiz.id).delete()
@@ -44,7 +43,7 @@ def prepare_questions():
             else:
                 # Delete associated questions
                 QuizQuestion.query.filter_by(quiz_id=existing_quiz.id).delete()
-                # Optionally delete the quiz result too if you have that
+                # Delete the quiz result too if you have that
                 QuizResult.query.filter_by(quiz_id=existing_quiz.id).delete()
                 db.session.delete(existing_quiz)
 
@@ -58,7 +57,6 @@ def prepare_questions():
                 "chatId": current_user.currentChatID
             })  
 
-    print(chat_history.difficulty)
     prompt = (
         f"Generate exactly 10 multiple-choice questions about {topic} at a {chat_history.difficulty} difficulty level. "
         "Each question must strictly follow **this exact format**:\n\n"
@@ -77,15 +75,14 @@ def prepare_questions():
         
     # Generate quiz and save
     response = llm.invoke(prompt)
-    #print(response)
+
     new_quiz = Quiz(user_id=current_user.id, chat_id=current_user.currentChatID, difficulty=chat_history.difficulty)
     db.session.add(new_quiz)
     db.session.commit()
 
     # Parse questions and store them
     questions = parse_questions(response, quiz_id=new_quiz.id)
-    #print("--------------------------")
-    #print(questions)
+
     db.session.add_all(questions[:10])
     db.session.commit()
 
@@ -161,6 +158,7 @@ def submit_quiz():
     chat_history = ChatHistory.query.filter_by(user_id=current_user.id, id=current_user.currentChatID).first()
     chat_history.is_sumbitted = True
     data = request.get_json()
+
     result = QuizResult(
         quiz_id=data['quiz_id'],
         score=data['score'],
@@ -169,6 +167,7 @@ def submit_quiz():
         userAnswers=data['userAnswers'],
         correctAnswers=data['correctAnswers']
     )
+
     db.session.add(result)
     db.session.commit()
     return jsonify({'message': 'Quiz result saved to database.'}), 201
@@ -183,7 +182,6 @@ def get_quiz_result():
     if not result:
         return jsonify({"error": "Result not found"}), 404
 
-    print(len(result.userAnswers))
     # Convert model to dict manually
     result_dict = {
         "score": result.score,
@@ -192,14 +190,11 @@ def get_quiz_result():
         "userAnswers": result.userAnswers,        # assuming it's a list (e.g., JSON column)
         "correctAnswers": result.correctAnswers   # same here
     }
-    #print(result_dict)
 
     return jsonify(result_dict)
 
 def parse_questions(raw_text, quiz_id):
-    # Regular expression to extract questions
-    #cleaned_text = re.sub(r"<think>.*?</think>", "", raw_text, flags=re.DOTALL)
-    #print(raw_text)
+
      # Updated pattern
     pattern = re.compile(
         r"Question:\s*(.*?)\s*Choices:\s*A\)\s*(.*?)\s*B\)\s*(.*?)\s*C\)\s*(.*?)\s*D\)\s*(.*?)\s*Correct Answer:\s*([ABCD])",
@@ -214,7 +209,7 @@ def parse_questions(raw_text, quiz_id):
 
     questions = []
     matches = pattern.findall(raw_text)
-    print(matches)
+    
     for match in matches:
         question_text = match[0].strip()
         options = [match[1].strip(), match[2].strip(), match[3].strip(), match[4].strip()]

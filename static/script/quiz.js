@@ -130,10 +130,6 @@ function submitQuiz(event) {
         if (userAnswers[i] === correctAnswers[i]) {
             correct++;
         }
-
-        console.log(`Question ${i + 1}:`);
-        console.log(`User Answer: ${userAnswers[i]}`);
-        console.log(`Correct Answer: ${correctAnswers[i]}`);
     }
 
     const scorePercentage = correct * 10;

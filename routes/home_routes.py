@@ -24,11 +24,11 @@ def home_page():
         # If no chat is found, flash an error message and redirect to home page
         if selected_chat.user_id != current_user.id:
             flash('Unathenticated chat is found, you can not enter !!!', 'error')
-            return redirect(url_for('home_routes.home_page'))  # Redirect to the homepage if no chat found
+            return redirect(url_for('home_routes.home_page'))  
         # If no chat is found, flash an error message and redirect to home page
         if selected_chat is None:
             flash('Selected chat not found', 'error')
-            return redirect(url_for('home_routes.home_page'))  # Redirect to the homepage if no chat found
+            return redirect(url_for('home_routes.home_page')) 
         else:
             # If a valid chat is found, update currentChatID and save to the database
             current_user.currentChatID = chat_id

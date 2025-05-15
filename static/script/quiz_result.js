@@ -6,7 +6,6 @@ fetch("/quiz/result", {
 })
     .then((response) => response.json())
     .then((data) => {
-        console.log(data)
         const scoreEl = document.getElementById("score-table");
         const pointEl = document.getElementById("point-table");
         const passingScoreEl = document.getElementById("passing-score");

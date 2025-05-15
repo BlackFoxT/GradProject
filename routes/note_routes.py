@@ -9,7 +9,6 @@ note_routes = Blueprint('note_routes', __name__)
 
 @note_routes.route("/saveNote", methods=["POST"])
 def saveNote():
-    print(request.json.get('number'))
     content = request.json.get('content')
     num = request.json.get('number')
     number = num
@@ -23,9 +22,6 @@ def saveNote():
         print(last_note.note_id)
         number = last_note.note_id + 1 if last_note else 1
     note = Note.query.filter_by(user_id=current_user.id, note_id=num, chat_id=current_user.currentChatID).first()
-    print(current_user.id)
-    print(current_user.currentChatID)
-    print(note)
 
     if note is None:
         note = Note(user_id=current_user.id, chat_id=current_user.currentChatID, note_id=number, text=content)
@@ -79,9 +75,6 @@ def askNote():
         ).order_by(Note.note_id.desc()).first()
         print(last_note.note_id)
         number = last_note.note_id + 1 if last_note else 1
-    #number = len(notes)+1
-    #note = Note.query.filter_by(user_id=current_user.id, note_id=num, chat_id=current_user.currentChatID).first()
-    #print(number)
-
+        
     #flash('Note have been saved.', 'success')
     return jsonify({"number": number})

@@ -57,6 +57,7 @@ def signup_page():
 @auth_bp.route("/logout")
 def logout():
     current_user.currentChatID = None
+    
     # Save the change to the database
     db.session.commit()
     logout_user()

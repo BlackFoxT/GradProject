@@ -2,9 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch("/get-note-history")
     .then((response) => response.json())
     .then((notes) => {
-       // console.log(notes.length)
       notes.forEach((note) => {
-      //  console.log(note.note_id)
         if(note.note_id >= 1){
             addNotes(note.note_id, note.text);
         }
@@ -30,59 +28,17 @@ document.addEventListener("DOMContentLoaded", function () {
     addNoteButton.addEventListener("click", function () {
         addNotes();
     });
-    /*const noteForm = document.getElementById("noteForm");
-    noteForm.addEventListener("submit", function (event) {
-        document.getElementById("submitNote").style.display="none";
-        event.preventDefault();
-        alert("Note saved: " + 2);
-        localStorage.setItem("content", 2); // Store in localStorage
-    });*/
-    
-    /*const form = document.getElementById("noteForm-1");
-    if(form){
-        form.addEventListener("submit", handleNoteSubmit(1));
-    function handleNoteSubmit(noteCount) {
-        return function(event) {
-            event.preventDefault();
-            const noteid = "note" + 1;
-            const noteElement = document.getElementById(noteid);
-            const content = noteElement.innerText.trim();
-            alert("Note " + 1 + " saved: ");
-            localStorage.setItem("note" + 1, content);
-            const id = "submitNote" + 1;
-            document.getElementById(id).style.display="none";
-            closeNote(1);
-            fetch("/saveNote", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ content: content, number : 1}),
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                    
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-        };
-    }
-    }*/
     
 });
 
 function addNotes(noteId, text){
-   
-        
-
         
         const notes = document.querySelectorAll('.note');
         let noteCount = notes.length+1;
-        //let num = noteCount;
+
         if(noteId){
             addNoteDiv(noteId, 0, text)
-        } //num = noteId;
+        } 
         else{
             fetch("/askForNote", {
                 method: "POST",
@@ -102,12 +58,11 @@ function addNotes(noteId, text){
           console.error("Error:", error);
         });
         }
-        //console.log(num)
-    console.log(noteCount)
-        // If the last row already has the maximum number of notes (4), create a new row
         
 }
+
 let index = 0;
+
 function addNoteDiv(noteId, noteCount, text){
     const addNoteButton = document.getElementById("add-note");
     const container = document.getElementById("note-container");
@@ -116,30 +71,24 @@ function addNoteDiv(noteId, noteCount, text){
     let targetRow = allRows[allRows.length - 1]; // Get the last row
     if(targetRow.querySelectorAll(".note")) notesInRow = targetRow.querySelectorAll(".note").length;
     else notesInRow = 0
-    console.log(notesInRow)
-    console.log(noteCount)
+
     const notes = document.querySelectorAll('.note');
     let maxNotesInRow = 3;
     if (notesInRow >= maxNotesInRow) {
         // Create a new row
         const newRow = document.createElement("div");
         newRow.classList.add("note-row");
-
-       
-        //console.log(noteCount)
         let id = "note" + noteCount;
+
         while (document.getElementById(id)) {
             noteCount++;
             id = "note" + noteCount;
           }
-        // Create and add the new note
-        console.log(id)
-        
         
         if (document.getElementById(id)) {
             index++;
         }
-        console.log(index)
+        
         const newNote = document.createElement("div");
         
         newNote.classList.add("note");
@@ -148,9 +97,8 @@ function addNoteDiv(noteId, noteCount, text){
             openNote(event, noteCount, index);
         });
         
-       // newNote.contentEditable = "true";
        if(noteId) newNote.innerText = text
-       else newNote.innerText = "Click here to type...";
+       else newNote.innerText = "Write something...";
         
         // Create the form and save button
         const form = document.createElement("form");
@@ -172,18 +120,19 @@ function addNoteDiv(noteId, noteCount, text){
         // Append note and button to the form
         form.appendChild(newNote);
         form.appendChild(saveButton);
-        //console.log(noteCount)
+        
         // Handle form submission
         form.addEventListener("submit", function (event) {
             saveNote(event, noteCount);
         });
+
         if(noteId){
             // === Delete Form ===
             const deleteForm = document.createElement("form");
             deleteForm.id = "deleteform" + noteCount;
             deleteForm.classList.add("deleteform");
             deleteForm.method = "POST";
-            deleteForm.action = `/chat/delete/${noteId}`; // Replace with dynamic route if needed
+            deleteForm.action = `/chat/delete/${noteId}`; 
             deleteForm.onsubmit = function () {
                 return confirm("Are you sure you want to delete this note?");
             };
@@ -221,19 +170,18 @@ function addNoteDiv(noteId, noteCount, text){
         // Append the new row to the container
         container.appendChild(newRow);
     } else {
-       // const notes = document.querySelectorAll('.note');
-        //let noteCount = notes.length+1;
+
         if(noteId){
             noteCount = noteId;
         } 
-      //  console.log(noteCount)
+
         let id = "note" + noteCount;
         
         while (document.getElementById(id)) {
             noteCount++;
             id = "note" + noteCount;
           }
-        console.log(index)
+          
         const newNote = document.createElement("div");
         newNote.id = id;
         
@@ -241,12 +189,15 @@ function addNoteDiv(noteId, noteCount, text){
         newNote.addEventListener("click", function(event) {
             openNote(event, noteCount, index);
         });
+
         if(noteId) newNote.innerText = text
-        else newNote.innerText = "Click here to type...";
+        else newNote.innerText = "Write something...";
+
         const form = document.createElement("form");
         form.id = "noteForm" + noteCount;
         // Create the save button
         const saveButton = document.createElement("button");
+
         if(noteId){
             saveButton.id = "submitNote" + noteId;
         }
@@ -265,6 +216,7 @@ function addNoteDiv(noteId, noteCount, text){
         form.addEventListener("submit", function (event) {
             saveNote(event, noteCount);
         });
+
         if(noteId){
             // === Delete Form ===
             const deleteForm = document.createElement("form");
@@ -303,14 +255,12 @@ function addNoteDiv(noteId, noteCount, text){
 
 function saveNote(event, number){
     const form = document.getElementById("noteForm-" + number);
-    //form.addEventListener("submit", handleNoteSubmit(1));
-    //function handleNoteSubmit(noteCount) {
             event.preventDefault();
             const noteid = "note" + number;
             const noteElement = document.getElementById(noteid);
             const content = noteElement.innerText.trim();
             alert("Note " + number + " saved: ");
-            //localStorage.setItem("note" + number, content);
+
             const id = "submitNote" + number;
             document.getElementById(id).style.display="none";
             const allDeleteForm = document.querySelectorAll('.deleteform');
@@ -318,8 +268,9 @@ function saveNote(event, number){
                 form.style.display = "block"; 
         
             });
+
             closeNote(number);
-            console.log(number)
+
             fetch("/saveNote", {
                 method: "POST",
                 headers: {
@@ -336,7 +287,6 @@ function saveNote(event, number){
           console.error("Error:", error);
         });
         location.reload();
-    //}
 }
 function openNote(event, number, indext){
     
@@ -344,51 +294,30 @@ function openNote(event, number, indext){
     const noteElement = document.getElementById(noteid);
     const allNotes = document.querySelectorAll('.note');
     localStorage.setItem("content", 1); // Store in localStorage
-    console.log(number)
     const notesArray = Array.from(allNotes); // convert to array
-    console.log(indext)
     const matches = notesArray.filter(note => note === noteElement);
-    console.log(matches)
-   // if (indext > 0) {
-        //let i = 0;
+
         allNotes.forEach(note => {
-           /* console.log(i)
-            if(i === index){
-                noteElement = note;
-                console.log(i)
-            }*/
-            /*if(note === noteElement && i !== index){
-                i++;
-                note.style.display = "none"; 
-                console.log(i)
-            }*/
             
             if (note !== noteElement) {
                 note.style.display = "none";
             }
             
         }); 
-   // }
-    /*else{
-        allNotes.forEach(note => {
-            if (note !== noteElement) {
-                note.style.display = "none"; 
-            }
-        }); */
-    //}
+
         noteElement.classList.remove("note");
     noteElement.classList.add("openedNote");
     document.getElementById("add-note").style.display="none";
     document.getElementById("closeNote").style.display="block";
-    // Hide delete button
-    //document.getElementById("deleteform" + number).style.display = "none";
+
     const allDeleteForm = document.querySelectorAll('.deleteform');
     allDeleteForm.forEach(form => {
             form.style.display = "none"; 
         
     });
+
     const id = "submitNote" + number;
-    console.log(number)
+
     document.getElementById(id).style.display="block";
     document.getElementById("closeNote").addEventListener("click", function () {
         console.log(number)
@@ -398,6 +327,7 @@ function openNote(event, number, indext){
     noteElement.contentEditable = "true";
     scrollToTop()
     const div = document.querySelector('.openedNote');
+
     if (div) { 
         div.scrollTop = div.scrollHeight;
     }
@@ -411,10 +341,9 @@ function openNote(event, number, indext){
 }
 
 function closeNote(number){
-    console.log(number)
     const id = "note" + number;
-    console.log(id)
     const noteElement = document.getElementById(id);
+
     if (noteElement) {
 
         noteElement.classList.remove("openedNote");
@@ -423,7 +352,6 @@ function closeNote(number){
         document.getElementById("closeNote").style.display="none";
         document.getElementById("submitNote" + number).style.display="none";
         const allNotes = document.querySelectorAll('.note');
-        //document.getElementById("deleteform" + number).style.display = "block";
         const allDeleteForm = document.querySelectorAll('.deleteform');
         allDeleteForm.forEach(form => {
             form.style.display = "block"; 
@@ -445,24 +373,3 @@ function scrollToTop() {
       behavior: "smooth" // for a smooth scroll effect
     });
   }
- /* function scrollToBottom() {
-    console.log("12212")
-    const div = document.querySelector('.openedNote');
-    if (div) { 
-        div.scrollTop = div.scrollHeight;
-    }
-  }*/
-  
-// Create a form to wrap the note and save button
-/*const form = document.createElement("form");
-form.onsubmit = function(e) {
-    e.preventDefault();
-    const content = newNote.innerText.trim();
-    localStorage.setItem("content", 1); // Store in localStorage
-
-    console.log(1)
-    if (content) {
-        alert("Note saved: " + content); // Replace with your saving logic
-    }
-
-};*/

@@ -25,29 +25,23 @@ document.addEventListener("DOMContentLoaded", function () {
         if (chatHistory && chatHistory.length > 0) {
           let chatLength = data.chatCount % 10;
           if (data.isUser) {
-            console.log(15)
             document.getElementById("takeNoteButton").style.display = "block";
             if(data.isQuizStarted && chatLength == 0){
               chatLength = 0;
-              //localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
             }
             setProgressBar(chatHistory, chatLength,data.chatId);
             if(chatLength == 0 && data.extraChat == 0){
-              console.log(19191)
               textarea.disabled = true;
-              //document.getElementById("askButton").textContent = "Start Quiz";
               document.getElementById("askButton").style.display = "none";
               document.getElementById("quizButton").style.display = "block";
             }
             if(data.isQuizSubmitted == true){
-              console.log(2222)
               document.getElementById("askButton").style.display = "block";
               document.getElementById("quizButton").style.display = "none";
               document.getElementById("exampleFormControlTextarea1").disabled = false;
             }
           }
-              // 0 - 10 chat progress bar güncellenecek  aria-valuenow 10 artıp rengi kırmızıdan yeşile dönsün
-              // chat sayısı artıkça kırmızıdan yeşile gidecek
+
           chatHistory.forEach((chat) => {
             contentDiv.innerHTML += `
               <div class="chat-item">
@@ -69,23 +63,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
   const toggleSidebarButton = document.getElementById("toggle-sidebar");
-  const sidebar = document.getElementById("sidebar");
-  // Ensure the sidebar is shown by default
-  if(sidebar) {
-    sidebar.classList.add("show");
-    if (toggleSidebarButton && sidebar) {
-      toggleSidebarButton.addEventListener("click", function () {
-        sidebar.classList.toggle("show");
-      });
-    }
-  } 
+const sidebar = document.getElementById("sidebar");
+const chat = document.getElementById("chat");
+
+if (sidebar) {
+  sidebar.classList.add("show"); // Sidebar is shown by default
+
+  if (toggleSidebarButton) {
+    toggleSidebarButton.addEventListener("click", function () {
+      sidebar.classList.toggle("show");
+
+      // Center the chat when sidebar is toggled
+      if (chat) {
+        chat.classList.toggle("center-chat");
+      }
+    });
+  }
+}
+
 
   const contentDiv = document.getElementById("hiddenContent");
   
   const chatDiv = document.getElementById("content");
   const header = document.getElementById("header");
   const textarea = document.getElementById("exampleFormControlTextarea1");
-  const progressDiv = document.getElementById("progressBarr");
   
   // Event listener for form submission (sending messages)
   const messageForm = document.getElementById("messageForm");
@@ -102,12 +103,14 @@ document.addEventListener("DOMContentLoaded", function () {
       // Display the user's message immediately
       contentDiv.innerHTML += `
         <div class="chat-item">
-          <div class="chat-question"><strong></strong> ${message}</div></div>`;
+          <div class="chat-question"><strong></strong> ${message}</div></div>
+          <div><strong></strong> Waiting for response...</div><hr></div>`;
       contentDiv.style.display = "block";
       header.style.display = "none";
       chatDiv.style.marginTop = "10px";
       scrollToBottom();
       document.getElementById("askButton").disabled = true;
+
       // Send the message to the Flask backend
       fetch("/ask", {
         method: "POST",
@@ -126,8 +129,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 JSON.parse(localStorage.getItem("chatHistory")) || [];
               chatHistory.push(data.chat_entry);
               localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-              //console.log("Stored chat in localStorage:", data.chat_entry);
               contentDiv.innerHTML = ``;
+
               // Append new chat after displaying existing history
               chatHistory.forEach((chat) => {
                 contentDiv.innerHTML += `
@@ -138,11 +141,10 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
               localStorage.removeItem("chatTopic");
               document.getElementById("takeNoteButton").style.display = "block";
-              //console.log( data.chats.length)
               let chatLength = data.chatCount % 10;
+
               if(chatLength == 0 && data.extraChat == 0){
                 textarea.disabled = true;
-                //document.getElementById("askButton").textContent = "Start Quiz";
                 document.getElementById("askButton").style.display = "none";
                 document.getElementById("quizButton").style.display = "block";
               }
@@ -160,32 +162,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>`;
                 });
                 const lastChat = data.chats[data.chats.length - 1];
-                //console.log(lastChat.question.slice(1))
-                //console.log(lastChat.question.slice(1).localeCompare('userinfo')
+
                 if (lastChat.question.slice(1).localeCompare('userinfo') == 0 || lastChat.question.slice(1).localeCompare('quiz') == 0
                 || lastChat.question.slice(1).localeCompare('note') == 0) {
                   directCommand(lastChat.question.slice(1),data.chatId);
-                }
-
-                /* if ((data.chats[data.chats.length - 1].question.toLowerCase()) == 'userinfo' ) {
-                  console.log(data.chats[data.chats.length-1].question)
-                  directCommand(data.chats[data.chats.length - 1].question.toLowerCase());
-                }*/                 
+                }               
               }
-
-              //console.log(data.chats);
-              // contentDiv.innerHTML = ``;
-              // Display the updated chat history
-              /* data.chats.forEach((chat) => {
-                contentDiv.innerHTML += `
-                  <div class="chat-item">
-                    <div class="chat-question"><strong></strong> ${chat.question}</div>
-                    <div><strong></strong> ${chat.response}</div><hr></div>`;
-              });*/
-             /* if(chatLength > 0 && chatLength < 10){
-                localStorage.setItem("isQuizStartedChatID" + data.chatId, false);
-                //localStorage.setItem("isSumbittedChatID" + data.chatId, false);
-              }*/
               
               setProgressBar(data.chats, chatLength, data.chatId, data.isQuizSubmitted);
             }
@@ -205,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function directCommand(command, chat_id) {
-  console.log("Redirecting to profile:", command);
+
   if (command.localeCompare('userinfo') == 0) {
 
     window.location.href = `http://127.0.0.1:5000/profile`; // Redirects to the profile page
@@ -230,14 +212,14 @@ function openTopic(event) {
   const topicDiv = document.getElementById("enterTopic");
   const backdrop = document.getElementById("backdrop");
   const progressBar = document.getElementById("progressBarr");
-progressBar.style.zIndex = "-1";
-//progressBar.style.height = "15px";
+  progressBar.style.zIndex = "-1";
   topicDiv.style.display = "block";  // Show the modal
   backdrop.style.display = "block";  // Show the backdrop
 
   // Disable interactions with the page
   document.body.classList.add("modal-open");
 }
+
 function startChat(event) {
   event.preventDefault(); // Prevent any unintended form submission
 
@@ -263,9 +245,11 @@ function closeTopic() {
   // Enable interactions with the page
   document.body.classList.remove("modal-open");
 }
+
 function takeNote(event) {
   window.location.href = `http://127.0.0.1:5000/note`;
 }
+
 function startQuizz(event) {
   // Disable entire page interaction
   document.body.style.pointerEvents = "none";
@@ -298,14 +282,11 @@ function startQuizz(event) {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data.response)
       // Remove overlay and re-enable interaction
       document.getElementById("waitingOverlay").remove();
       document.body.style.pointerEvents = "auto";
       document.body.style.opacity = "1";
 
-      
-      //localStorage.setItem("isQuizStartedChatID" + data.chatId, true);
       setProgressBar(null, 0, true)
       window.location.href = `http://127.0.0.1:5000/quiz_start`;
     })
@@ -328,6 +309,7 @@ function setProgressBar(chatHistory,chatLength,chatId,isQuizStarted){
             progressDiv.style.backgroundColor = "white"; // Change background color
             const maxChatLength= 10; // maximum chat sayısı
             let progressBarPercentage = 0; 
+
             if(chatHistory){
               progressBarPercentage = chatLength*10;//burda percentage'in 100ü aşmadığından emin oluyoruz.
               if(chatLength != 0 && chatLength%10 == 0){
