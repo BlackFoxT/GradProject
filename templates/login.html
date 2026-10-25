@@ -1,4 +1,4 @@
-{% extends "layouts/empty_layout.html" %} {% block title %}Login{% endblock title %} 
+{% extends "layouts/empty_layout.html" %} {% block title %}Login{% endblock title %}
 {% block content %}
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
@@ -13,10 +13,12 @@
         {% endif %} {% endwith %}
         <form method="POST" action="{{ url_for('auth_routes.login_page') }}">
             <div id="login-mail-input" class="mb-3">
-                <input type="email" class="form-control" id="login-email" name="email" placeholder="{{ _('Email Address') }}" required />
+                <input type="email" class="form-control" id="login-email" name="email"
+                    placeholder="{{ _('Email Address') }}" required />
             </div>
             <div id="login-password-input" class="mb-3">
-                <input type="password" class="form-control" id="login-password" name="password" placeholder="{{ _('Password') }}" required />
+                <input type="password" class="form-control" id="login-password" name="password"
+                    placeholder="{{ _('Password') }}" required />
             </div>
             <button type="button" id="login-next-button" class="btn btn-success w-100">
                 {{ _('Continue') }}
@@ -40,16 +42,22 @@
         </div>
 
         <div class="d-grid gap-2">
-            <button class="btn btn-outline-secondary d-grid align-items-center authLogoButton">
-                <img src="https://auth.openai.com/assets/google-logo-NePEveMl.svg" alt="Google" class="authLogoImage" />
+            <button type="button"
+                class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 authLogoButton">
+                <img src="{{ url_for('static', filename='images/google.png') }}" alt="Google" class="authLogoImage"
+                    width="20" height="20" />
                 <span class="authLogoText">{{ _('Continue with Google') }}</span>
             </button>
-            <button class="btn btn-outline-secondary d-grid align-items-center authLogoButton">
-                <img src="https://auth.openai.com/assets/microsoft-logo-BUXxQnXH.svg" alt="Microsoft" class="authLogoImage" />
+            <button type="button"
+                class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 authLogoButton">
+                <img src="{{ url_for('static', filename='images/microsoft.png') }}" alt="Microsoft"
+                    class="authLogoImage" width="20" height="20" />
                 <span class="authLogoText">{{ _('Continue with Microsoft') }}</span>
             </button>
-            <button class="btn btn-outline-secondary d-grid align-items-center authLogoButton">
-                <img src="https://auth.openai.com/assets/apple-logo-vertical-full-bleed-tAoxPOUx.svg" alt="Apple" class="authLogoImage" />
+            <button type="button"
+                class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 authLogoButton">
+                <img src="{{ url_for('static', filename='images/apple.jpg') }}" alt="Apple" class="authLogoImage"
+                    width="20" height="20" />
                 <span class="authLogoText">{{ _('Continue with Apple') }}</span>
             </button>
         </div>
