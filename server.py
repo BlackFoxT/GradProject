@@ -1,3 +1,4 @@
+import os
 from flask import Flask, g
 from flask_login import LoginManager
 from flask_babel import Babel, _,lazy_gettext as _l
@@ -15,8 +16,15 @@ from models.user import User
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
+#app.secret_key = 'your_secret_key'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-change-me')
+
+# Use Postgres on Render (DATABASE_URL), fall back to local SQLite
+db_url = os.environ.get('DATABASE_URL', 'sqlite:///main.db')
+if db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['LANGUAGES'] = ['en', 'tr']
 
@@ -67,7 +75,9 @@ app.register_blueprint(quiz_routes)
 app.register_blueprint(note_routes)
 
 
+# Create tables on startup (also needed under gunicorn)
+with app.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
